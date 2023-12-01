@@ -1,0 +1,76 @@
+CC = g++ -Wall -std=c++17 -fPIC
+PLATFORM = linux
+PLATVER = 
+PLATDIR = 
+FILEEXT = 
+LIBFLAG = 
+RELEASE = 0
+UNICODE = 0
+LOADHDR = -I ./
+LOADSO = -L ../../XEngine_BaseLib/XEngine_BaseLib
+LIB = -lXEngine_BaseLib
+LIBEX = 
+OBJECTS = AVPlayer_Video.o AVPlayer_Audio.o pch.o
+
+ifeq ($(PLATFORM),linux)
+	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
+		PLATVER = -D __CENTOS__
+		PLATDIR = XEngine_Linux/Centos
+	else
+		PLATVER = -D __UBUNTU__
+		PLATDIR = XEngine_Linux/Ubuntu
+	endif
+	FILEEXT = so
+	LIBFLAG = -shared
+	LIBEX = -lSDL2 -lpthread -lrt -ldl
+	LOADBIN = -Wl,-rpath=../XEngine_BaseLib,--disable-new-dtags
+else ifeq ($(PLATFORM),mac)
+	CC += -Wno-deprecated-declarations
+	PLATVER = -D __MACOS__
+	PLATDIR = XEngine_Mac
+	FILEEXT = dylib
+	LIBFLAG = -dynamiclib
+	LIBEX = -lSDL2 -lpthread -ldl
+	LOADBIN = -Wl,-rpath,@loader_path/../XEngine_BaseLib/
+endif
+
+ifeq ($(RELEASE),1)
+FLAGS = -c 
+DEBUG = 
+else
+FLAGS = -c -lc_p
+DEBUG = -g -pg 
+endif
+
+ifeq ($(UNICODE),1)
+UNICODE = -D _UNICODE
+else
+UNICODE = 
+endif
+
+all:$(OBJECTS)
+	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_AVPlayer.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
+
+AVPlayer_Video.o:./AVPlayer_Video/AVPlayer_Video.cpp                      
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./AVPlayer_Video/AVPlayer_Video.cpp   
+AVPlayer_Audio.o:./AVPlayer_Audio/AVPlayer_Audio.cpp                      
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./AVPlayer_Audio/AVPlayer_Audio.cpp
+	
+pch.o:./pch.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp
+
+
+InstallAll:InstallSo InstallHeader
+InstallSo:./libXEngine_AVPlayer.$(FILEEXT)
+	cp ./libXEngine_AVPlayer.$(FILEEXT) ../../../XEngine_Release/$(PLATDIR)/XEngine_AVCodec/libXEngine_AVPlayer.$(FILEEXT)
+
+InstallHeader:./AVPlayer_Define.h ./AVPlayer_Error.h
+	cp ./AVPlayer_Define.h ../../../XEngine_Release/XEngine_Include/XEngine_AVCodec/AVPlayer_Define.h
+	cp ./AVPlayer_Error.h ../../../XEngine_Release/XEngine_Include/XEngine_AVCodec/AVPlayer_Error.h
+
+
+CleanAll:CleanObj CleanMk
+CleanObj:
+	rm *.o                                        
+CleanMk:
+	rm *.$(FILEEXT)                                

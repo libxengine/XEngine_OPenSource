@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34302.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_Module", "XEngine_Module", "{26417B01-459E-4287-9524-7B0293BAD18A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_Example", "XEngine_Example", "{58092034-5B83-4806-B7FE-CCDD7414C4AE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetHelp_BTorrent", "XEngine_Module\NetHelp_BTorrent\NetHelp_BTorrent.vcxproj", "{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AVCodec_APPPlayer", "XEngine_Example\AVCodec_APPPlayer\AVCodec_APPPlayer.vcxproj", "{83CC39D4-25F3-48AC-B6CD-7A1228316692}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetHelp_APPBTorrent", "XEngine_Example\NetHelp_APPBTorrent\NetHelp_APPBTorrent.vcxproj", "{5848905C-21BD-4C7B-BEA2-72107E686E35}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_AVPlayer", "XEngine_Module\XEngine_AVPlayer\XEngine_AVPlayer.vcxproj", "{7CFD692D-2957-4758-936D-7E9D18CEDD34}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F}.Debug|x64.ActiveCfg = Debug|x64
+		{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F}.Debug|x64.Build.0 = Debug|x64
+		{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F}.Debug|x86.ActiveCfg = Debug|Win32
+		{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F}.Debug|x86.Build.0 = Debug|Win32
+		{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F}.Release|x64.ActiveCfg = Release|x64
+		{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F}.Release|x64.Build.0 = Release|x64
+		{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F}.Release|x86.ActiveCfg = Release|Win32
+		{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F}.Release|x86.Build.0 = Release|Win32
+		{83CC39D4-25F3-48AC-B6CD-7A1228316692}.Debug|x64.ActiveCfg = Debug|x64
+		{83CC39D4-25F3-48AC-B6CD-7A1228316692}.Debug|x64.Build.0 = Debug|x64
+		{83CC39D4-25F3-48AC-B6CD-7A1228316692}.Debug|x86.ActiveCfg = Debug|Win32
+		{83CC39D4-25F3-48AC-B6CD-7A1228316692}.Debug|x86.Build.0 = Debug|Win32
+		{83CC39D4-25F3-48AC-B6CD-7A1228316692}.Release|x64.ActiveCfg = Release|x64
+		{83CC39D4-25F3-48AC-B6CD-7A1228316692}.Release|x64.Build.0 = Release|x64
+		{83CC39D4-25F3-48AC-B6CD-7A1228316692}.Release|x86.ActiveCfg = Release|Win32
+		{83CC39D4-25F3-48AC-B6CD-7A1228316692}.Release|x86.Build.0 = Release|Win32
+		{5848905C-21BD-4C7B-BEA2-72107E686E35}.Debug|x64.ActiveCfg = Debug|x64
+		{5848905C-21BD-4C7B-BEA2-72107E686E35}.Debug|x64.Build.0 = Debug|x64
+		{5848905C-21BD-4C7B-BEA2-72107E686E35}.Debug|x86.ActiveCfg = Debug|Win32
+		{5848905C-21BD-4C7B-BEA2-72107E686E35}.Debug|x86.Build.0 = Debug|Win32
+		{5848905C-21BD-4C7B-BEA2-72107E686E35}.Release|x64.ActiveCfg = Release|x64
+		{5848905C-21BD-4C7B-BEA2-72107E686E35}.Release|x64.Build.0 = Release|x64
+		{5848905C-21BD-4C7B-BEA2-72107E686E35}.Release|x86.ActiveCfg = Release|Win32
+		{5848905C-21BD-4C7B-BEA2-72107E686E35}.Release|x86.Build.0 = Release|Win32
+		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Debug|x64.ActiveCfg = Debug|x64
+		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Debug|x64.Build.0 = Debug|x64
+		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Debug|x86.ActiveCfg = Debug|Win32
+		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Debug|x86.Build.0 = Debug|Win32
+		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Release|x64.ActiveCfg = Release|x64
+		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Release|x64.Build.0 = Release|x64
+		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Release|x86.ActiveCfg = Release|Win32
+		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5D4CC389-B9BA-4B55-9520-55D4BA5BB50F} = {26417B01-459E-4287-9524-7B0293BAD18A}
+		{83CC39D4-25F3-48AC-B6CD-7A1228316692} = {58092034-5B83-4806-B7FE-CCDD7414C4AE}
+		{5848905C-21BD-4C7B-BEA2-72107E686E35} = {58092034-5B83-4806-B7FE-CCDD7414C4AE}
+		{7CFD692D-2957-4758-936D-7E9D18CEDD34} = {26417B01-459E-4287-9524-7B0293BAD18A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {16D43B4F-E3D4-4036-A44C-5DDD64988164}
+	EndGlobalSection
+EndGlobal

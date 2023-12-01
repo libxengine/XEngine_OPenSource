@@ -31,12 +31,17 @@
 GITEE:https://gitee.com/xyry/libxengine  
 GITHUB:https://github.com/libxengine/xengine
 
-#### 快速部署
+###### 快速部署
 
 git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/xengine.git  
 window执行XEngine_WINEnv.bat 脚本  
 Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
 macos执行:./XEngine_LINEnv.sh -i 3  
+
+#### 开源库依赖
+
+XEngine_AVPlayer 需要sdl2支持  
+NetHelp_BTorrent 需要libtorrent库  
 
 #### Windows
 

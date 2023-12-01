@@ -43,7 +43,7 @@ CBTorrent_Creator::~CBTorrent_Creator()
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Creator::BTorrent_Creator_Init(XNETHANDLE* pxhToken, LPCXSTR lpszBTPath, int nPieceSize)
+bool CBTorrent_Creator::BTorrent_Creator_Init(XNETHANDLE* pxhToken, LPCXSTR lpszBTPath, int nPieceSize)
 {
     BTDload_IsErrorOccur = FALSE;
 
@@ -70,7 +70,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_Init(XNETHANDLE* pxhToken, LPCXSTR lps
 	}
 
 	st_BTCreator.m_nPieceSize = nPieceSize;
-	_tcscpy(st_BTCreator.tszBTPath, lpszBTPath);
+	_tcsxcpy(st_BTCreator.tszBTPath, lpszBTPath);
 
 	BaseLib_OperatorHandle_Create(pxhToken);
     st_Locker.lock();
@@ -101,7 +101,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_Init(XNETHANDLE* pxhToken, LPCXSTR lps
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Creator::BTorrent_Creator_AddNode(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex)
+bool CBTorrent_Creator::BTorrent_Creator_AddNode(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -124,7 +124,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_AddNode(XNETHANDLE xhToken, LPCXSTR lp
 	memset(&st_BTInfo, '\0', sizeof(BTORRENT_PARSEMAP));
 
 	st_BTInfo.nValue = nIndex;
-	_tcscpy(st_BTInfo.tszValue, lpszAddr);
+	_tcsxcpy(st_BTInfo.tszValue, lpszAddr);
 	stl_MapIterator->second.pStl_ListNode->push_back(st_BTInfo);
 	st_Locker.unlock_shared();
 	return TRUE;
@@ -152,7 +152,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_AddNode(XNETHANDLE xhToken, LPCXSTR lp
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Creator::BTorrent_Creator_AddTracker(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex)
+bool CBTorrent_Creator::BTorrent_Creator_AddTracker(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -175,7 +175,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_AddTracker(XNETHANDLE xhToken, LPCXSTR
 	memset(&st_BTInfo, '\0', sizeof(BTORRENT_PARSEMAP));
 
 	st_BTInfo.nValue = nIndex;
-	_tcscpy(st_BTInfo.tszValue, lpszAddr);
+	_tcsxcpy(st_BTInfo.tszValue, lpszAddr);
 	stl_MapIterator->second.pStl_ListTracker->push_back(st_BTInfo);
 	st_Locker.unlock_shared();
 	return TRUE;
@@ -203,7 +203,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_AddTracker(XNETHANDLE xhToken, LPCXSTR
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Creator::BTorrent_Creator_AddSeeds(XNETHANDLE xhToken, LPCXSTR lpszAddr, XBOOL bSingle)
+bool CBTorrent_Creator::BTorrent_Creator_AddSeeds(XNETHANDLE xhToken, LPCXSTR lpszAddr, bool bSingle)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -226,7 +226,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_AddSeeds(XNETHANDLE xhToken, LPCXSTR l
 	memset(&st_BTInfo, '\0', sizeof(BTORRENT_PARSEMAP));
 
 	st_BTInfo.nValue = bSingle;
-	_tcscpy(st_BTInfo.tszValue, lpszAddr);
+	_tcsxcpy(st_BTInfo.tszValue, lpszAddr);
 	stl_MapIterator->second.pStl_ListSeeds->push_back(st_BTInfo);
 	st_Locker.unlock_shared();
 	return TRUE;
@@ -259,7 +259,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_AddSeeds(XNETHANDLE xhToken, LPCXSTR l
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Creator::BTorrent_Creator_SetInfo(XNETHANDLE xhToken, LPCXSTR lpszCreator, LPCXSTR lpszComment /* = NULL */, LPCXSTR lpszCertBuffer /* = NULL */)
+bool CBTorrent_Creator::BTorrent_Creator_SetInfo(XNETHANDLE xhToken, LPCXSTR lpszCreator, LPCXSTR lpszComment /* = NULL */, LPCXSTR lpszCertBuffer /* = NULL */)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -278,14 +278,14 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_SetInfo(XNETHANDLE xhToken, LPCXSTR lp
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	_tcscpy(stl_MapIterator->second.tszCreate, lpszCreator);
+	_tcsxcpy(stl_MapIterator->second.tszCreate, lpszCreator);
 	if (NULL != lpszComment)
 	{
-		_tcscpy(stl_MapIterator->second.tszComment, lpszComment);
+		_tcsxcpy(stl_MapIterator->second.tszComment, lpszComment);
 	}
 	if (NULL != lpszCertBuffer)
 	{
-		_tcscpy(stl_MapIterator->second.tszPEMCert, lpszCertBuffer);
+		_tcsxcpy(stl_MapIterator->second.tszPEMCert, lpszCertBuffer);
 	}
 	st_Locker.unlock_shared();
 	return TRUE;
@@ -318,7 +318,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_SetInfo(XNETHANDLE xhToken, LPCXSTR lp
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Creator::BTorrent_Creator_GetTorrent(XNETHANDLE xhToken, LPCXSTR lpszBTFile /* = NULL */, XCHAR* ptszMsgBuffer /* = NULL */, int* pInt_MsgLen /* = NULL */)
+bool CBTorrent_Creator::BTorrent_Creator_GetTorrent(XNETHANDLE xhToken, LPCXSTR lpszBTFile /* = NULL */, XCHAR* ptszMsgBuffer /* = NULL */, int* pInt_MsgLen /* = NULL */)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -422,7 +422,7 @@ XBOOL CBTorrent_Creator::BTorrent_Creator_GetTorrent(XNETHANDLE xhToken, LPCXSTR
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Creator::BTorrent_Creator_Destory(XNETHANDLE xhToken)
+bool CBTorrent_Creator::BTorrent_Creator_Destory(XNETHANDLE xhToken)
 {
 	BTDload_IsErrorOccur = FALSE;
 

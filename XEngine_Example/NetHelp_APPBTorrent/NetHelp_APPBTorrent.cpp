@@ -1,21 +1,25 @@
 ﻿#ifdef _MSC_BUILD
 #include <Windows.h>
 #include <tchar.h>
-#pragma comment(lib,"../../../XEngine/XEngine_SourceCode/Debug/XEngine_BaseLib.lib")
-#pragma comment(lib,"../../../XEngine/XEngine_SourceCode/Debug/NetHelp_BTorrent.lib")
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <thread>
-#include "../../../XEngine/XEngine_SourceCode/XEngine_CommHdr.h"
-#include "../../../XEngine/XEngine_SourceCode/XEngine_BaseLib/XEngine_BaseLib/BaseLib_Define.h"
-#include "../../../XEngine/XEngine_SourceCode/XEngine_BaseLib/XEngine_BaseLib/BaseLib_Error.h"
-#include "../../../XEngine/XEngine_SourceCode/XEngine_NetHelp/NetHelp_BTorrent/BTorrent_Define.h"
-#include "../../../XEngine/XEngine_SourceCode/XEngine_NetHelp/NetHelp_BTorrent/BTorrent_Error.h"
+#include <XEngine_Include/XEngine_CommHdr.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
+#include "../../XEngine_Module/NetHelp_BTorrent/BTorrent_Define.h"
+#include "../../XEngine_Module/NetHelp_BTorrent/BTorrent_Error.h"
 
-//Linux::g++ -std=c++17 -Wall -g NetHelp_APPBTorrent.cpp -o NetHelp_APPBTorrent.exe -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/NetHelp_BTorrent -lXEngine_BaseLib -lNetHelp_BTorrent -Wl,-rpath=../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib:../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/NetHelp_BTorrent,--disable-new-dtags
-//MacOS::g++ -std=c++17 -Wall -g NetHelp_APPBTorrent.cpp -o NetHelp_APPBTorrent.exe -L ../../../XEngine/XEngine_Release/XEngine_Mac/XEngine_BaseLib -L ../../../XEngine/XEngine_Release/XEngine_Mac/NetHelp_BTorrent -lXEngine_BaseLib -lNetHelp_BTorrent
+#ifdef _MSC_BUILD
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
+#pragma comment(lib,"../../Debug/NetHelp_BTorrent.lib")
+#endif
+
+//Linux::g++ -std=c++17 -Wall -g NetHelp_APPBTorrent.cpp -o AVCodec_APPPlayer.exe -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L -L ../../XEngine_Module/NetHelp_BTorrent -lXEngine_BaseLib -lNetHelp_BTorrent
+//Macos::g++ -std=c++17 -Wall -g NetHelp_APPBTorrent.cpp -o AVCodec_APPPlayer.exe -L ../../XEngine_Module/NetHelp_BTorrent -lXEngine_BaseLib -lNetHelp_BTorrent
+
 
 int BTorrent_Parse(LPCXSTR lpszFile)
 {
@@ -147,7 +151,7 @@ int BTorrent_Download()
 		printf("BTorrent_Creator_Init:%lX\n", BTorrent_GetLastError());
 		return -1;
 	}
-	XBOOL bRun = TRUE;
+	bool bRun = TRUE;
 
 	while (1)
 	{

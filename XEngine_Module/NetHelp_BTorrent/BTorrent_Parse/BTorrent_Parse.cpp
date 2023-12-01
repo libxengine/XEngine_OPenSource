@@ -38,7 +38,7 @@ CBTorrent_Parse::~CBTorrent_Parse()
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr)
+bool CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr)
 {
     BTDload_IsErrorOccur = FALSE;
 
@@ -58,8 +58,8 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAdd
     }
     memset(pSt_BTParse,'\0',sizeof(BTORRENT_PARSEINFO));
 
-	LPCXSTR lpszFindStr = _T("magnet:?xt=urn:");
-	if (NULL == _tcsstr(lpszAddr, lpszFindStr))
+	LPCXSTR lpszFindStr = _X("magnet:?xt=urn:");
+	if (NULL == _tcsxstr(lpszAddr, lpszFindStr))
 	{
 		std::fstream m_FStream;
 		m_FStream.exceptions(std::ifstream::failbit);
@@ -118,7 +118,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAdd
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Parse::BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
 {
     BTDload_IsErrorOccur = FALSE;
 
@@ -143,7 +143,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSE
     for (int i = 0; stl_ListIterator != stl_MapIterator->second->m_BTInfo->nodes().end(); stl_ListIterator++, i++)
     {
         (*pppSt_Parse)[i]->nValue = stl_ListIterator->second;
-        _tcscpy((*pppSt_Parse)[i]->tszValue, stl_ListIterator->first.c_str());
+        _tcsxcpy((*pppSt_Parse)[i]->tszValue, stl_ListIterator->first.c_str());
     }
     st_Locker.unlock_shared();
     return TRUE;
@@ -171,7 +171,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSE
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Parse::BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
 {
     BTDload_IsErrorOccur = FALSE;
 
@@ -197,7 +197,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PA
     for (auto const& stl_ListIterator : stl_MapIterator->second->m_BTInfo->trackers())
     {
 		(*pppSt_Parse)[i]->nValue = stl_ListIterator.tier;
-		_tcscpy((*pppSt_Parse)[i]->tszValue, stl_ListIterator.url.c_str());
+		_tcsxcpy((*pppSt_Parse)[i]->tszValue, stl_ListIterator.url.c_str());
 		i++;
     }
 	st_Locker.unlock_shared();
@@ -226,7 +226,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PA
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Parse::BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -252,7 +252,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARS
 	for (auto const& stl_ListIterator : stl_MapIterator->second->m_BTInfo->web_seeds())
 	{
 		(*pppSt_Parse)[i]->nValue = stl_ListIterator.type;
-		_tcscpy((*pppSt_Parse)[i]->tszValue, stl_ListIterator.url.c_str());
+		_tcsxcpy((*pppSt_Parse)[i]->tszValue, stl_ListIterator.url.c_str());
 		i++;
 	}
 	st_Locker.unlock_shared();
@@ -281,7 +281,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARS
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Parse::BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_PieceLen, int* pInt_PieceCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_PieceLen, int* pInt_PieceCount)
 {
     BTDload_IsErrorOccur = FALSE;
 
@@ -333,7 +333,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_Pie
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Parse::BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHash /* = NULL */, XCHAR* ptszCreator /* = NULL */, XCHAR* ptszComment /* = NULL */)
+bool CBTorrent_Parse::BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHash /* = NULL */, XCHAR* ptszCreator /* = NULL */, XCHAR* ptszComment /* = NULL */)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -343,15 +343,15 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHas
 	{
 		if (NULL != ptszHash)
 		{
-			_tcscpy(ptszHash, stl_MapIterator->second->m_BTInfo->info_hash().to_string().c_str());
+			_tcsxcpy(ptszHash, stl_MapIterator->second->m_BTInfo->info_hash().to_string().c_str());
 		}
 		if (NULL != ptszCreator)
 		{
-			_tcscpy(ptszCreator, stl_MapIterator->second->m_BTInfo->creator().c_str());
+			_tcsxcpy(ptszCreator, stl_MapIterator->second->m_BTInfo->creator().c_str());
 		}
 		if (NULL != ptszComment)
 		{
-			_tcscpy(ptszComment, stl_MapIterator->second->m_BTInfo->comment().c_str());
+			_tcsxcpy(ptszComment, stl_MapIterator->second->m_BTInfo->comment().c_str());
 		}
 	}
 	st_Locker.unlock_shared();
@@ -375,7 +375,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHas
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Parse::BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszMagnet)
+bool CBTorrent_Parse::BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszMagnet)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -383,7 +383,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszM
 	unordered_map<XNETHANDLE, BTORRENT_PARSEINFO*>::const_iterator stl_MapIterator = stl_MapBTParse.find(xhToken);
 	if (stl_MapIterator != stl_MapBTParse.end())
 	{
-		_tcscpy(ptszMagnet, make_magnet_uri(*stl_MapIterator->second->m_BTInfo).c_str());
+		_tcsxcpy(ptszMagnet, make_magnet_uri(*stl_MapIterator->second->m_BTInfo).c_str());
 	}
 	st_Locker.unlock_shared();
 	return TRUE;
@@ -416,7 +416,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszM
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFilePath, BTORRENT_FILEINFO*** pppSt_FileList, int* pInt_ListCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFilePath, BTORRENT_FILEINFO*** pppSt_FileList, int* pInt_ListCount)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -451,7 +451,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFil
 		//判断是否有HASH值
 		if (!m_FileStorage.hash(stl_ListIterator).is_all_zeros())
 		{
-			_tcscpy((*pppSt_FileList)[i]->tszFileHash, m_FileStorage.hash(stl_ListIterator).to_string().c_str());
+			_tcsxcpy((*pppSt_FileList)[i]->tszFileHash, m_FileStorage.hash(stl_ListIterator).to_string().c_str());
 		}
 #ifdef _MSC_BUILD
 		nUTFLen = m_FileStorage.file_path(stl_ListIterator).length();
@@ -459,8 +459,8 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFil
 		nUTFLen = m_FileStorage.file_name(stl_ListIterator).size();
 		BaseLib_OperatorCharset_UTFToAnsi(m_FileStorage.file_name(stl_ListIterator).data(), (*pppSt_FileList)[i]->tszFileName, &nUTFLen);
 #else
-		_tcscpy((*pppSt_FileList)[i]->tszFilePath, m_FileStorage.file_path(stl_ListIterator).c_str());
-		_tcscpy((*pppSt_FileList)[i]->tszFileName, m_FileStorage.file_name(stl_ListIterator).data());
+		_tcsxcpy((*pppSt_FileList)[i]->tszFilePath, m_FileStorage.file_path(stl_ListIterator).c_str());
+		_tcsxcpy((*pppSt_FileList)[i]->tszFileName, m_FileStorage.file_name(stl_ListIterator).data());
 #endif
 		(*pppSt_FileList)[i]->nFileOffset = m_FileStorage.file_offset(stl_ListIterator);
 		(*pppSt_FileList)[i]->nFileSize = m_FileStorage.file_size(stl_ListIterator);
@@ -486,7 +486,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFil
 		}
 		if (nFileFlags & lt::file_storage::flag_symlink)
 		{
-			_tcscpy((*pppSt_FileList)[i]->tszFileLink, m_FileStorage.symlink(stl_ListIterator).c_str());
+			_tcsxcpy((*pppSt_FileList)[i]->tszFileLink, m_FileStorage.symlink(stl_ListIterator).c_str());
 		}
 		i++;
 	}
@@ -506,7 +506,7 @@ XBOOL CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFil
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_Parse::BTorrent_Parse_Destory(XNETHANDLE xhToken)
+bool CBTorrent_Parse::BTorrent_Parse_Destory(XNETHANDLE xhToken)
 {
 	BTDload_IsErrorOccur = FALSE;
 

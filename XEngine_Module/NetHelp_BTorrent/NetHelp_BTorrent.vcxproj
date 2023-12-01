@@ -30,14 +30,14 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -70,6 +70,22 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
+    <LibraryPath>$(XEngine_Lib32);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
+    <LibraryPath>$(XEngine_Lib32);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(XEngine_Include)</IncludePath>
+    <LibraryPath>$(XEngine_Lib64);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
+    <LibraryPath>$(XEngine_Lib64);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -106,10 +122,8 @@
       <ModuleDefinitionFile>NetHelp_BTorrent.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)Release\NetHelp_BTorrent.lib" "../../../XEngine_Release/XEngine_Windows/x86/XEngine_NetHelp/NetHelp_BTorrent.lib"
-copy "$(SolutionDir)Release\NetHelp_BTorrent.dll" "../../../XEngine_Release/XEngine_Windows/x86/XEngine_NetHelp/NetHelp_BTorrent.dll"
-copy "$(ProjectDir)BTorrent_Define.h" "../../../XEngine_Release/XEngine_Include/XEngine_NetHelp/"
-copy "$(ProjectDir)BTorrent_Error.h" "../../../XEngine_Release/XEngine_Include/XEngine_NetHelp/"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -148,10 +162,8 @@ copy "$(ProjectDir)BTorrent_Error.h" "../../../XEngine_Release/XEngine_Include/X
       <ModuleDefinitionFile>NetHelp_BTorrent.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)x64\Release\NetHelp_BTorrent.lib" "../../../XEngine_Release/XEngine_Windows/x64/XEngine_NetHelp/NetHelp_BTorrent.lib"
-copy "$(SolutionDir)x64\Release\NetHelp_BTorrent.dll" "../../../XEngine_Release/XEngine_Windows/x64/XEngine_NetHelp/NetHelp_BTorrent.dll"
-copy "$(ProjectDir)BTorrent_Define.h" "../../../XEngine_Release/XEngine_Include/XEngine_NetHelp/"
-copy "$(ProjectDir)BTorrent_Error.h" "../../../XEngine_Release/XEngine_Include/XEngine_NetHelp/"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -29,13 +29,13 @@ public:
 	CBTorrent_Creator();
 	~CBTorrent_Creator();
 public:
-	XBOOL BTorrent_Creator_Init(XNETHANDLE* pxhToken, LPCXSTR lpszBTPath, int nPieceSize = 0);
-	XBOOL BTorrent_Creator_AddNode(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex);
-	XBOOL BTorrent_Creator_AddTracker(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex = 0);
-	XBOOL BTorrent_Creator_AddSeeds(XNETHANDLE xhToken, LPCXSTR lpszAddr, XBOOL bSingle = FALSE);
-	XBOOL BTorrent_Creator_SetInfo(XNETHANDLE xhToken, LPCXSTR lpszCreator, LPCXSTR lpszComment = NULL, LPCXSTR lpszCertBuffer = NULL);
-	XBOOL BTorrent_Creator_GetTorrent(XNETHANDLE xhToken, LPCXSTR lpszBTFile = NULL, XCHAR* ptszMsgBuffer = NULL, int* pInt_MsgLen = NULL);
-	XBOOL BTorrent_Creator_Destory(XNETHANDLE xhToken);
+	bool BTorrent_Creator_Init(XNETHANDLE* pxhToken, LPCXSTR lpszBTPath, int nPieceSize = 0);
+	bool BTorrent_Creator_AddNode(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex);
+	bool BTorrent_Creator_AddTracker(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex = 0);
+	bool BTorrent_Creator_AddSeeds(XNETHANDLE xhToken, LPCXSTR lpszAddr, bool bSingle = FALSE);
+	bool BTorrent_Creator_SetInfo(XNETHANDLE xhToken, LPCXSTR lpszCreator, LPCXSTR lpszComment = NULL, LPCXSTR lpszCertBuffer = NULL);
+	bool BTorrent_Creator_GetTorrent(XNETHANDLE xhToken, LPCXSTR lpszBTFile = NULL, XCHAR* ptszMsgBuffer = NULL, int* pInt_MsgLen = NULL);
+	bool BTorrent_Creator_Destory(XNETHANDLE xhToken);
 protected:
 private:
 	shared_mutex st_Locker;

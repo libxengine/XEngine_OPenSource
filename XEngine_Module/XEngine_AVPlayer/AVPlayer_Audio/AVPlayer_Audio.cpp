@@ -69,11 +69,11 @@ XHANDLE CAVPlayer_Audio::AVPlayer_Audio_Create(int nSampleRate, int nSampleFmt, 
     pSt_AVPlayer->st_AudioSource.silence = 0;            //设置静音的值
     pSt_AVPlayer->st_AudioSource.samples = 1024;         //音频缓冲区中的采样个数，要求必须是2的n次方
     //设计采样格式
-    if (ENUM_AVCOLLECT_AUDIO_SAMPLE_FMT_S16 == nSampleFmt)
+    if (1 == nSampleFmt)
     {
         pSt_AVPlayer->st_AudioSource.format = AUDIO_S16SYS;
     }
-    else if (ENUM_AVCOLLECT_AUDIO_SAMPLE_FMT_S32 == nSampleFmt)
+    else if (2 == nSampleFmt)
     {
         pSt_AVPlayer->st_AudioSource.format = AUDIO_S32SYS;
     }

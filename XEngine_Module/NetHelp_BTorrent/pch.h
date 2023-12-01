@@ -38,30 +38,21 @@
 #include <libtorrent/read_resume_data.hpp>
 #include <libtorrent/write_resume_data.hpp>
 using namespace std;
-#include "../../XEngine_CommHdr.h"
-#include "../../XEngine_Types.h"
-#include "../../XEngine_BaseLib/XEngine_BaseLib/BaseLib_Define.h"
-#include "../../XEngine_BaseLib/XEngine_BaseLib/BaseLib_Error.h"
+#include <XEngine_Include/XEngine_CommHdr.h>
+#include <XEngine_Include/XEngine_Types.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include "BTorrent_Define.h"
 #include "BTorrent_Error.h"
 //////////////////////////////////////////////////////////////////////////
 //                       用户不用关心的数据
 //////////////////////////////////////////////////////////////////////////
-extern XBOOL BTDload_IsErrorOccur;
+extern bool BTDload_IsErrorOccur;
 extern XLONG BTDload_dwErrorCode;
 
 
 #ifdef _MSC_BUILD
-#ifdef _DEBUG
-#pragma comment(lib,"../../Debug/XEngine_BaseLib.lib")
-#else
-#ifdef _WIN64
-#pragma comment(lib,"../../x64/Release/XEngine_BaseLib.lib")
-#else
-#pragma comment(lib,"../../Release/XEngine_BaseLib.lib")
-#endif
-#endif
-#pragma comment(lib,"torrent-rasterbar")
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #else
 #ifdef __linux__
 #pragma GCC diagnostic ignored "-Wclass-memaccess"

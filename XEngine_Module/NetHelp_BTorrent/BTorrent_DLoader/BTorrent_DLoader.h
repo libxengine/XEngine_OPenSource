@@ -20,7 +20,7 @@ typedef struct
     XCHAR tszAddr[MAX_PATH];                                              //下载地址
     XCHAR tszFile[MAX_PATH];                                              //保存地址
 	XCHAR tszTemp[MAX_PATH];                                              //临时文件
-    XBOOL bIsResume;                                                       //是否续传
+    bool bIsResume;                                                       //是否续传
     XPVOID lPClass;                                                       //指向类的指针
 }BTORRENT_DLOADINFO, * LPBTORRENT_DLOADINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -30,14 +30,14 @@ public:
     CBTorrent_DLoader();
     ~CBTorrent_DLoader();
 public:
-    XBOOL BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile = NULL);
-    XBOOL BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount);
-    XBOOL BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_DLOADER* pSt_DLStatus);
-    XBOOL BTorrent_DLoader_SaveResume(XNETHANDLE xhToken);
-    XBOOL BTorrent_DLoader_Close(XNETHANDLE xhToken);
+    bool BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile = NULL);
+    bool BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount);
+    bool BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_DLOADER* pSt_DLStatus);
+    bool BTorrent_DLoader_SaveResume(XNETHANDLE xhToken);
+    bool BTorrent_DLoader_Close(XNETHANDLE xhToken);
 public:
-    XBOOL BTorrent_DLoader_SetPause(XNETHANDLE xhToken, XBOOL bPause);
-    XBOOL BTorrent_DLoader_UPNPEnable(XNETHANDLE xhToken, XBOOL bEnable = FALSE);
+    bool BTorrent_DLoader_SetPause(XNETHANDLE xhToken, bool bPause);
+    bool BTorrent_DLoader_UPNPEnable(XNETHANDLE xhToken, bool bEnable = FALSE);
 private:
 	shared_mutex st_Locker;
 private:

@@ -48,7 +48,7 @@ CBTorrent_DLoader::~CBTorrent_DLoader()
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_DLoader::BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile /* = NULL */)
+bool CBTorrent_DLoader::BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile /* = NULL */)
 {
     BTDload_IsErrorOccur = FALSE;
 
@@ -72,8 +72,8 @@ XBOOL CBTorrent_DLoader::BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR l
 
 	lt::add_torrent_params m_TorrentParam;
 	//是磁力链接还是BT种子
-	LPCXSTR lpszBTType = _T("magnet:?xt=urn:");
-	if (NULL == _tcsstr(lpszAddr, lpszBTType))
+	LPCXSTR lpszBTType = _X("magnet:?xt=urn:");
+	if (NULL == _tcsxstr(lpszAddr, lpszBTType))
 	{
 		pSt_BTDLoader->m_BTParam.ti = std::make_shared<lt::torrent_info>(std::string(lpszAddr));
 	}
@@ -103,8 +103,8 @@ XBOOL CBTorrent_DLoader::BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR l
     pSt_BTDLoader->m_BTSession->async_add_torrent(std::move(pSt_BTDLoader->m_BTParam));
     //设置选项
     pSt_BTDLoader->lPClass = this;
-    _tcscpy(pSt_BTDLoader->tszAddr, lpszAddr);
-	_tcscpy(pSt_BTDLoader->tszFile, lpszSavePath);
+    _tcsxcpy(pSt_BTDLoader->tszAddr, lpszAddr);
+	_tcsxcpy(pSt_BTDLoader->tszFile, lpszSavePath);
 	//生成句柄
 	BaseLib_OperatorHandle_Create(pxhToken);
    
@@ -136,7 +136,7 @@ XBOOL CBTorrent_DLoader::BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR l
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount)
+bool CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -225,7 +225,7 @@ XBOOL CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORREN
 				BaseLib_OperatorCharset_UTFToAnsi(stl_VectorIterator->name.c_str(), stl_MapIterator->second->st_DLStatus.tszFileName, &nUTFLen);
 				stl_MapIterator->second->st_DLStatus.nDLoadTotal = stl_VectorIterator->total;
 #else
-				_tcscpy(stl_MapIterator->second->st_DLStatus.tszFileName, stl_VectorIterator->name.c_str());
+				_tcsxcpy(stl_MapIterator->second->st_DLStatus.tszFileName, stl_VectorIterator->name.c_str());
 				stl_MapIterator->second->st_DLStatus.nDLoadTotal = stl_VectorIterator->total_wanted;
 #endif
 				stl_MapIterator->second->st_DLStatus.nDLCount = stl_VectorIterator->total_done;
@@ -260,7 +260,7 @@ XBOOL CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORREN
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_DLoader::BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_DLOADER* pSt_DLStatus)
+bool CBTorrent_DLoader::BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_DLOADER* pSt_DLStatus)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -297,7 +297,7 @@ XBOOL CBTorrent_DLoader::BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT
   意思：是否成功
 备注：每调用一次,将会触发一次事件信号,通知系统保存一次临时文件
 *********************************************************************/
-XBOOL CBTorrent_DLoader::BTorrent_DLoader_SaveResume(XNETHANDLE xhToken)
+bool CBTorrent_DLoader::BTorrent_DLoader_SaveResume(XNETHANDLE xhToken)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -331,7 +331,7 @@ XBOOL CBTorrent_DLoader::BTorrent_DLoader_SaveResume(XNETHANDLE xhToken)
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_DLoader::BTorrent_DLoader_Close(XNETHANDLE xhToken)
+bool CBTorrent_DLoader::BTorrent_DLoader_Close(XNETHANDLE xhToken)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -362,7 +362,7 @@ XBOOL CBTorrent_DLoader::BTorrent_DLoader_Close(XNETHANDLE xhToken)
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_DLoader::BTorrent_DLoader_SetPause(XNETHANDLE xhToken, XBOOL bPause)
+bool CBTorrent_DLoader::BTorrent_DLoader_SetPause(XNETHANDLE xhToken, bool bPause)
 {
 	BTDload_IsErrorOccur = FALSE;
 
@@ -400,7 +400,7 @@ XBOOL CBTorrent_DLoader::BTorrent_DLoader_SetPause(XNETHANDLE xhToken, XBOOL bPa
   意思：是否成功
 备注：
 *********************************************************************/
-XBOOL CBTorrent_DLoader::BTorrent_DLoader_UPNPEnable(XNETHANDLE xhToken, XBOOL bEnable /* = FALSE */)
+bool CBTorrent_DLoader::BTorrent_DLoader_UPNPEnable(XNETHANDLE xhToken, bool bEnable /* = FALSE */)
 {
 	BTDload_IsErrorOccur = FALSE;
 

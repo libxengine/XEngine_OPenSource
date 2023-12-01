@@ -22,15 +22,15 @@ public:
 	CBTorrent_Parse();
 	~CBTorrent_Parse();
 public:
-	XBOOL BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr);
-	XBOOL BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
-	XBOOL BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
-	XBOOL BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
-	XBOOL BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_PieceLen, int* pInt_PieceCount);
-	XBOOL BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHash = NULL, XCHAR* ptszCreator = NULL, XCHAR* ptszComment = NULL);
-	XBOOL BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszMagnet);
-	XBOOL BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFilePath, BTORRENT_FILEINFO*** pppSt_FileList, int* pInt_ListCount);
-	XBOOL BTorrent_Parse_Destory(XNETHANDLE xhToken);
+	bool BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr);
+	bool BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
+	bool BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
+	bool BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
+	bool BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_PieceLen, int* pInt_PieceCount);
+	bool BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHash = NULL, XCHAR* ptszCreator = NULL, XCHAR* ptszComment = NULL);
+	bool BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszMagnet);
+	bool BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFilePath, BTORRENT_FILEINFO*** pppSt_FileList, int* pInt_ListCount);
+	bool BTorrent_Parse_Destory(XNETHANDLE xhToken);
 protected:
 private:
 	shared_mutex st_Locker;

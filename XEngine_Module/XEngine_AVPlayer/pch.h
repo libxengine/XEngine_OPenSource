@@ -10,19 +10,15 @@
 #ifdef _MSC_BUILD
 // 添加要在此处预编译的标头
 #include "framework.h"
-#include <SDL2/SDL.h>
-#else
-#include <SDL2/SDL.h>
 #endif
 #endif //PCH_H
 #include <stdio.h>
 #include <errno.h>
 #include <memory>
+#include <SDL2/SDL.h>
 using namespace std;
-#include "../../XEngine_CommHdr.h"
-#include "../../XEngine_Types.h"
-#include "../../XEngine_ProtocolHdr.h"
-#include "../XEngine_AVCollect/AVCollect_Define.h"
+#include <XEngine_Include/XEngine_CommHdr.h>
+#include <XEngine_Include/XEngine_Types.h>
 #include "AVPlayer_Define.h"
 #include "AVPlayer_Error.h"
 /********************************************************************
@@ -41,15 +37,7 @@ extern XLONG AVPlayer_dwErrorCode;
 
 
 #ifdef _MSC_BUILD
-#ifdef _DEBUG
-#pragma comment(lib,"../../Debug/XEngine_BaseLib.lib")
-#else
-#ifdef _WIN64
-#pragma comment(lib,"../../x64/Release/XEngine_BaseLib.lib")
-#else
-#pragma comment(lib,"../../Release/XEngine_BaseLib.lib")
-#endif // _WIN64
-#endif
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #else
 #ifdef __linux__
 #pragma GCC diagnostic ignored "-Wclass-memaccess"

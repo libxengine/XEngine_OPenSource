@@ -1,36 +1,87 @@
+[中文](README.md) ||  [English](README.en.md)  
+
 # XEngine_OPenSource
+This repository is the repository for XEngine's open source modules and examples  
 
-#### Description
-XEngine framework has open source module
+## Introduction
 
-#### Software Architecture
-Software architecture description
+Development language:c c++  
+Development tools:vs2022  
+support systems:linux,macos,windows
 
-#### Installation
+## Dir Struct
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+- XEngine_Module  Module Source
+- XEngine_Example Example Source
 
-#### Instructions
+#### Module Struct
+- NetHelp_BTorrent    bt protocol module
+- XEngine_AVPlayer    audio and video play module
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Contribution
-
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+#### Example Struct
+- AVCodec_APPPlayer   audio and video play example
+- NetHelp_APPBTorrent bt protocol example
 
 
-#### Gitee Feature
+## install
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+#### XEngine environment
+
+you have to install xengine before complie,You can refer to its Readme document  
+GITEE:https://gitee.com/xyry/libxengine  
+GITHUB:https://github.com/libxengine/xengine  
+
+#### fast to deployment
+
+git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git  
+window Exection XEngine_WINEnv.bat  
+Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
+Macos Exection:./XEngine_LINEnv.sh -i 3  
+
+#### Windows
+use vs open and complie  
+
+#### Linux
+
+Linux use Makefile complie  
+UBUNTU22.04 x64 or RockyLinux 9 x64  
+
+##### Compile Command
+
+execute command in XEngine_Source path   
+make complie  
+make FLAGS=InstallAll Install File  
+make FLAGS=CleanAll Clear Complie  
+
+#### MacOS
+
+Linux use Makefile to complie,terminal exection,Requires mac 13 and above 
+
+##### Compile Command
+
+refer to linux
+
+## Use
+
+1.  Switch to the MASTER branch
+2.  download code
+3.  complie
+4.  install
+5.  run
+
+## Participate in contribution
+
+1.  Fork this code
+2.  Create new Feat_xxx branch
+3.  Submit the code
+4.  New Pull Request
+
+## Follow us
+
+If you think this software is helpful to you, please give us a START  
+You can also follow us via WeChat  
+![qrcode](https://www.xyry.org/qrcode.jpg)
+
+## post issues
+
+if you have eny quest.post issues...

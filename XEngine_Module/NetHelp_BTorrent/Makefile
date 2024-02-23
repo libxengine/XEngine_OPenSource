@@ -9,7 +9,7 @@ UNICODE = 0
 LOADHDR = -I ./
 LIB = -lXEngine_BaseLib
 LIBEX = 
-LOADSO = -L ../../XEngine_BaseLib/XEngine_BaseLib
+LOADSO = 
 OBJECTS = BTorrent_Creator.o BTorrent_DLoader.o BTorrent_Parse.o pch.o 
 
 ifeq ($(PLATFORM),linux)
@@ -60,15 +60,6 @@ BTorrent_Parse.o:./BTorrent_Parse/BTorrent_Parse.cpp
 	             
 pch.o:./pch.cpp            
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp
-
-
-InstallAll:InstallSo InstallHeader
-InstallSo:./libNetHelp_BTorrent.$(FILEEXT)
-	cp ./libNetHelp_BTorrent.$(FILEEXT) ../../../XEngine_Release/$(PLATDIR)/XEngine_NetHelp/libNetHelp_BTorrent.$(FILEEXT)
-	
-InstallHeader:./BTorrent_Define.h ./BTorrent_Error.h
-	cp ./BTorrent_Define.h ../../../XEngine_Release/XEngine_Include/XEngine_NetHelp/BTorrent_Define.h
-	cp ./BTorrent_Error.h ../../../XEngine_Release/XEngine_Include/XEngine_NetHelp/BTorrent_Error.h
 
 
 CleanAll:CleanObj CleanMk

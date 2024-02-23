@@ -7,7 +7,7 @@ LIBFLAG =
 RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./
-LOADSO = -L ../../XEngine_BaseLib/XEngine_BaseLib
+LOADSO = 
 LIB = -lXEngine_BaseLib
 LIBEX = 
 OBJECTS = AVPlayer_Video.o AVPlayer_Audio.o pch.o
@@ -58,15 +58,6 @@ AVPlayer_Audio.o:./AVPlayer_Audio/AVPlayer_Audio.cpp
 	
 pch.o:./pch.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp
-
-
-InstallAll:InstallSo InstallHeader
-InstallSo:./libXEngine_AVPlayer.$(FILEEXT)
-	cp ./libXEngine_AVPlayer.$(FILEEXT) ../../../XEngine_Release/$(PLATDIR)/XEngine_AVCodec/libXEngine_AVPlayer.$(FILEEXT)
-
-InstallHeader:./AVPlayer_Define.h ./AVPlayer_Error.h
-	cp ./AVPlayer_Define.h ../../../XEngine_Release/XEngine_Include/XEngine_AVCodec/AVPlayer_Define.h
-	cp ./AVPlayer_Error.h ../../../XEngine_Release/XEngine_Include/XEngine_AVCodec/AVPlayer_Error.h
 
 
 CleanAll:CleanObj CleanMk

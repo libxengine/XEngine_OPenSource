@@ -15,6 +15,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetHelp_APPBTorrent", "XEng
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_AVPlayer", "XEngine_Module\XEngine_AVPlayer\XEngine_AVPlayer.vcxproj", "{7CFD692D-2957-4758-936D-7E9D18CEDD34}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_Application", "XEngine_Application", "{742EB475-5A9A-4359-99A6-6D59D34255FF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_FileSort", "XEngine_Application\XEngine_FileSort\XEngine_FileSort.vcxproj", "{0AFB3874-DBAF-436D-996D-8188FB08F2FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -55,6 +59,14 @@ Global
 		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Release|x64.Build.0 = Release|x64
 		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Release|x86.ActiveCfg = Release|Win32
 		{7CFD692D-2957-4758-936D-7E9D18CEDD34}.Release|x86.Build.0 = Release|Win32
+		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Debug|x64.ActiveCfg = Debug|x64
+		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Debug|x64.Build.0 = Debug|x64
+		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Debug|x86.ActiveCfg = Debug|Win32
+		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Debug|x86.Build.0 = Debug|Win32
+		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Release|x64.ActiveCfg = Release|x64
+		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Release|x64.Build.0 = Release|x64
+		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Release|x86.ActiveCfg = Release|Win32
+		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +76,7 @@ Global
 		{83CC39D4-25F3-48AC-B6CD-7A1228316692} = {58092034-5B83-4806-B7FE-CCDD7414C4AE}
 		{5848905C-21BD-4C7B-BEA2-72107E686E35} = {58092034-5B83-4806-B7FE-CCDD7414C4AE}
 		{7CFD692D-2957-4758-936D-7E9D18CEDD34} = {26417B01-459E-4287-9524-7B0293BAD18A}
+		{0AFB3874-DBAF-436D-996D-8188FB08F2FF} = {742EB475-5A9A-4359-99A6-6D59D34255FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {16D43B4F-E3D4-4036-A44C-5DDD64988164}

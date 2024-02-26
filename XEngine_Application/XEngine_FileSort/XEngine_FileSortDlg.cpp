@@ -55,7 +55,7 @@ BOOL CXEngineFileSortDlg::OnInitDialog()
 	m_ListFile.InsertColumn(0, _T("序号"), LVCFMT_LEFT, 50);
 	m_ListFile.InsertColumn(1, _T("原始文件"), LVCFMT_LEFT, 300);
 	m_ListFile.InsertColumn(2, _T("目标文件"), LVCFMT_LEFT, 300);
-	m_ListFile.InsertColumn(3, _T("替换结果"), LVCFMT_LEFT, 100);
+	m_ListFile.InsertColumn(3, _T("替换结果"), LVCFMT_LEFT, 80);
 	m_EditNumber.SetWindowText(_T("1"));
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -122,31 +122,15 @@ bool compareNumericString(const std::string& strSource, const std::string& strDe
 	return strSource < strDest;
 }
 
-void CXEngineFileSortDlg::OnBnClickedButton1()
+void CXEngineFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 {
-	// TODO: 在此添加控件通知处理程序代码
-	BROWSEINFO st_BrowseInfo = { 0 };
-	TCHAR tszDIRBuffer[MAX_PATH] = {};
-	st_BrowseInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
-
-	LPITEMIDLIST pSt_ItemList = SHBrowseForFolder(&st_BrowseInfo);
-	
-	if (NULL == pSt_ItemList)
-	{
-		return;
-	}
-	if (!SHGetPathFromIDList(pSt_ItemList, tszDIRBuffer))
-	{
-		return;
-	}
-	m_ListFile.DeleteAllItems();
-	m_EditSelectDir.SetWindowText(tszDIRBuffer);
-	CoTaskMemFree(pSt_ItemList);
+	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
 
 	int nListCount = 0;
-	XCHAR** ppszListDir = NULL; 
-
+	XCHAR** ppszListDir = NULL;
+	TCHAR tszDIRBuffer[MAX_PATH] = {};
 	_tcscat(tszDIRBuffer, _T("\\*"));
+	
 	USES_CONVERSION;
 	SystemApi_File_EnumFile(W2A(tszDIRBuffer), &ppszListDir, &nListCount, false, 1);
 	list<string> stl_ListFile;
@@ -161,7 +145,7 @@ void CXEngineFileSortDlg::OnBnClickedButton1()
 
 	int j = 0;
 	CString m_StrNumber;
-	m_EditNumber.GetWindowText(m_StrNumber);
+	pClass_This->m_EditNumber.GetWindowText(m_StrNumber);
 
 	j = _ttoi(m_StrNumber.GetBuffer());
 	auto stl_ListIterator = stl_ListFile.begin();
@@ -177,47 +161,94 @@ void CXEngineFileSortDlg::OnBnClickedButton1()
 		_stprintf(tszIndexStr, _T("%d"), i);
 		sprintf(tszFileName, "%s%d.%s", tszFilePath, j, tszFileExt);
 
-		m_ListFile.InsertItem(i, _T(""));
-		m_ListFile.SetItemText(i, 0, tszIndexStr);
-		m_ListFile.SetItemText(i, 1, A2W(stl_ListIterator->c_str()));
-		m_ListFile.SetItemText(i, 2, A2W(tszFileName));
+		pClass_This->m_ListFile.InsertItem(i, _T(""));
+		pClass_This->m_ListFile.SetItemText(i, 0, tszIndexStr);
+#ifdef _UNICODE
+		int nGBKLen = 0;
+		wchar_t tszUNCSrc[MAX_PATH] = {};
+		wchar_t tszUNCDst[MAX_PATH] = {};
+		nGBKLen = stl_ListIterator->length();
+		BaseLib_OperatorCharset_AnsiToUnicode(stl_ListIterator->c_str(), tszUNCSrc, &nGBKLen);
+
+		nGBKLen = strlen(tszFileName);
+		BaseLib_OperatorCharset_AnsiToUnicode(tszFileName, tszUNCDst, &nGBKLen);
+		pClass_This->m_ListFile.SetItemText(i, 1, tszUNCSrc);
+		pClass_This->m_ListFile.SetItemText(i, 2, tszUNCDst);
+#else
+		pClass_This->m_ListFile.SetItemText(i, 1, stl_ListIterator->c_str());
+		pClass_This->m_ListFile.SetItemText(i, 2, tszFileName);
+#endif
+		CString m_StrLog;
+		m_StrLog.Format(_T("提示:正在进行列举文件,总个数:%d,当前:%d"), stl_ListFile.size(), i);
+		pClass_This->m_StaticTips.SetWindowText(m_StrLog);
 	}
 }
 
-void CXEngineFileSortDlg::OnBnClickedButton2()
+void CXEngineFileSortDlg::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	
-	list<FILESORT_INFO> m_ListBackFile;
-	for (int i = 0; i < m_ListFile.GetItemCount(); i++)
+	BROWSEINFO st_BrowseInfo = { 0 };
+	TCHAR tszDIRBuffer[MAX_PATH] = {};
+	st_BrowseInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
+
+	LPITEMIDLIST pSt_ItemList = SHBrowseForFolder(&st_BrowseInfo);
+	if (NULL == pSt_ItemList)
 	{
-		FILESORT_INFO st_FileInfo = {};
-		CString m_StrSource = m_ListFile.GetItemText(i, 1);
-		CString m_StrDest = m_ListFile.GetItemText(i, 2);
+		return;
+	}
+	if (!SHGetPathFromIDList(pSt_ItemList, tszDIRBuffer))
+	{
+		return;
+	}
+	m_ListFile.DeleteAllItems();
+	m_EditSelectDir.SetWindowText(tszDIRBuffer);
+	CoTaskMemFree(pSt_ItemList);
+
+	std::thread pSTD_Thread(XEngine_FileSort_ThreadList, this);
+	pSTD_Thread.join();
+}
+
+void CXEngineFileSortDlg::XEngine_FileSort_ThreadRename(LPVOID lParam)
+{
+	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
+
+	for (int i = 0; i < pClass_This->m_ListFile.GetItemCount(); i++)
+	{
+		CString m_StrSource = pClass_This->m_ListFile.GetItemText(i, 1);
+		CString m_StrDest = pClass_This->m_ListFile.GetItemText(i, 2);
 		//他们两个文件名称是否一样
 		if (0 == _tcsnicmp(m_StrSource.GetBuffer(), m_StrDest.GetBuffer(), m_StrSource.GetLength()))
 		{
 			//相同文件不处理
-			m_ListFile.SetItemText(i, 3, _T("相同"));
+			pClass_This->m_ListFile.SetItemText(i, 3, _T("相同"));
 		}
 		else
 		{
 			//不相同,开始改名
 			if (0 == _taccess(m_StrDest.GetBuffer(), 0))
 			{
-				m_ListFile.SetItemText(i, 3, _T("文件存在"));
+				pClass_This->m_ListFile.SetItemText(i, 3, _T("文件存在"));
 			}
 			else
 			{
 				if (0 == _trename(m_StrSource.GetBuffer(), m_StrDest.GetBuffer()))
 				{
-					m_ListFile.SetItemText(i, 3, _T("成功"));
+					pClass_This->m_ListFile.SetItemText(i, 3, _T("成功"));
 				}
 				else
 				{
-					m_ListFile.SetItemText(i, 3, _T("失败"));
+					pClass_This->m_ListFile.SetItemText(i, 3, _T("失败"));
 				}
 			}
 		}
+		CString m_StrLog;
+		m_StrLog.Format(_T("提示:正在进行重命名文件,总个数:%d,当前:%d"), pClass_This->m_ListFile.GetItemCount(), i);
+		pClass_This->m_StaticTips.SetWindowText(m_StrLog);
 	}
+}
+void CXEngineFileSortDlg::OnBnClickedButton2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	std::thread pSTDThread(XEngine_FileSort_ThreadRename, this);
+	pSTDThread.join();
 }

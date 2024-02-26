@@ -37,4 +37,6 @@ public:
 	CEdit m_EditNumber;
 	afx_msg void OnBnClickedButton2();
 	CStatic m_StaticTips;
+	static void XEngine_FileSort_ThreadList(LPVOID lParam);
+	static void XEngine_FileSort_ThreadRename(LPVOID lParam);
 };

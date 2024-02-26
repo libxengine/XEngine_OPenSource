@@ -11,6 +11,7 @@
 #include "framework.h"
 #include <string>
 #include <list>
+#include <thread>
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>

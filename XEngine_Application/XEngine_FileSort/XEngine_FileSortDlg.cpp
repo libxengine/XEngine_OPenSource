@@ -37,9 +37,29 @@ BEGIN_MESSAGE_MAP(CXEngineFileSortDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CXEngineFileSortDlg::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_BUTTON2, &CXEngineFileSortDlg::OnBnClickedButton2)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
+void CXEngineFileSortDlg::XEngine_FileSort_Thread(LPVOID lParam)
+{
+	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
+
+	if (pClass_This->bThread)
+	{
+		if (!pClass_This->bThreadList && (NULL != pClass_This->pSTDThreadList))
+		{
+			pClass_This->pSTDThreadList->join();
+			pClass_This->pSTDThreadList = NULL;
+		}
+		if (!pClass_This->bThreadName && (NULL != pClass_This->pSTDThreadName))
+		{
+			pClass_This->pSTDThreadName->join();
+			pClass_This->pSTDThreadName = NULL;
+		}
+		Sleep(1);
+	}
+}
 // CXEngineFileSortDlg 消息处理程序
 
 BOOL CXEngineFileSortDlg::OnInitDialog()
@@ -57,6 +77,9 @@ BOOL CXEngineFileSortDlg::OnInitDialog()
 	m_ListFile.InsertColumn(2, _T("目标文件"), LVCFMT_LEFT, 300);
 	m_ListFile.InsertColumn(3, _T("替换结果"), LVCFMT_LEFT, 80);
 	m_EditNumber.SetWindowText(_T("1"));
+
+	bThread = true;
+	pSTDThread = std::make_unique<std::thread>(XEngine_FileSort_Thread, this);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -126,6 +149,7 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 {
 	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
 
+	int nHideCount = 0;
 	int nListCount = 0;
 	CString m_StrPath;
 	XCHAR** ppszListDir = NULL;
@@ -139,14 +163,28 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 	{
 		m_StrPath.Append(_T("\\*"));
 	}
-	
+	CString m_StrLog;
+	pClass_This->m_StaticTips.SetWindowText(_T("提示:开始查找所有文件"));
+
 	USES_CONVERSION;
 	SystemApi_File_EnumFile(W2A(m_StrPath.GetBuffer()), &ppszListDir, &nListCount, false, 1);
 	list<string> stl_ListFile;
 
+	m_StrLog.Format(_T("提示:正在对文件进行排序,一共有%d 个文件"), nListCount);
+	pClass_This->m_StaticTips.SetWindowText(m_StrLog);
+
 	for (int i = 0; i < nListCount; i++)
 	{
-		stl_ListFile.push_back(ppszListDir[i]);
+		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
+		SystemApi_File_GetFileAttr(ppszListDir[i], &st_FileAttr);
+		if (st_FileAttr.bHidden)
+		{
+			nHideCount++;
+		}
+		else
+		{
+			stl_ListFile.push_back(ppszListDir[i]);
+		}
 	}
 	BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListDir, nListCount);
 
@@ -187,10 +225,11 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 		pClass_This->m_ListFile.SetItemText(i, 1, stl_ListIterator->c_str());
 		pClass_This->m_ListFile.SetItemText(i, 2, tszFileName);
 #endif
-		CString m_StrLog;
-		m_StrLog.Format(_T("提示:正在进行列举文件,总个数:%d,当前:%d"), stl_ListFile.size(), i);
+		m_StrLog.Format(_T("提示:正在插入文件到列表,总个数:%d,当前:%d"), stl_ListFile.size(), i);
 		pClass_This->m_StaticTips.SetWindowText(m_StrLog);
 	}
+	m_StrLog.Format(_T("提示:插入文件到列表成功,总个数:%d,忽略的文件个数:%d"), stl_ListFile.size(), nHideCount);
+	pClass_This->m_StaticTips.SetWindowText(m_StrLog);
 }
 
 void CXEngineFileSortDlg::OnBnClickedButton1()
@@ -213,6 +252,7 @@ void CXEngineFileSortDlg::OnBnClickedButton1()
 	m_EditSelectDir.SetWindowText(tszDIRBuffer);
 	CoTaskMemFree(pSt_ItemList);
 
+	bThreadList = true;
 	m_StaticTips.SetWindowText(_T("开始搜索文件"));
 	pSTDThreadList = std::make_unique<std::thread>(XEngine_FileSort_ThreadList, this);
 }
@@ -254,10 +294,25 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadName(LPVOID lParam)
 		m_StrLog.Format(_T("提示:正在进行重命名文件,总个数:%d,当前:%d"), pClass_This->m_ListFile.GetItemCount(), i);
 		pClass_This->m_StaticTips.SetWindowText(m_StrLog);
 	}
+	CString m_StrLog;
+	m_StrLog.Format(_T("提示:重命名文件成功,总个数:%d"), pClass_This->m_ListFile.GetItemCount());
+	pClass_This->m_StaticTips.SetWindowText(m_StrLog);
+	pClass_This->bThreadName = false;
 }
 void CXEngineFileSortDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	bThreadName = true;
 	m_StaticTips.SetWindowText(_T("开始重命名文件"));
 	pSTDThreadName = std::make_unique<std::thread>(XEngine_FileSort_ThreadName, this);
+}
+
+
+void CXEngineFileSortDlg::OnDestroy()
+{
+	CDialogEx::OnDestroy();
+
+	// TODO: 在此处添加消息处理程序代码
+	bThread = false;
+	pSTDThread->join();
 }

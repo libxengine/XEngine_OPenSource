@@ -31,8 +31,13 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 protected:
+	bool bThread = false;
+	bool bThreadList = false;
+	bool bThreadName = false;
+	std::unique_ptr<std::thread> pSTDThread;
 	std::unique_ptr<std::thread> pSTDThreadList;
 	std::unique_ptr<std::thread> pSTDThreadName;
+	static void XEngine_FileSort_Thread(LPVOID lParam);
 	static void XEngine_FileSort_ThreadList(LPVOID lParam);
 	static void XEngine_FileSort_ThreadName(LPVOID lParam);
 public:
@@ -42,4 +47,5 @@ public:
 	CEdit m_EditNumber;
 	afx_msg void OnBnClickedButton2();
 	CStatic m_StaticTips;
+	afx_msg void OnDestroy();
 };

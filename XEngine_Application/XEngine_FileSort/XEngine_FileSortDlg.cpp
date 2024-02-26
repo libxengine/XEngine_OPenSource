@@ -127,12 +127,21 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
 
 	int nListCount = 0;
+	CString m_StrPath;
 	XCHAR** ppszListDir = NULL;
-	TCHAR tszDIRBuffer[MAX_PATH] = {};
-	_tcscat(tszDIRBuffer, _T("\\*"));
+
+	pClass_This->m_EditSelectDir.GetWindowText(m_StrPath);
+	if ('\\' == m_StrPath.GetBuffer()[m_StrPath.GetLength() - 1])
+	{
+		m_StrPath.Append(_T("*"));
+	}
+	else
+	{
+		m_StrPath.Append(_T("\\*"));
+	}
 	
 	USES_CONVERSION;
-	SystemApi_File_EnumFile(W2A(tszDIRBuffer), &ppszListDir, &nListCount, false, 1);
+	SystemApi_File_EnumFile(W2A(m_StrPath.GetBuffer()), &ppszListDir, &nListCount, false, 1);
 	list<string> stl_ListFile;
 
 	for (int i = 0; i < nListCount; i++)
@@ -204,11 +213,11 @@ void CXEngineFileSortDlg::OnBnClickedButton1()
 	m_EditSelectDir.SetWindowText(tszDIRBuffer);
 	CoTaskMemFree(pSt_ItemList);
 
-	std::thread pSTD_Thread(XEngine_FileSort_ThreadList, this);
-	pSTD_Thread.join();
+	m_StaticTips.SetWindowText(_T("开始搜索文件"));
+	pSTDThreadList = std::make_unique<std::thread>(XEngine_FileSort_ThreadList, this);
 }
 
-void CXEngineFileSortDlg::XEngine_FileSort_ThreadRename(LPVOID lParam)
+void CXEngineFileSortDlg::XEngine_FileSort_ThreadName(LPVOID lParam)
 {
 	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
 
@@ -249,6 +258,6 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadRename(LPVOID lParam)
 void CXEngineFileSortDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	std::thread pSTDThread(XEngine_FileSort_ThreadRename, this);
-	pSTDThread.join();
+	m_StaticTips.SetWindowText(_T("开始重命名文件"));
+	pSTDThreadName = std::make_unique<std::thread>(XEngine_FileSort_ThreadName, this);
 }

@@ -45,7 +45,7 @@ void CXEngineFileSortDlg::XEngine_FileSort_Thread(LPVOID lParam)
 {
 	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
 
-	if (pClass_This->bThread)
+	while (pClass_This->bThread)
 	{
 		if (!pClass_This->bThreadList && (NULL != pClass_This->pSTDThreadList))
 		{
@@ -230,6 +230,7 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 	}
 	m_StrLog.Format(_T("提示:插入文件到列表成功,总个数:%d,忽略的文件个数:%d"), stl_ListFile.size(), nHideCount);
 	pClass_This->m_StaticTips.SetWindowText(m_StrLog);
+	pClass_This->bThreadList = false;
 }
 
 void CXEngineFileSortDlg::OnBnClickedButton1()

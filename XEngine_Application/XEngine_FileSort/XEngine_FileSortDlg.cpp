@@ -262,38 +262,91 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadName(LPVOID lParam)
 {
 	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
 
-	for (int i = 0; i < pClass_This->m_ListFile.GetItemCount(); i++)
+	CString m_StrLastSrc = pClass_This->m_ListFile.GetItemText(pClass_This->m_ListFile.GetItemCount() - 1, 1);
+	CString m_StrLastDst = pClass_This->m_ListFile.GetItemText(pClass_This->m_ListFile.GetItemCount() - 1, 2);
+
+	XCHAR tszFileSrc[MAX_PATH] = {};
+	XCHAR tszFileDst[MAX_PATH] = {};
+	USES_CONVERSION;
+	BaseLib_OperatorString_GetFileAndPath(W2A(m_StrLastSrc.GetBuffer()), NULL, tszFileSrc);
+	BaseLib_OperatorString_GetFileAndPath(W2A(m_StrLastDst.GetBuffer()), NULL, tszFileDst);
+
+	XCHAR tszNameSrc[MAX_PATH] = {};
+	XCHAR tszNameDst[MAX_PATH] = {};
+	BaseLib_OperatorString_GetKeyValue(tszFileSrc, ".", tszNameSrc);
+	BaseLib_OperatorString_GetKeyValue(tszFileDst, ".", tszNameDst);
+
+	if (atoi(tszNameSrc) > atoi(tszNameDst))
 	{
-		CString m_StrSource = pClass_This->m_ListFile.GetItemText(i, 1);
-		CString m_StrDest = pClass_This->m_ListFile.GetItemText(i, 2);
-		//他们两个文件名称是否一样
-		if (0 == _tcsnicmp(m_StrSource.GetBuffer(), m_StrDest.GetBuffer(), m_StrSource.GetLength()))
+		for (int i = 0; i < pClass_This->m_ListFile.GetItemCount(); i++)
 		{
-			//相同文件不处理
-			pClass_This->m_ListFile.SetItemText(i, 3, _T("相同"));
-		}
-		else
-		{
-			//不相同,开始改名
-			if (0 == _taccess(m_StrDest.GetBuffer(), 0))
+			CString m_StrSource = pClass_This->m_ListFile.GetItemText(i, 1);
+			CString m_StrDest = pClass_This->m_ListFile.GetItemText(i, 2);
+			//他们两个文件名称是否一样
+			if (0 == _tcsnicmp(m_StrSource.GetBuffer(), m_StrDest.GetBuffer(), m_StrSource.GetLength()))
 			{
-				pClass_This->m_ListFile.SetItemText(i, 3, _T("文件存在"));
+				//相同文件不处理
+				pClass_This->m_ListFile.SetItemText(i, 3, _T("相同"));
 			}
 			else
 			{
-				if (0 == _trename(m_StrSource.GetBuffer(), m_StrDest.GetBuffer()))
+				//不相同,开始改名
+				if (0 == _taccess(m_StrDest.GetBuffer(), 0))
 				{
-					pClass_This->m_ListFile.SetItemText(i, 3, _T("成功"));
+					pClass_This->m_ListFile.SetItemText(i, 3, _T("文件存在"));
 				}
 				else
 				{
-					pClass_This->m_ListFile.SetItemText(i, 3, _T("失败"));
+					if (0 == _trename(m_StrSource.GetBuffer(), m_StrDest.GetBuffer()))
+					{
+						pClass_This->m_ListFile.SetItemText(i, 3, _T("成功"));
+					}
+					else
+					{
+						pClass_This->m_ListFile.SetItemText(i, 3, _T("失败"));
+					}
 				}
 			}
+			CString m_StrLog;
+			m_StrLog.Format(_T("提示:正在进行重命名文件,总个数:%d,当前:%d"), pClass_This->m_ListFile.GetItemCount(), i);
+			pClass_This->m_StaticTips.SetWindowText(m_StrLog);
 		}
-		CString m_StrLog;
-		m_StrLog.Format(_T("提示:正在进行重命名文件,总个数:%d,当前:%d"), pClass_This->m_ListFile.GetItemCount(), i);
-		pClass_This->m_StaticTips.SetWindowText(m_StrLog);
+	}
+	else
+	{
+		for (int i = pClass_This->m_ListFile.GetItemCount() - 1; i >= 0; i--)
+		{
+			CString m_StrSource = pClass_This->m_ListFile.GetItemText(i, 1);
+			CString m_StrDest = pClass_This->m_ListFile.GetItemText(i, 2);
+			//他们两个文件名称是否一样
+			if (0 == _tcsnicmp(m_StrSource.GetBuffer(), m_StrDest.GetBuffer(), m_StrSource.GetLength()))
+			{
+				//相同文件不处理
+				pClass_This->m_ListFile.SetItemText(i, 3, _T("相同"));
+			}
+			else
+			{
+				//不相同,开始改名
+				if (0 == _taccess(m_StrDest.GetBuffer(), 0))
+				{
+					pClass_This->m_ListFile.SetItemText(i, 3, _T("文件存在"));
+				}
+				else
+				{
+					if (0 == _trename(m_StrSource.GetBuffer(), m_StrDest.GetBuffer()))
+					{
+						pClass_This->m_ListFile.SetItemText(i, 3, _T("成功"));
+					}
+					else
+					{
+						pClass_This->m_ListFile.SetItemText(i, 3, _T("失败"));
+					}
+				}
+			}
+			CString m_StrLog;
+			m_StrLog.Format(_T("提示:正在进行重命名文件,总个数:%d,当前:%d"), pClass_This->m_ListFile.GetItemCount(), i);
+			pClass_This->m_StaticTips.SetWindowText(m_StrLog);
+		}
 	}
 	CString m_StrLog;
 	m_StrLog.Format(_T("提示:重命名文件成功,总个数:%d"), pClass_This->m_ListFile.GetItemCount());

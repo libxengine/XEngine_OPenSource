@@ -11,12 +11,16 @@ support systems:linux,macos,windows
 
 ## Dir Struct
 
-- XEngine_Module  Module Source
-- XEngine_Example Example Source
+- XEngine_Application  tools Source  
+- XEngine_Module       Module Source
+- XEngine_Example      Example Source
 
 #### Module Struct
 - NetHelp_BTorrent    bt protocol module
 - XEngine_AVPlayer    audio and video play module
+
+#### 工具结构
+- XEngine_FileSort    file sort tools
 
 #### Example Struct
 - AVCodec_APPPlayer   audio and video play example

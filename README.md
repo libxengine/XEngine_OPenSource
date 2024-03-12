@@ -12,12 +12,16 @@
 
 ## 目录结构
 
-- XEngine_Module  模块源代码
-- XEngine_Example 例子源代码
+- XEngine_Application  工具库代码  
+- XEngine_Module       模块源代码
+- XEngine_Example      例子源代码
 
 #### 模块结构
 - NetHelp_BTorrent    BT协议模块
 - XEngine_AVPlayer    音视频播放模块
+
+#### 工具结构
+- XEngine_FileSort    文件排序工具
 
 #### 例子结构
 - AVCodec_APPPlayer   音视频播放器

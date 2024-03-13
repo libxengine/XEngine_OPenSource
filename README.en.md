@@ -16,7 +16,6 @@ support systems:linux,macos,windows
 - XEngine_Example      Example Source
 
 #### Module Struct
-- NetHelp_BTorrent    bt protocol module
 - XEngine_AVPlayer    audio and video play module
 
 #### 工具结构
@@ -24,7 +23,6 @@ support systems:linux,macos,windows
 
 #### Example Struct
 - AVCodec_APPPlayer   audio and video play example
-- NetHelp_APPBTorrent bt protocol example
 
 ## install
 
@@ -44,7 +42,6 @@ Macos Exection:./XEngine_LINEnv.sh -i 3
 #### opensource library dependencies
 
 XEngine_AVPlayer need sdl2  
-NetHelp_BTorrent need libtorrent  
 
 #### Windows
 use vs open and complie  

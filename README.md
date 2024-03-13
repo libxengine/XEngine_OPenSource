@@ -17,7 +17,6 @@
 - XEngine_Example      例子源代码
 
 #### 模块结构
-- NetHelp_BTorrent    BT协议模块
 - XEngine_AVPlayer    音视频播放模块
 
 #### 工具结构
@@ -25,7 +24,6 @@
 
 #### 例子结构
 - AVCodec_APPPlayer   音视频播放器
-- NetHelp_APPBTorrent bt协议例子
 
 ## 安装教程
 
@@ -45,7 +43,6 @@ macos执行:./XEngine_LINEnv.sh -i 3
 #### 开源库依赖
 
 XEngine_AVPlayer 需要sdl2支持  
-NetHelp_BTorrent 需要libtorrent库  
 
 #### Windows
 

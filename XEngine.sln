@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_Application", "XEng
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_FileSort", "XEngine_Application\XEngine_FileSort\XEngine_FileSort.vcxproj", "{0AFB3874-DBAF-436D-996D-8188FB08F2FF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_APPSimulateKeyInput", "XEngine_Application\XEngine_APPSimulateKeyInput\XEngine_APPSimulateKeyInput.vcxproj", "{17AD4502-08BC-4677-A4D1-DE22A71F6E83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -47,6 +49,14 @@ Global
 		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Release|x64.Build.0 = Release|x64
 		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Release|x86.ActiveCfg = Release|Win32
 		{0AFB3874-DBAF-436D-996D-8188FB08F2FF}.Release|x86.Build.0 = Release|Win32
+		{17AD4502-08BC-4677-A4D1-DE22A71F6E83}.Debug|x64.ActiveCfg = Debug|x64
+		{17AD4502-08BC-4677-A4D1-DE22A71F6E83}.Debug|x64.Build.0 = Debug|x64
+		{17AD4502-08BC-4677-A4D1-DE22A71F6E83}.Debug|x86.ActiveCfg = Debug|Win32
+		{17AD4502-08BC-4677-A4D1-DE22A71F6E83}.Debug|x86.Build.0 = Debug|Win32
+		{17AD4502-08BC-4677-A4D1-DE22A71F6E83}.Release|x64.ActiveCfg = Release|x64
+		{17AD4502-08BC-4677-A4D1-DE22A71F6E83}.Release|x64.Build.0 = Release|x64
+		{17AD4502-08BC-4677-A4D1-DE22A71F6E83}.Release|x86.ActiveCfg = Release|Win32
+		{17AD4502-08BC-4677-A4D1-DE22A71F6E83}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +65,7 @@ Global
 		{83CC39D4-25F3-48AC-B6CD-7A1228316692} = {58092034-5B83-4806-B7FE-CCDD7414C4AE}
 		{7CFD692D-2957-4758-936D-7E9D18CEDD34} = {26417B01-459E-4287-9524-7B0293BAD18A}
 		{0AFB3874-DBAF-436D-996D-8188FB08F2FF} = {742EB475-5A9A-4359-99A6-6D59D34255FF}
+		{17AD4502-08BC-4677-A4D1-DE22A71F6E83} = {742EB475-5A9A-4359-99A6-6D59D34255FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {16D43B4F-E3D4-4036-A44C-5DDD64988164}

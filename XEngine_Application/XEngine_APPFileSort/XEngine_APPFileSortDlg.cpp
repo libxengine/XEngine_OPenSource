@@ -1,11 +1,11 @@
 ﻿
-// XEngine_FileSortDlg.cpp: 实现文件
+// XEngine_APPFileSortDlg.cpp: 实现文件
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "XEngine_FileSort.h"
-#include "XEngine_FileSortDlg.h"
+#include "XEngine_APPFileSort.h"
+#include "XEngine_APPFileSortDlg.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -13,17 +13,17 @@
 #endif
 
 
-// CXEngineFileSortDlg 对话框
+// CXEngineAPPFileSortDlg 对话框
 
 
 
-CXEngineFileSortDlg::CXEngineFileSortDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_XENGINE_FILESORT_DIALOG, pParent)
+CXEngineAPPFileSortDlg::CXEngineAPPFileSortDlg(CWnd* pParent /*=nullptr*/)
+	: CDialogEx(IDD_XENGINE_APPFILESORT_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CXEngineFileSortDlg::DoDataExchange(CDataExchange* pDX)
+void CXEngineAPPFileSortDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT1, m_EditSelectDir);
@@ -32,37 +32,18 @@ void CXEngineFileSortDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_TIPS, m_StaticTips);
 }
 
-BEGIN_MESSAGE_MAP(CXEngineFileSortDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CXEngineAPPFileSortDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON1, &CXEngineFileSortDlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_BUTTON2, &CXEngineFileSortDlg::OnBnClickedButton2)
+	ON_BN_CLICKED(IDC_BUTTON1, &CXEngineAPPFileSortDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CXEngineAPPFileSortDlg::OnBnClickedButton2)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
-void CXEngineFileSortDlg::XEngine_FileSort_Thread(LPVOID lParam)
-{
-	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
+// CXEngineAPPFileSortDlg 消息处理程序
 
-	while (pClass_This->bThread)
-	{
-		if (!pClass_This->bThreadList && (NULL != pClass_This->pSTDThreadList))
-		{
-			pClass_This->pSTDThreadList->join();
-			pClass_This->pSTDThreadList = NULL;
-		}
-		if (!pClass_This->bThreadName && (NULL != pClass_This->pSTDThreadName))
-		{
-			pClass_This->pSTDThreadName->join();
-			pClass_This->pSTDThreadName = NULL;
-		}
-		Sleep(1);
-	}
-}
-// CXEngineFileSortDlg 消息处理程序
-
-BOOL CXEngineFileSortDlg::OnInitDialog()
+BOOL CXEngineAPPFileSortDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
@@ -87,7 +68,7 @@ BOOL CXEngineFileSortDlg::OnInitDialog()
 //  来绘制该图标。  对于使用文档/视图模型的 MFC 应用程序，
 //  这将由框架自动完成。
 
-void CXEngineFileSortDlg::OnPaint()
+void CXEngineAPPFileSortDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -114,7 +95,7 @@ void CXEngineFileSortDlg::OnPaint()
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
 //显示。
-HCURSOR CXEngineFileSortDlg::OnQueryDragIcon()
+HCURSOR CXEngineAPPFileSortDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
@@ -145,9 +126,28 @@ bool compareNumericString(const std::string& strSource, const std::string& strDe
 	return strSource < strDest;
 }
 
-void CXEngineFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
+void CXEngineAPPFileSortDlg::XEngine_FileSort_Thread(LPVOID lParam)
 {
-	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
+	CXEngineAPPFileSortDlg* pClass_This = (CXEngineAPPFileSortDlg*)lParam;
+
+	while (pClass_This->bThread)
+	{
+		if (!pClass_This->bThreadList && (NULL != pClass_This->pSTDThreadList))
+		{
+			pClass_This->pSTDThreadList->join();
+			pClass_This->pSTDThreadList = NULL;
+		}
+		if (!pClass_This->bThreadName && (NULL != pClass_This->pSTDThreadName))
+		{
+			pClass_This->pSTDThreadName->join();
+			pClass_This->pSTDThreadName = NULL;
+		}
+		Sleep(1);
+	}
+}
+void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
+{
+	CXEngineAPPFileSortDlg* pClass_This = (CXEngineAPPFileSortDlg*)lParam;
 
 	int nHideCount = 0;
 	int nListCount = 0;
@@ -232,35 +232,9 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 	pClass_This->m_StaticTips.SetWindowText(m_StrLog);
 	pClass_This->bThreadList = false;
 }
-
-void CXEngineFileSortDlg::OnBnClickedButton1()
+void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadName(LPVOID lParam)
 {
-	// TODO: 在此添加控件通知处理程序代码
-	BROWSEINFO st_BrowseInfo = { 0 };
-	TCHAR tszDIRBuffer[MAX_PATH] = {};
-	st_BrowseInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
-
-	LPITEMIDLIST pSt_ItemList = SHBrowseForFolder(&st_BrowseInfo);
-	if (NULL == pSt_ItemList)
-	{
-		return;
-	}
-	if (!SHGetPathFromIDList(pSt_ItemList, tszDIRBuffer))
-	{
-		return;
-	}
-	m_ListFile.DeleteAllItems();
-	m_EditSelectDir.SetWindowText(tszDIRBuffer);
-	CoTaskMemFree(pSt_ItemList);
-
-	bThreadList = true;
-	m_StaticTips.SetWindowText(_T("开始搜索文件"));
-	pSTDThreadList = std::make_unique<std::thread>(XEngine_FileSort_ThreadList, this);
-}
-
-void CXEngineFileSortDlg::XEngine_FileSort_ThreadName(LPVOID lParam)
-{
-	CXEngineFileSortDlg* pClass_This = (CXEngineFileSortDlg*)lParam;
+	CXEngineAPPFileSortDlg* pClass_This = (CXEngineAPPFileSortDlg*)lParam;
 
 	CString m_StrLastSrc = pClass_This->m_ListFile.GetItemText(pClass_This->m_ListFile.GetItemCount() - 1, 1);
 	CString m_StrLastDst = pClass_This->m_ListFile.GetItemText(pClass_This->m_ListFile.GetItemCount() - 1, 2);
@@ -353,7 +327,33 @@ void CXEngineFileSortDlg::XEngine_FileSort_ThreadName(LPVOID lParam)
 	pClass_This->m_StaticTips.SetWindowText(m_StrLog);
 	pClass_This->bThreadName = false;
 }
-void CXEngineFileSortDlg::OnBnClickedButton2()
+void CXEngineAPPFileSortDlg::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	BROWSEINFO st_BrowseInfo = { 0 };
+	TCHAR tszDIRBuffer[MAX_PATH] = {};
+	st_BrowseInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
+
+	LPITEMIDLIST pSt_ItemList = SHBrowseForFolder(&st_BrowseInfo);
+	if (NULL == pSt_ItemList)
+	{
+		return;
+	}
+	if (!SHGetPathFromIDList(pSt_ItemList, tszDIRBuffer))
+	{
+		return;
+	}
+	m_ListFile.DeleteAllItems();
+	m_EditSelectDir.SetWindowText(tszDIRBuffer);
+	CoTaskMemFree(pSt_ItemList);
+
+	bThreadList = true;
+	m_StaticTips.SetWindowText(_T("开始搜索文件"));
+	pSTDThreadList = std::make_unique<std::thread>(XEngine_FileSort_ThreadList, this);
+}
+
+
+void CXEngineAPPFileSortDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	bThreadName = true;
@@ -362,7 +362,7 @@ void CXEngineFileSortDlg::OnBnClickedButton2()
 }
 
 
-void CXEngineFileSortDlg::OnDestroy()
+void CXEngineAPPFileSortDlg::OnDestroy()
 {
 	CDialogEx::OnDestroy();
 

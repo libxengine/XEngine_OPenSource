@@ -21,9 +21,9 @@
 using namespace std;
 #endif //PCH_H
 /********************************************************************
-//    Created:     2024/02/21  17:53:59
-//    File Name:   D:\XEngine_OPenSource\XEngine_Application\XEngine_FileSort\pch.h
-//    File Path:   D:\XEngine_OPenSource\XEngine_Application\XEngine_FileSort
+//    Created:     2024/04/26  17:18:44
+//    File Name:   D:\XEngine_OPenSource\XEngine_Application\XEngine_APPFileSort\pch.h
+//    File Path:   D:\XEngine_OPenSource\XEngine_Application\XEngine_APPFileSort
 //    File Base:   pch
 //    File Ext:    h
 //    Project:     XEngine(网络通信引擎)
@@ -31,7 +31,7 @@ using namespace std;
 //    Purpose:     公用头
 //    History:
 *********************************************************************/
-typedef struct  
+typedef struct
 {
 	TCHAR tszFileSrc[MAX_PATH];
 	TCHAR tszFileDst[MAX_PATH];

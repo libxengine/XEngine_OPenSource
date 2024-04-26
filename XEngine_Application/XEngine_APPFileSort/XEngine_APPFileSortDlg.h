@@ -1,20 +1,20 @@
 ﻿
-// XEngine_FileSortDlg.h: 头文件
+// XEngine_APPFileSortDlg.h: 头文件
 //
 
 #pragma once
 
 
-// CXEngineFileSortDlg 对话框
-class CXEngineFileSortDlg : public CDialogEx
+// CXEngineAPPFileSortDlg 对话框
+class CXEngineAPPFileSortDlg : public CDialogEx
 {
 // 构造
 public:
-	CXEngineFileSortDlg(CWnd* pParent = nullptr);	// 标准构造函数
+	CXEngineAPPFileSortDlg(CWnd* pParent = nullptr);	// 标准构造函数
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_XENGINE_FILESORT_DIALOG };
+	enum { IDD = IDD_XENGINE_APPFILESORT_DIALOG };
 #endif
 
 	protected:
@@ -42,10 +42,10 @@ protected:
 	static void XEngine_FileSort_ThreadName(LPVOID lParam);
 public:
 	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
 	CEdit m_EditSelectDir;
 	CListCtrl m_ListFile;
 	CEdit m_EditNumber;
-	afx_msg void OnBnClickedButton2();
 	CStatic m_StaticTips;
 	afx_msg void OnDestroy();
 };

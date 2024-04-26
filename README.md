@@ -20,7 +20,8 @@
 - XEngine_AVPlayer    音视频播放模块
 
 #### 工具结构
-- XEngine_FileSort    文件排序工具
+- XEngine_APPFileSort          文件排序工具
+- XEngine_APPSimulateKeyInput  模拟键盘输入工具
 
 #### 例子结构
 - AVCodec_APPPlayer   音视频播放器

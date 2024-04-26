@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="XEngine_FileSort.h">
+    <ClInclude Include="XEngine_APPFileSort.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="XEngine_FileSortDlg.h">
+    <ClInclude Include="XEngine_APPFileSortDlg.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
@@ -35,10 +35,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="XEngine_FileSort.cpp">
+    <ClCompile Include="XEngine_APPFileSort.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="XEngine_FileSortDlg.cpp">
+    <ClCompile Include="XEngine_APPFileSortDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
@@ -46,17 +46,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="XEngineFileSort.rc">
+    <ResourceCompile Include="XEngineAPPFileSort.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\XEngineFileSort.rc2">
+    <None Include="res\XEngineAPPFileSort.rc2">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\XEngine_FileSort.ico">
+    <Image Include="res\XEngine_APPFileSort.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

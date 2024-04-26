@@ -1,27 +1,27 @@
 ﻿
-// XEngine_FileSort.cpp: 定义应用程序的类行为。
+// XEngine_APPFileSort.cpp: 定义应用程序的类行为。
 //
 
 #include "pch.h"
 #include "framework.h"
-#include "XEngine_FileSort.h"
-#include "XEngine_FileSortDlg.h"
+#include "XEngine_APPFileSort.h"
+#include "XEngine_APPFileSortDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
-// CXEngineFileSortApp
+// CXEngineAPPFileSortApp
 
-BEGIN_MESSAGE_MAP(CXEngineFileSortApp, CWinApp)
+BEGIN_MESSAGE_MAP(CXEngineAPPFileSortApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 
-// CXEngineFileSortApp 构造
+// CXEngineAPPFileSortApp 构造
 
-CXEngineFileSortApp::CXEngineFileSortApp()
+CXEngineAPPFileSortApp::CXEngineAPPFileSortApp()
 {
 	// 支持重新启动管理器
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
@@ -31,14 +31,14 @@ CXEngineFileSortApp::CXEngineFileSortApp()
 }
 
 
-// 唯一的 CXEngineFileSortApp 对象
+// 唯一的 CXEngineAPPFileSortApp 对象
 
-CXEngineFileSortApp theApp;
+CXEngineAPPFileSortApp theApp;
 
 
-// CXEngineFileSortApp 初始化
+// CXEngineAPPFileSortApp 初始化
 
-BOOL CXEngineFileSortApp::InitInstance()
+BOOL CXEngineAPPFileSortApp::InitInstance()
 {
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
 	// 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
@@ -71,7 +71,7 @@ BOOL CXEngineFileSortApp::InitInstance()
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
 
-	CXEngineFileSortDlg dlg;
+	CXEngineAPPFileSortDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)

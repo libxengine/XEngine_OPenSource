@@ -19,7 +19,8 @@ support systems:linux,macos,windows
 - XEngine_AVPlayer    audio and video play module
 
 #### 工具结构
-- XEngine_FileSort    file sort tools
+- XEngine_APPFileSort           file sort tools
+- XEngine_APPSimulateKeyInput   Simulate keybroad Input Tools
 
 #### Example Struct
 - AVCodec_APPPlayer   audio and video play example

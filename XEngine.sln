@@ -18,6 +18,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_APPFileSort", "XEngine_Application\XEngine_APPFileSort\XEngine_APPFileSort.vcxproj", "{4C849057-8C2C-4211-8861-991570FB7971}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_InfoReport", "XEngine_Module\XEngine_InfoReport\XEngine_InfoReport.vcxproj", "{F6520D2C-BB8E-45BB-964B-F5D6A4318A89}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {F1736B3F-03A2-4FC7-B045-A12BA8D724FB}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "XEngine_Module\jsoncpp\jsoncpp.vcxproj", "{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}"
 EndProject

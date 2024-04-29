@@ -60,7 +60,7 @@ json_writer.o:json_writer.cpp
 
 InstallAll:InstallSo
 InstallSo:./libjsoncpp.$(FILEEXT)
-	cp ./libjsoncpp.$(FILEEXT) ../../../XEngine_Release/libjsoncpp.$(FILEEXT)
+	cp ./libjsoncpp.$(FILEEXT) ../../../../XEngine_Release/libjsoncpp.$(FILEEXT)
 
 
 

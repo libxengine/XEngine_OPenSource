@@ -30,12 +30,17 @@ CInfoReport_APIMachine::~CInfoReport_APIMachine()
   类型：常量字符指针
   可空：N
   意思：输入请求地址
+ 参数.二：lpszServiceName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入上报的服务名称
 返回值
   类型：逻辑型
   意思：是否成功
 备注：lpszAPIUrl = _X("http://127.0.0.1:5501/api?function=machine");
 *********************************************************************/
-bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl)
+bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName)
 {
 	InfoReport_IsErrorOccur = false;
 
@@ -72,6 +77,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl)
 	XCHAR tszMachineText[1024] = {};
 	InfoReport_APIMachine_GetText(tszMachineText);
 
+	st_JsonRoot["tszServiceName"] = lpszServiceName;
 	st_JsonRoot["tszMachineName"] = tszOSName;
 	st_JsonRoot["tszMachineCode"] = st_SDKSerial.tszSystemSerial;
 	st_JsonRoot["tszMachineSystem"] = tszComputerName;

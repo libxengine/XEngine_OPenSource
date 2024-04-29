@@ -17,7 +17,7 @@ public:
     CInfoReport_APIMachine();
     ~CInfoReport_APIMachine();
 public:
-    bool InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl);
+    bool InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName);
     bool InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, __int64x* pInt_TimeNumber);
 protected:
     bool InfoReport_APIMachine_GetText(XCHAR *ptszMSGBuffer);

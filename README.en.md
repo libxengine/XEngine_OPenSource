@@ -25,7 +25,8 @@ support systems:linux,macos,windows
 - XEngine_APPSimulateKeyInput   Simulate keybroad Input Tools
 
 #### Example Struct
-- AVCodec_APPPlayer   audio and video play example
+- AVCodec_APPPlayer       audio and video play example
+- InfoReport_APPExample   information report example
 
 ## install
 

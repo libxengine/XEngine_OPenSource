@@ -26,7 +26,8 @@
 - XEngine_APPSimulateKeyInput  模拟键盘输入工具
 
 #### 例子结构
-- AVCodec_APPPlayer   音视频播放器
+- AVCodec_APPPlayer       音视频播放器
+- InfoReport_APPExample   报告模块例子
 
 ## 安装教程
 

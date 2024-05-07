@@ -44,7 +44,12 @@ extern "C" bool InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServi
   类型：常量字符指针
   可空：N
   意思：输入请求地址
- 参数.二：pInt_TimeNumber
+ 参数.二：lpszServiceName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入服务名称
+ 参数.三：pInt_TimeNumber
   In/Out：Out
   类型：整数型指针
   可空：N
@@ -54,4 +59,4 @@ extern "C" bool InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServi
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, __int64x* pInt_TimeNumber);
+extern "C" bool InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName, __int64x* pInt_TimeNumber);

@@ -33,7 +33,7 @@ extern "C" bool InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServi
 {
 	return m_APIMachine.InfoReport_APIMachine_Send(lpszAPIUrl, lpszServiceName);
 }
-extern "C" bool InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, __int64x * pInt_TimeNumber)
+extern "C" bool InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName, __int64x * pInt_TimeNumber)
 {
-	return m_APIMachine.InfoReport_APIMachine_GetTime(lpszAPIUrl, pInt_TimeNumber);
+	return m_APIMachine.InfoReport_APIMachine_GetTime(lpszAPIUrl, lpszServiceName, pInt_TimeNumber);
 }

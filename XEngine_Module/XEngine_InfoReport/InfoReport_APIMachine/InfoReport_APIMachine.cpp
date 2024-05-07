@@ -121,7 +121,12 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
   类型：常量字符指针
   可空：N
   意思：输入请求地址
- 参数.二：pInt_TimeNumber
+ 参数.二：lpszServiceName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入服务名称
+ 参数.三：pInt_TimeNumber
   In/Out：Out
   类型：整数型指针
   可空：N
@@ -131,7 +136,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
   意思：是否成功
 备注：
 *********************************************************************/
-bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, __int64x* pInt_TimeNumber)
+bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName, __int64x* pInt_TimeNumber)
 {
 	InfoReport_IsErrorOccur = false;
 
@@ -156,6 +161,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, _
 	Json::StreamWriterBuilder st_JsonBuilder;
 	Json::CharReaderBuilder st_JsonReader;
 
+	st_JsonRoot["tszServiceName"] = lpszServiceName;
 	st_JsonRoot["tszMachineCode"] = st_SDKSerial.tszSystemSerial;
 	st_JsonBuilder["emitUTF8"] = true;
 
@@ -184,15 +190,9 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, _
 		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_CODE;
 		return false;
 	}
-	Json::Value st_JsonObject = st_JsonRoot["data"];
-	//老版本
-	if (st_JsonObject.isArray())
-	{
-		InfoReport_IsErrorOccur = true;
-		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_VERSION;
-		return false;
-	}
-	*pInt_TimeNumber = st_JsonObject["nTimeNumber"].asInt64();
+	Json::Value st_JsonArray = st_JsonRoot["data"];
+	
+	*pInt_TimeNumber = st_JsonArray[0]["nTimeNumber"].asInt64();
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////

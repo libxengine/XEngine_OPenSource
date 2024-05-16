@@ -57,17 +57,16 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
 	XCHAR tszOSName[128] = {};
 	XCHAR tszOSVersion[128] = {};
 	XCHAR tszOSBuild[128] = {};
+	XCHAR tszUserName[128] = {};
 	XCHAR tszComputerName[128] = {};
 	XLONG nOSArch = 0;
 
 	XCLIENT_APIHTTP st_HTTPParam = {};
-	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
 	
 	_xstprintf(tszAPIUrl, _X("%s&params1=0"), lpszAPIUrl);
 
 	SystemApi_System_GetSystemVer(tszOSName, tszOSVersion, tszOSBuild, &nOSArch);
-	SystemApi_System_GetSysName(NULL, tszComputerName);
-	SystemApi_HardWare_GetSerial(&st_SDKSerial);
+	SystemApi_System_GetSysName(tszUserName, tszComputerName);
 
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
@@ -79,7 +78,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
 
 	st_JsonRoot["tszServiceName"] = lpszServiceName;
 	st_JsonRoot["tszMachineName"] = tszOSName;
-	st_JsonRoot["tszMachineCode"] = st_SDKSerial.tszSystemSerial;
+	st_JsonRoot["tszMachineUser"] = tszUserName;
 	st_JsonRoot["tszMachineSystem"] = tszComputerName;
 	st_JsonRoot["tszMachineText"] = tszMachineText;
 
@@ -149,20 +148,20 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, L
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR tszAPIUrl[MAX_PATH] = {};
+	XCHAR tszComputerName[MAX_PATH] = {};
 	XCLIENT_APIHTTP st_HTTPParam = {};
-	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
 
 	_xstprintf(tszAPIUrl, _X("%s&params1=2"), lpszAPIUrl);
-
-	SystemApi_HardWare_GetSerial(&st_SDKSerial);
 
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
 	Json::StreamWriterBuilder st_JsonBuilder;
 	Json::CharReaderBuilder st_JsonReader;
 
+	SystemApi_System_GetSysName(NULL, tszComputerName);
+
 	st_JsonRoot["tszServiceName"] = lpszServiceName;
-	st_JsonRoot["tszMachineCode"] = st_SDKSerial.tszSystemSerial;
+	st_JsonRoot["tszMachineSystem"] = tszComputerName;
 	st_JsonBuilder["emitUTF8"] = true;
 
 	XCHAR* ptszMsgBuffer = NULL;

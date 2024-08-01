@@ -19,6 +19,7 @@ support systems:linux,macos,windows
 - XEngine_AVPlayer    audio and video play module
 - XEngine_InfoReport  information report module
 - jsoncpp             json module
+- tinyxml2            XML module
 
 #### 工具结构
 - XEngine_APPFileSort           file sort tools

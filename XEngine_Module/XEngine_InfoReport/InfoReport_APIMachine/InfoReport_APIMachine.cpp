@@ -73,7 +73,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
 	Json::StreamWriterBuilder st_JsonBuilder;
 	Json::CharReaderBuilder st_JsonReader;
 
-	XCHAR tszMachineText[1024] = {};
+	XCHAR tszMachineText[2048] = {};
 	InfoReport_APIMachine_GetText(tszMachineText);
 
 	st_JsonRoot["tszServiceName"] = lpszServiceName;

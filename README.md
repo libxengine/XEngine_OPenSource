@@ -20,6 +20,7 @@
 - XEngine_AVPlayer    音视频播放模块
 - XEngine_InfoReport  信息报告模块
 - jsoncpp             json模块
+- tinyxml2            XML模块 
 
 #### 工具结构
 - XEngine_APPFileSort          文件排序工具

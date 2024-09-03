@@ -30,6 +30,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinyxml2", "XEngine_Module\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyXML2_APPExample", "XEngine_Example\TinyXML2_APPExample\TinyXML2_APPExample.vcxproj", "{1D3B10A1-0621-4E13-B3EA-659341369DA2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_APPSocketTest", "XEngine_Application\XEngine_APPSocketTest\XEngine_APPSocketTest.vcxproj", "{EC87A64B-FA90-44F2-9842-F0B95FF7B078}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -110,6 +112,14 @@ Global
 		{1D3B10A1-0621-4E13-B3EA-659341369DA2}.Release|x64.Build.0 = Release|x64
 		{1D3B10A1-0621-4E13-B3EA-659341369DA2}.Release|x86.ActiveCfg = Release|Win32
 		{1D3B10A1-0621-4E13-B3EA-659341369DA2}.Release|x86.Build.0 = Release|Win32
+		{EC87A64B-FA90-44F2-9842-F0B95FF7B078}.Debug|x64.ActiveCfg = Debug|x64
+		{EC87A64B-FA90-44F2-9842-F0B95FF7B078}.Debug|x64.Build.0 = Debug|x64
+		{EC87A64B-FA90-44F2-9842-F0B95FF7B078}.Debug|x86.ActiveCfg = Debug|Win32
+		{EC87A64B-FA90-44F2-9842-F0B95FF7B078}.Debug|x86.Build.0 = Debug|Win32
+		{EC87A64B-FA90-44F2-9842-F0B95FF7B078}.Release|x64.ActiveCfg = Release|x64
+		{EC87A64B-FA90-44F2-9842-F0B95FF7B078}.Release|x64.Build.0 = Release|x64
+		{EC87A64B-FA90-44F2-9842-F0B95FF7B078}.Release|x86.ActiveCfg = Release|Win32
+		{EC87A64B-FA90-44F2-9842-F0B95FF7B078}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +134,7 @@ Global
 		{A67868D2-15F6-41F5-9CB8-595D4E2731F7} = {58092034-5B83-4806-B7FE-CCDD7414C4AE}
 		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A} = {26417B01-459E-4287-9524-7B0293BAD18A}
 		{1D3B10A1-0621-4E13-B3EA-659341369DA2} = {58092034-5B83-4806-B7FE-CCDD7414C4AE}
+		{EC87A64B-FA90-44F2-9842-F0B95FF7B078} = {742EB475-5A9A-4359-99A6-6D59D34255FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {16D43B4F-E3D4-4036-A44C-5DDD64988164}

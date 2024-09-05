@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CXEngineAPPSocketTestDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON3, &CXEngineAPPSocketTestDlg::OnBnClickedButton3)
 	ON_BN_CLICKED(IDC_BUTTON4, &CXEngineAPPSocketTestDlg::OnBnClickedButton4)
 	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_BUTTON2, &CXEngineAPPSocketTestDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -62,6 +63,7 @@ BOOL CXEngineAPPSocketTestDlg::OnInitDialog()
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 
 	m_EditIPPort.SetWindowText(_T("5000"));
+	m_EditIPAddr.SetWindowText(_T("127.0.0.1"));
 
 	m_BtnStartService.EnableWindow(true);
 	m_BtnStartConnect.EnableWindow(true);
@@ -109,23 +111,46 @@ bool CALLBACK CXEngineAPPSocketTestDlg::NetCore_TCPSelect_CBLogin(LPCXSTR lpszCl
 {
 	CXEngineAPPSocketTestDlg* pClass_This = (CXEngineAPPSocketTestDlg*)lParam;
 
-	pClass_This->SocketTest_LogPrint(0, lpszClientAddr);
+	pClass_This->SocketTest_LogPrint(0, 0, lpszClientAddr);
 	return true;
 }
 void CALLBACK CXEngineAPPSocketTestDlg::NetCore_TCPSelect_CBRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen, XPVOID lParam)
 {
 	CXEngineAPPSocketTestDlg* pClass_This = (CXEngineAPPSocketTestDlg*)lParam;
 
-	pClass_This->SocketTest_LogPrint(1, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+	pClass_This->SocketTest_LogPrint(1, 0, lpszClientAddr, lpszMsgBuffer, nMsgLen);
 }
 void CALLBACK CXEngineAPPSocketTestDlg::NetCore_TCPSelect_CBLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	CXEngineAPPSocketTestDlg* pClass_This = (CXEngineAPPSocketTestDlg*)lParam;
 
-	pClass_This->SocketTest_LogPrint(2, lpszClientAddr);
+	pClass_This->SocketTest_LogPrint(2, 0, lpszClientAddr);
+}
+void CALLBACK CXEngineAPPSocketTestDlg::XClient_TCPSelect_CBEvent(XHANDLE xhToken, XNETHANDLE xhClient, XSOCKET hSocket, ENUM_XCLIENT_SOCKET_EVENTS enTCPClientEvents, LPCXSTR lpszMsgBuffer, int nMsgLen, XPVOID lParam)
+{
+	CXEngineAPPSocketTestDlg* pClass_This = (CXEngineAPPSocketTestDlg*)lParam;
+
+	switch (enTCPClientEvents)
+	{
+	case ENUM_XCLIENT_SOCKET_EVENT_CONNING:
+		break;
+	case ENUM_XCLIENT_SOCKET_EVENT_CONNECTED:
+		pClass_This->SocketTest_LogPrint(3, xhClient, NULL);
+		break;
+	case ENUM_XCLIENT_SOCKET_EVENT_RECV:
+		pClass_This->SocketTest_LogPrint(4, xhClient, NULL, lpszMsgBuffer, nMsgLen);
+		break;
+	case ENUM_XCLIENT_SOCKET_EVENT_SEND:
+		break;
+	case ENUM_XCLIENT_SOCKET_EVENT_CLOSE:
+		pClass_This->SocketTest_LogPrint(5, xhClient, NULL);
+		break;
+	default:
+		break;
+	}
 }
 
-bool CXEngineAPPSocketTestDlg::SocketTest_LogPrint(int nType, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMSGLen)
+bool CXEngineAPPSocketTestDlg::SocketTest_LogPrint(int nType, XNETHANDLE xhClient, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMSGLen)
 {
 	CString m_StrLog;
 	TCHAR tszMSGBuffer[2048] = {}; 
@@ -139,9 +164,21 @@ bool CXEngineAPPSocketTestDlg::SocketTest_LogPrint(int nType, LPCXSTR lpszClient
 	{
 		_stprintf(tszMSGBuffer, _T("事件=用户:%s 接受数据,大小:%d:%s\r\n"), A2W(lpszClientAddr), nMSGLen, A2W(lpszMsgBuffer));
 	}
-	else
+	else if (2 == nType)
 	{
 		_stprintf(tszMSGBuffer, _T("事件=用户:%s 离开\r\n"), A2W(lpszClientAddr));
+	}
+	else if (3 == nType)
+	{
+		_stprintf(tszMSGBuffer, _T("事件=用户:%lld 连接服务器成功\r\n"), xhClient);
+	}
+	else if (4 == nType)
+	{
+		_stprintf(tszMSGBuffer, _T("事件=用户:%lld 接受数据,大小:%d:%s\r\n"), xhClient, nMSGLen, A2W(lpszMsgBuffer));
+	}
+	else if (5 == nType)
+	{
+		_stprintf(tszMSGBuffer, _T("事件=用户:%lld 离开\r\n"), xhClient);
 	}
 	
 	m_EditRecv.GetWindowText(m_StrLog);
@@ -175,6 +212,7 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton1()
 	m_BtnStartService.EnableWindow(false);
 	m_BtnStartConnect.EnableWindow(false);
 	m_BtnStop.EnableWindow(true);
+	nClientType = 1;
 }
 
 
@@ -193,11 +231,23 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton3()
 	m_EditIPClient.GetWindowText(m_StrSendAddr);
 
 	USES_CONVERSION;
-	if (!NetCore_TCPSelect_Send(W2A(m_StrSendAddr.GetBuffer()), W2A(m_StrSendMsg.GetBuffer()), m_StrSendMsg.GetLength()))
+	if (nClientType == 1)
 	{
-		AfxMessageBox(_T("发送数据失败"));
-		return;
+		if (!NetCore_TCPSelect_Send(W2A(m_StrSendAddr.GetBuffer()), W2A(m_StrSendMsg.GetBuffer()), m_StrSendMsg.GetLength()))
+		{
+			AfxMessageBox(_T("发送数据失败"));
+			return;
+		}
 	}
+	else if (nClientType == 2)
+	{
+		if (!XClient_TCPSelect_SendEx(xhToken, xhClient, W2A(m_StrSendMsg.GetBuffer()), m_StrSendMsg.GetLength()))
+		{
+			AfxMessageBox(_T("发送数据失败"));
+			return;
+		}
+	}
+	
 	m_EditSend.SetWindowText(_T(""));
 }
 
@@ -208,7 +258,16 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton4()
 	m_BtnStartService.EnableWindow(true);
 	m_BtnStartConnect.EnableWindow(true);
 	m_BtnStop.EnableWindow(false);
-	NetCore_TCPSelect_Stop();
+	
+	if (1 == nClientType)
+	{
+		NetCore_TCPSelect_Stop();
+	}
+	else if (2 == nClientType)
+	{
+		XClient_TCPSelect_DeleteEx(xhToken, xhClient);
+		XClient_TCPSelect_StopEx(xhToken);
+	}
 }
 
 
@@ -218,4 +277,39 @@ void CXEngineAPPSocketTestDlg::OnDestroy()
 
 	// TODO: 在此处添加消息处理程序代码
 	WSACleanup();
+}
+
+
+void CXEngineAPPSocketTestDlg::OnBnClickedButton2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CString m_StrClientAddr;
+	CString m_StrClientPort;
+
+	m_EditIPAddr.GetWindowText(m_StrClientAddr);
+	m_EditIPPort.GetWindowText(m_StrClientPort);
+
+	if (m_StrClientAddr.IsEmpty() || m_StrClientPort.IsEmpty())
+	{
+		AfxMessageBox(_T("地址或者端口为空"));
+		return;
+	}
+	USES_CONVERSION;
+	xhToken = XClient_TCPSelect_StartEx(XClient_TCPSelect_CBEvent, this);
+	if (NULL == xhToken)
+	{
+		AfxMessageBox(_T("创建客户端失败"));
+		return;
+	}
+
+	if (!XClient_TCPSelect_InsertEx(xhToken, &xhClient, W2A(m_StrClientAddr.GetBuffer()), _ttoi(m_StrClientPort.GetBuffer())))
+	{
+		AfxMessageBox(_T("连接服务器失败"));
+		return;
+	}
+
+	m_BtnStartService.EnableWindow(false);
+	m_BtnStartConnect.EnableWindow(false);
+	m_BtnStop.EnableWindow(true);
+	nClientType = 2;
 }

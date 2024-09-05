@@ -34,8 +34,13 @@ protected:
 	static bool CALLBACK NetCore_TCPSelect_CBLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
 	static void CALLBACK NetCore_TCPSelect_CBRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszMsgBuffer, int nMsgLen, XPVOID lParam);
 	static void CALLBACK NetCore_TCPSelect_CBLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
+	static void CALLBACK XClient_TCPSelect_CBEvent(XHANDLE xhToken, XNETHANDLE xhClient, XSOCKET hSocket, ENUM_XCLIENT_SOCKET_EVENTS enTCPClientEvents, LPCXSTR lpszMsgBuffer, int nMsgLen, XPVOID lParam);
 protected:
-	bool SocketTest_LogPrint(int nType, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer = NULL, int nMSGLen = 0);
+	bool SocketTest_LogPrint(int nType, XNETHANDLE xhClient, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer = NULL, int nMSGLen = 0);
+private:
+	XSHOT nClientType = 0;  //0:未决,1:TCP 服务器,2:TCP 客户端,3:UDP 服务器,4:UDP 客户端
+	XHANDLE xhToken = NULL;
+	XNETHANDLE xhClient = 0;
 public:
 	CEdit m_EditIPPort;
 	CEdit m_EditRecv;
@@ -49,4 +54,5 @@ public:
 	CButton m_BtnStop;
 	afx_msg void OnDestroy();
 	CEdit m_EditIPClient;
+	afx_msg void OnBnClickedButton2();
 };

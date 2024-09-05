@@ -36,11 +36,6 @@ using namespace std;
 //    Purpose:     公用头
 //    History:
 *********************************************************************/
-#ifdef _UNICODE
-typedef std::wstring tstring;
-#else
-typedef std::string tstring;
-#endif
-
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_Core/XEngine_Core")
+#pragma comment(lib,"XEngine_Client/XClient_Socket")

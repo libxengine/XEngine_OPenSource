@@ -22,8 +22,9 @@ support systems:linux,macos,windows
 - tinyxml2            XML module
 
 #### 工具结构
-- XEngine_APPFileSort           file sort tools
-- XEngine_APPSimulateKeyInput   Simulate keybroad Input Tools
+- XEngine_APPFileSort          file sort tools
+- XEngine_APPSimulateKeyInput  Simulate keybroad Input Tools
+- XEngine_SocketTest           network test tool(server and client)
 
 #### Example Struct
 - AVCodec_APPPlayer       audio and video play example

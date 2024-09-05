@@ -25,6 +25,7 @@
 #### 工具结构
 - XEngine_APPFileSort          文件排序工具
 - XEngine_APPSimulateKeyInput  模拟键盘输入工具
+- XEngine_SocketTest           网络测试工具(服务器和客户端)
 
 #### 例子结构
 - AVCodec_APPPlayer       音视频播放器

@@ -145,6 +145,11 @@ bool CXEngineAPPSocketTestDlg::SocketTest_LogPrint(int nType, LPCXSTR lpszClient
 	}
 	
 	m_EditRecv.GetWindowText(m_StrLog);
+
+	if (m_StrLog.GetLength() > 10240)
+	{
+		m_StrLog.ReleaseBuffer();
+	}
 	m_StrLog.Append(tszMSGBuffer);
 	m_EditRecv.SetWindowText(m_StrLog);
 	m_EditRecv.SetSel(m_StrLog.GetLength(), m_StrLog.GetLength());

@@ -24,7 +24,8 @@ support systems:linux,macos,windows
 #### 工具结构
 - XEngine_APPFileSort          file sort tools
 - XEngine_APPSimulateKeyInput  Simulate keybroad Input Tools
-- XEngine_SocketTest           network test tool(server and client)
+- XEngine_APPSocketTest        network test tool(server and client)
+- XEngine_APPModuleTest        XEngine install completed check
 
 #### Example Struct
 - AVCodec_APPPlayer       audio and video play example

@@ -2,6 +2,7 @@ CC = g++ -Wall -std=c++17 -fPIC
 PLATFORM = linux
 PLATVER = 
 PLATDIR = 
+FLAGS = -c 
 FILEEXT = 
 LIBFLAG = 
 RELEASE = 0
@@ -13,11 +14,9 @@ LIBEX =
 OBJECTS = InfoReport_APIMachine.o pch.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+DEBUG = -g
 endif
 
 ifeq ($(UNICODE),1)

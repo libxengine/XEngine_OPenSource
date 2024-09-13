@@ -4,6 +4,7 @@ PLATVER =
 PLATDIR = 
 FILEEXT = 
 LIBFLAG = 
+FLAGS = -c 
 RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ 
@@ -13,11 +14,9 @@ LIBEX =
 OBJECTS = json_reader.o json_value.o json_writer.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+DEBUG = -g
 endif
 
 ifeq ($(UNICODE),1)

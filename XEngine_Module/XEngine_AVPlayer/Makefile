@@ -2,6 +2,7 @@ CC = g++ -Wall -std=c++17 -fPIC
 PLATFORM = linux
 PLATVER = 
 PLATDIR = 
+FLAGS = -c 
 FILEEXT = 
 LIBFLAG = 
 RELEASE = 0
@@ -11,6 +12,18 @@ LOADSO =
 LIB = -lXEngine_BaseLib
 LIBEX = 
 OBJECTS = AVPlayer_Video.o AVPlayer_Audio.o pch.o
+
+ifeq ($(RELEASE),1)
+DEBUG = 
+else
+DEBUG = -g
+endif
+
+ifeq ($(UNICODE),1)
+UNICODE = -D _UNICODE
+else
+UNICODE = 
+endif
 
 ifeq ($(PLATFORM),linux)
 	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
@@ -32,20 +45,6 @@ else ifeq ($(PLATFORM),mac)
 	LIBFLAG = -dynamiclib
 	LIBEX = -lSDL2 -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/../XEngine_BaseLib/
-endif
-
-ifeq ($(RELEASE),1)
-FLAGS = -c 
-DEBUG = 
-else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
-endif
-
-ifeq ($(UNICODE),1)
-UNICODE = -D _UNICODE
-else
-UNICODE = 
 endif
 
 all:$(OBJECTS)

@@ -4,9 +4,7 @@ PLATVER =
 PLATDIR = 
 FILEEXT = 
 LIBFLAG = 
-FLAGS = -c 
 RELEASE = 0
-UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = -L 
 LIB = 
@@ -14,15 +12,16 @@ LIBEX =
 OBJECTS = json_reader.o json_value.o json_writer.o
 
 ifeq ($(RELEASE),1)
+FLAGS = -c 
 DEBUG = 
 else
-DEBUG = -g
-endif
-
-ifeq ($(UNICODE),1)
-UNICODE = -D _UNICODE
-else
-UNICODE = 
+	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g 
+	else
+		FLAGS = -c -lc_p
+		DEBUG = -g -pg 
+	endif
 endif
 
 ifeq ($(PLATFORM),linux)
@@ -51,11 +50,11 @@ all:$(OBJECTS)
 	$(CC) $(DEBUG) $(OBJECTS) -o libjsoncpp.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 json_reader.o:json_reader.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) json_reader.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) json_reader.cpp
 json_value.o:json_value.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) json_value.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) json_value.cpp
 json_writer.o:json_writer.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) json_writer.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) json_writer.cpp
 
 InstallAll:InstallSo
 InstallSo:./libjsoncpp.$(FILEEXT)

@@ -2,11 +2,9 @@ CC = g++ -Wall -std=c++17 -fPIC
 PLATFORM = linux
 PLATVER = 
 PLATDIR = 
-FLAGS = -c
 FILEEXT = 
 LIBFLAG = 
 RELEASE = 0
-UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO = -L 
 LIB = 
@@ -14,15 +12,16 @@ LIBEX =
 OBJECTS = pch.o tinyxml2.o
 
 ifeq ($(RELEASE),1)
+FLAGS = -c 
 DEBUG = 
 else
-DEBUG = -g
-endif
-
-ifeq ($(UNICODE),1)
-UNICODE = -D _UNICODE
-else
-UNICODE = 
+	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g 
+	else
+		FLAGS = -c -lc_p
+		DEBUG = -g -pg 
+	endif
 endif
 
 ifeq ($(PLATFORM),linux)
@@ -51,9 +50,9 @@ all:$(OBJECTS)
 	$(CC) $(DEBUG) $(OBJECTS) -o libtinyxml2.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 pch.o:pch.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) pch.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) pch.cpp
 tinyxml2.o:tinyxml2.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) tinyxml2.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) tinyxml2.cpp
 
 CleanAll:CleanObj CleanMk
 CleanObj:

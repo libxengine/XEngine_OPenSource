@@ -2,11 +2,9 @@ CC = g++ -Wall -std=c++17 -fPIC
 PLATFORM = linux
 PLATVER = 
 PLATDIR = 
-FLAGS = -c 
 FILEEXT = 
 LIBFLAG = 
 RELEASE = 0
-UNICODE = 0
 LOADHDR = -I ./ -I ../jsoncpp
 LOADSO = -L ../jsoncpp
 LIB = -lXEngine_BaseLib -lXEngine_SystemApi -lXClient_APIHelp -ljsoncpp
@@ -14,15 +12,16 @@ LIBEX =
 OBJECTS = InfoReport_APIMachine.o pch.o
 
 ifeq ($(RELEASE),1)
+FLAGS = -c 
 DEBUG = 
 else
-DEBUG = -g
-endif
-
-ifeq ($(UNICODE),1)
-UNICODE = -D _UNICODE
-else
-UNICODE = 
+	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g 
+	else
+		FLAGS = -c -lc_p
+		DEBUG = -g -pg 
+	endif
 endif
 
 ifeq ($(PLATFORM),linux)
@@ -51,10 +50,10 @@ all:$(OBJECTS)
 	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_InfoReport.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 InfoReport_APIMachine.o:./InfoReport_APIMachine/InfoReport_APIMachine.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./InfoReport_APIMachine/InfoReport_APIMachine.cpp 
+	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) ./InfoReport_APIMachine/InfoReport_APIMachine.cpp 
 
 pch.o:./pch.cpp                 		       	    
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) ./pch.cpp
 
 
 InstallAll:InstallSo 

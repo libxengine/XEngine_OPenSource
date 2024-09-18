@@ -40,7 +40,8 @@ protected:
 private:
 	XSHOT nClientType = 0;  //0:未决,1:TCP 服务器,2:TCP 客户端,3:UDP 服务器,4:UDP 客户端
 	XHANDLE xhToken = NULL;
-	XHANDLE xhUDPSocket = NULL;
+	XHANDLE xhUDPToken = NULL;
+	XSOCKET xhUDPSocket = 0;
 	XNETHANDLE xhClient = 0;
 public:
 	CEdit m_EditIPPort;

@@ -217,13 +217,13 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton1()
 	}
 	else if (BST_CHECKED == m_RadioProtocolUDP.GetCheck())
 	{
-		xhUDPSocket = NetCore_UDPSelect_Start(_ttoi(m_StrIPPort.GetBuffer()));
-		if (NULL == xhUDPSocket)
+		xhUDPToken = NetCore_UDPSelect_Start(_ttoi(m_StrIPPort.GetBuffer()));
+		if (NULL == xhUDPToken)
 		{
 			AfxMessageBox(_T("启动服务端失败"));
 			return;
 		}
-		NetCore_UDPSelect_RegisterCallBack(xhUDPSocket, NetCore_TCPSelect_CBRecv, this);
+		NetCore_UDPSelect_RegisterCallBack(xhUDPToken, NetCore_TCPSelect_CBRecv, this);
 		nClientType = 3;
 	}
 	AfxMessageBox(_T("启动服务端成功"));
@@ -266,6 +266,32 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton3()
 			return;
 		}
 	}
+	else if (nClientType == 3)
+	{
+		CString m_StrIPAddr;
+		CString m_StrIPPort;
+		m_EditIPAddr.GetWindowText(m_StrIPAddr);
+		m_EditIPPort.GetWindowText(m_StrIPPort);
+
+		if (!NetCore_UDPSelect_Send(xhUDPToken, W2A(m_StrSendMsg.GetBuffer()), m_StrSendMsg.GetLength(), W2A(m_StrIPAddr.GetBuffer()), _ttoi(m_StrIPPort.GetBuffer())))
+		{
+			AfxMessageBox(_T("发送数据失败"));
+			return;
+		}
+	}
+	else if (nClientType == 4)
+	{
+		CString m_StrIPAddr;
+		CString m_StrIPPort;
+		m_EditIPAddr.GetWindowText(m_StrIPAddr);
+		m_EditIPPort.GetWindowText(m_StrIPPort);
+
+		if (!XClient_UDPSelect_SendMsg(xhUDPSocket, W2A(m_StrSendMsg.GetBuffer()), m_StrSendMsg.GetLength()))
+		{
+			AfxMessageBox(_T("发送数据失败"));
+			return;
+		}
+	}
 	
 	m_EditSend.SetWindowText(_T(""));
 }
@@ -290,7 +316,11 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton4()
 	}
 	else if (3 == nClientType)
 	{
-		NetCore_UDPSelect_Stop(xhUDPSocket);
+		NetCore_UDPSelect_Stop(xhUDPToken);
+	}
+	else if (4 == nClientType)
+	{
+		XClient_UDPSelect_Close(xhUDPSocket);
 	}
 }
 
@@ -319,17 +349,36 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton2()
 		return;
 	}
 	USES_CONVERSION;
-	xhToken = XClient_TCPSelect_StartEx(XClient_TCPSelect_CBEvent, this);
-	if (NULL == xhToken)
-	{
-		AfxMessageBox(_T("创建客户端失败"));
-		return;
-	}
 
-	if (!XClient_TCPSelect_InsertEx(xhToken, &xhClient, W2A(m_StrClientAddr.GetBuffer()), _ttoi(m_StrClientPort.GetBuffer())))
+	if (BST_CHECKED == m_RadioProtocolTCP.GetCheck())
 	{
-		AfxMessageBox(_T("连接服务器失败"));
-		return;
+		xhToken = XClient_TCPSelect_StartEx(XClient_TCPSelect_CBEvent, this);
+		if (NULL == xhToken)
+		{
+			AfxMessageBox(_T("创建客户端失败"));
+			return;
+		}
+
+		if (!XClient_TCPSelect_InsertEx(xhToken, &xhClient, W2A(m_StrClientAddr.GetBuffer()), _ttoi(m_StrClientPort.GetBuffer())))
+		{
+			AfxMessageBox(_T("连接服务器失败"));
+			return;
+		}
+		nClientType = 2;
+	}
+	else if (BST_CHECKED == m_RadioProtocolUDP.GetCheck())
+	{
+		if (!XClient_UDPSelect_Create(&xhUDPSocket))
+		{
+			AfxMessageBox(_T("创建客户端失败"));
+			return;
+		}
+		if (!XClient_UDPSelect_Connect(xhUDPSocket, W2A(m_StrClientAddr.GetBuffer()), _ttoi(m_StrClientPort.GetBuffer())))
+		{
+			AfxMessageBox(_T("连接服务器失败"));
+			return;
+		}
+		nClientType = 4;
 	}
 
 	m_BtnStartService.EnableWindow(false);
@@ -337,5 +386,4 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton2()
 	m_BtnStop.EnableWindow(true);
 	m_RadioProtocolTCP.EnableWindow(FALSE);
 	m_RadioProtocolUDP.EnableWindow(FALSE);
-	nClientType = 2;
 }

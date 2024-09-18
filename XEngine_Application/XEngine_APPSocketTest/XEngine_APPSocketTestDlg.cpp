@@ -34,6 +34,8 @@ void CXEngineAPPSocketTestDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON2, m_BtnStartConnect);
 	DDX_Control(pDX, IDC_BUTTON4, m_BtnStop);
 	DDX_Control(pDX, IDC_EDIT5, m_EditIPClient);
+	DDX_Control(pDX, IDC_RADIO1, m_RadioProtocolTCP);
+	DDX_Control(pDX, IDC_RADIO2, m_RadioProtocolUDP);
 }
 
 BEGIN_MESSAGE_MAP(CXEngineAPPSocketTestDlg, CDialogEx)
@@ -68,6 +70,8 @@ BOOL CXEngineAPPSocketTestDlg::OnInitDialog()
 	m_BtnStartService.EnableWindow(true);
 	m_BtnStartConnect.EnableWindow(true);
 	m_BtnStop.EnableWindow(false);
+
+	m_RadioProtocolTCP.SetCheck(BST_CHECKED);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -201,18 +205,33 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton1()
 	CString m_StrIPPort;
 
 	m_EditIPPort.GetWindowText(m_StrIPPort);
-	if (!NetCore_TCPSelect_Start(_ttoi(m_StrIPPort.GetBuffer())))
+	if (BST_CHECKED == m_RadioProtocolTCP.GetCheck())
 	{
-		AfxMessageBox(_T("启动服务端失败"));
-		return;
+		if (!NetCore_TCPSelect_Start(_ttoi(m_StrIPPort.GetBuffer())))
+		{
+			AfxMessageBox(_T("启动服务端失败"));
+			return;
+		}
+		NetCore_TCPSelect_RegisterCallBack(NetCore_TCPSelect_CBLogin, NetCore_TCPSelect_CBRecv, NetCore_TCPSelect_CBLeave, this, this, this);
+		nClientType = 1;
 	}
-	NetCore_TCPSelect_RegisterCallBack(NetCore_TCPSelect_CBLogin, NetCore_TCPSelect_CBRecv, NetCore_TCPSelect_CBLeave, this, this, this);
+	else if (BST_CHECKED == m_RadioProtocolUDP.GetCheck())
+	{
+		xhUDPSocket = NetCore_UDPSelect_Start(_ttoi(m_StrIPPort.GetBuffer()));
+		if (NULL == xhUDPSocket)
+		{
+			AfxMessageBox(_T("启动服务端失败"));
+			return;
+		}
+		NetCore_UDPSelect_RegisterCallBack(xhUDPSocket, NetCore_TCPSelect_CBRecv, this);
+		nClientType = 3;
+	}
 	AfxMessageBox(_T("启动服务端成功"));
-
 	m_BtnStartService.EnableWindow(false);
 	m_BtnStartConnect.EnableWindow(false);
 	m_BtnStop.EnableWindow(true);
-	nClientType = 1;
+	m_RadioProtocolTCP.EnableWindow(FALSE);
+	m_RadioProtocolUDP.EnableWindow(FALSE);
 }
 
 
@@ -258,7 +277,8 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton4()
 	m_BtnStartService.EnableWindow(true);
 	m_BtnStartConnect.EnableWindow(true);
 	m_BtnStop.EnableWindow(false);
-	
+	m_RadioProtocolTCP.EnableWindow(true);
+	m_RadioProtocolUDP.EnableWindow(true);
 	if (1 == nClientType)
 	{
 		NetCore_TCPSelect_Stop();
@@ -267,6 +287,10 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton4()
 	{
 		XClient_TCPSelect_DeleteEx(xhToken, xhClient);
 		XClient_TCPSelect_StopEx(xhToken);
+	}
+	else if (3 == nClientType)
+	{
+		NetCore_UDPSelect_Stop(xhUDPSocket);
 	}
 }
 
@@ -311,5 +335,7 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton2()
 	m_BtnStartService.EnableWindow(false);
 	m_BtnStartConnect.EnableWindow(false);
 	m_BtnStop.EnableWindow(true);
+	m_RadioProtocolTCP.EnableWindow(FALSE);
+	m_RadioProtocolUDP.EnableWindow(FALSE);
 	nClientType = 2;
 }

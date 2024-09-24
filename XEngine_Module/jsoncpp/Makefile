@@ -56,11 +56,6 @@ json_value.o:json_value.cpp
 json_writer.o:json_writer.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) json_writer.cpp
 
-InstallAll:InstallSo
-InstallSo:./libjsoncpp.$(FILEEXT)
-	cp ./libjsoncpp.$(FILEEXT) ../../../../XEngine_Release/libjsoncpp.$(FILEEXT)
-
-
 
 CleanAll:CleanObj CleanMk
 CleanObj:

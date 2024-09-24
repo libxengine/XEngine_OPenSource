@@ -56,11 +56,6 @@ pch.o:./pch.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) ./pch.cpp
 
 
-InstallAll:InstallSo 
-InstallSo:./libXEngine_InfoReport.$(FILEEXT)
-	cp ./libXEngine_InfoReport.$(FILEEXT) ../../../../XEngine_Release/libXEngine_InfoReport.$(FILEEXT)
-
-
 CleanAll:CleanObj CleanMk
 CleanObj:                                               
 	rm *.o

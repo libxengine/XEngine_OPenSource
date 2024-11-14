@@ -101,7 +101,11 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
 		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_PARSE;
 		return false;
 	}
+#if XENGINE_VERSION_KERNEL >= 9
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+#else
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+#endif
 
 	if (0 != st_JsonRoot["code"].asInt())
 	{
@@ -181,7 +185,11 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, L
 		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_PARSE;
 		return false;
 	}
+#if XENGINE_VERSION_KERNEL >= 9
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+#else
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+#endif
 
 	if (0 != st_JsonRoot["code"].asInt())
 	{

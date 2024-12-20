@@ -52,13 +52,11 @@ macos执行:./XEngine_LINEnv.sh -i 3
 XEngine_AVPlayer 需要sdl2支持  
 
 #### Windows
-
 使用VS打开并且编译,你需要优先配置XEngine环境才能使用  
 
 #### Linux
-
 Linux使用Makefile编译  
-UBUNTU22.04 或者 RockyLinux 9 x64均可
+UBUNTU24.04
 
 ###### 编译命令
 
@@ -68,7 +66,6 @@ make FLAGS=InstallAll 安装库程序
 make FLAGS=CleanAll 清理编译
 
 #### MacOS
-
 使用makefile编译,控制台运行,需要mac 13以及以上版本
 
 ###### 编译命令

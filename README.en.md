@@ -54,9 +54,8 @@ XEngine_AVPlayer need sdl2
 use vs open and complie  
 
 #### Linux
-
 Linux use Makefile complie  
-UBUNTU22.04 x64 or RockyLinux 9 x64  
+UBUNTU22.04
 
 ##### Compile Command
 

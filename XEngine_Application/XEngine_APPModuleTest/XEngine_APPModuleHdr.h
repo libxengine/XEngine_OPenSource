@@ -37,8 +37,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/NetCore_Error.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Define.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Define.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include <XEngine_Include/XEngine_Core/Protocol_Define.h>
 #include <XEngine_Include/XEngine_Core/Protocol_Error.h>
 //客户端
@@ -46,13 +46,20 @@ using namespace std;
 #include <XEngine_Include/XEngine_Client/XClient_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
-#include <XEngine_Include/XEngine_Client/SslClient_Define.h>
-#include <XEngine_Include/XEngine_Client/SslClient_Error.h>
 #include <XEngine_Include/XEngine_Client/StreamClient_Define.h>
 #include <XEngine_Include/XEngine_Client/StreamClient_Error.h>
 //系统组件
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
+//网络组件
+#include <XEngine_Include/XEngine_NetHelp/APIAddr_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIAddr_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIFlow_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIFlow_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/XSocket_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/XSocket_Error.h>
 //帮助模块
 #include <XEngine_Include/XEngine_HelpComponents/BINPack_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/BINPack_Error.h>
@@ -66,13 +73,6 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/WBlackList_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
-//网络组件
-#include <XEngine_Include/XEngine_NetHelp/APIFlow_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIFlow_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/XSocket_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/XSocket_Error.h>
 //RFC组件
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
@@ -134,15 +134,19 @@ using namespace std;
 
 #pragma comment(lib,"XEngine_Core/XEngine_Core")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool")
-#pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
+#pragma comment(lib,"XEngine_Core/XEngine_Cryption")
 #pragma comment(lib,"XEngine_Core/XEngine_Protocol")
 
 #pragma comment(lib,"XEngine_Client/XClient_Socket")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
-#pragma comment(lib,"XEngine_Client/XClient_OPenSsl")
 #pragma comment(lib,"XEngine_Client/XClient_Stream")
 
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
+
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIAddr")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIFlow")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_XSocket")
 
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_BINPack")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Compress")
@@ -150,10 +154,6 @@ using namespace std;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_WBlackList")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog")
-
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIFlow")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_XSocket")
 
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_MQTTProtocol")

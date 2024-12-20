@@ -13,7 +13,7 @@ int main()
     XCHAR tszMSGBuffer[2048] = {};
 
     _xtprintf(_X("XEngine_Client Test:\n"));
-    _xtprintf(_X("XEngine_BaseLib-BaseLib_OperatorVer_XNumberStr:%s\n"), BaseLib_OperatorVer_XNumberStr());
+    _xtprintf(_X("XEngine_BaseLib-BaseLib_Version_XNumberStr:%s\n"), BaseLib_Version_XNumberStr());
     _xtprintf(_X("XEngine_BaseSafe-BaseSafe_String_Strcopy:%ld\n"), BaseSafe_String_Strcopy(tszMSGBuffer, _X("123"), 3));
     _xtprintf(_X("XEngine_Algorithm-Algorithm_String_HEXToInt:%d\n"), Algorithm_String_HEXToInt(tszMSGBuffer));
 
@@ -22,7 +22,7 @@ int main()
     NetCore_Socket_Close(hSocket);
     _xtprintf(_X("XEngine_ManagePool-ManagePool_Memory_Create:%p\n"), xhToken = ManagePool_Memory_Create());
     ManagePool_Memory_Destory(xhToken);
-    _xtprintf(_X("XEngine_OPenSsl-OPenSsl_Codec_CRC32Codec:%X\n"), OPenSsl_Codec_CRC32Codec(tszMSGBuffer, 3));
+    _xtprintf(_X("XEngine_Cryption-Cryption_Codec_CRC32Codec:%X\n"), Cryption_Codec_CRC32Codec(tszMSGBuffer, 3));
     _xtprintf(_X("XEngine_Protocol-Protocol_ICMPRaw_Init:%d\n"), Protocol_ICMPRaw_Init(&hSocket));
     NetCore_Socket_Close(hSocket);
     
@@ -31,7 +31,6 @@ int main()
     XClient_UDPSelect_Close(hSocket);
     _xtprintf(_X("XClient_APIHelp-APIClient_Http_Create:%d\n"), APIClient_Http_Create(&xhClient));
     APIClient_Http_Close(xhClient);
-	_xtprintf(_X("XClient_OPenSsl-XClient_OPenSsl_CloseEx:%d\n"), XClient_OPenSsl_CloseEx(NULL));
 	_xtprintf(_X("XClient_Stream-XClient_StreamPush_FileInit:%p\n"), xhToken = XClient_StreamPush_FileInit());
     XClient_StreamPush_FileClose(xhToken);
 
@@ -48,7 +47,7 @@ int main()
 
 	_xtprintf(_X("XEngine_NetHelp Test:\n"));
 	_xtprintf(_X("NetHelp_APIFlow-APIFlow_NetCtrl_Destory:%d\n"), APIFlow_NetCtrl_Destory(0));
-    _xtprintf(_X("NetHelp_APIHelp-APIHelp_EMail_IsEMailAddr:%d\n"), APIHelp_EMail_IsEMailAddr(_X("486179@qq.com")));
+    _xtprintf(_X("NetHelp_APIAddr-APIAddr_EMail_IsEMailAddr:%d\n"), APIAddr_EMail_IsEMailAddr(_X("486179@qq.com")));
     _xtprintf(_X("NetHelp_XSocket-APIFlow_NetCtrl_Destory:%d\n"), XSocket_Api_IsPortOccupation(80, NETHELP_XSOCKET_API_NETSTATE_PROTOCOL_TCP));
 
 	_xtprintf(_X("XEngine_RfcComponents Test:\n"));

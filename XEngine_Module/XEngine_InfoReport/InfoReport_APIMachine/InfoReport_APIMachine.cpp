@@ -104,7 +104,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
 #if XENGINE_VERSION_KERNEL >= 9
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 #else
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 #endif
 
 	if (0 != st_JsonRoot["code"].asInt())
@@ -188,7 +188,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, L
 #if XENGINE_VERSION_KERNEL >= 9
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 #else
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 #endif
 
 	if (0 != st_JsonRoot["code"].asInt())
@@ -228,8 +228,13 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetText(XCHAR* ptszMSGBuffer)
 	SystemApi_System_GetMemoryUsage(&st_MemoryInfo, XENGINE_SYSTEMSDK_API_SYSTEM_SIZE_MB);
 	SystemApi_System_GetProcessCount(&nProcessCount);
 
+#if XENGINE_VERSION_KERNEL >= 9
+	st_JsonCPUObject["nCPUNumber"] = st_CPUInfo.nCPUNumber;
+	st_JsonCPUObject["nCPUSpeed"] = st_CPUInfo.nCPUSpeed;
+#else
 	st_JsonCPUObject["nCPUNumber"] = st_CPUInfo.nCpuNumber;
 	st_JsonCPUObject["nCPUSpeed"] = st_CPUInfo.nCpuSpeed;
+#endif
 
 	st_JsonOSObject["OSArch"] = (Json::Value::Int)nOSArch;
 	st_JsonOSObject["OSVersion"] = tszOSVersion;

@@ -105,16 +105,16 @@ bool compareNumericString(const std::string& strSource, const std::string& strDe
 	// 解析字符串中的数字部分
 	XCHAR tszSrcName[MAX_PATH] = {};
 	XCHAR tszDstName[MAX_PATH] = {};
-	BaseLib_OperatorString_GetFileAndPath(strSource.c_str(), NULL, tszSrcName);
-	BaseLib_OperatorString_GetFileAndPath(strDest.c_str(), NULL, tszDstName);
+	BaseLib_String_GetFileAndPath(strSource.c_str(), NULL, tszSrcName);
+	BaseLib_String_GetFileAndPath(strDest.c_str(), NULL, tszDstName);
 
 	XCHAR tszSrcKey[MAX_PATH] = {};
 	XCHAR tszSrcVlu[MAX_PATH] = {};
 	XCHAR tszDstKey[MAX_PATH] = {};
 	XCHAR tszDstVlu[MAX_PATH] = {};
 
-	BaseLib_OperatorString_GetKeyValue(tszSrcName, _X("."), tszSrcKey, tszSrcVlu);
-	BaseLib_OperatorString_GetKeyValue(tszDstName, _X("."), tszDstKey, tszDstVlu);
+	BaseLib_String_GetKeyValue(tszSrcName, _X("."), tszSrcKey, tszSrcVlu);
+	BaseLib_String_GetKeyValue(tszDstName, _X("."), tszDstKey, tszDstVlu);
 	int nValueSrc = atoi(tszSrcKey);
 	int nVlaueDst = atoi(tszDstKey);
 	// 如果数字不相等，则按数字排序
@@ -186,7 +186,7 @@ void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 			stl_ListFile.push_back(ppszListDir[i]);
 		}
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListDir, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppszListDir, nListCount);
 
 	stl_ListFile.sort(compareNumericString);
 
@@ -203,7 +203,7 @@ void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 		CHAR tszFilePath[MAX_PATH] = {};
 		CHAR tszFileExt[MAX_PATH] = {};
 
-		BaseLib_OperatorString_GetFileAndPath(stl_ListIterator->c_str(), tszFilePath, NULL, NULL, tszFileExt);
+		BaseLib_String_GetFileAndPath(stl_ListIterator->c_str(), tszFilePath, NULL, NULL, tszFileExt);
 
 		_stprintf(tszIndexStr, _T("%d"), i);
 		sprintf(tszFileName, "%s%d.%s", tszFilePath, j, tszFileExt);
@@ -215,10 +215,10 @@ void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 		wchar_t tszUNCSrc[MAX_PATH] = {};
 		wchar_t tszUNCDst[MAX_PATH] = {};
 		nGBKLen = stl_ListIterator->length();
-		BaseLib_OperatorCharset_AnsiToUnicode(stl_ListIterator->c_str(), tszUNCSrc, &nGBKLen);
+		BaseLib_Charset_AnsiToUnicode(stl_ListIterator->c_str(), tszUNCSrc, &nGBKLen);
 
 		nGBKLen = strlen(tszFileName);
-		BaseLib_OperatorCharset_AnsiToUnicode(tszFileName, tszUNCDst, &nGBKLen);
+		BaseLib_Charset_AnsiToUnicode(tszFileName, tszUNCDst, &nGBKLen);
 		pClass_This->m_ListFile.SetItemText(i, 1, tszUNCSrc);
 		pClass_This->m_ListFile.SetItemText(i, 2, tszUNCDst);
 #else
@@ -242,13 +242,13 @@ void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadName(LPVOID lParam)
 	XCHAR tszFileSrc[MAX_PATH] = {};
 	XCHAR tszFileDst[MAX_PATH] = {};
 	USES_CONVERSION;
-	BaseLib_OperatorString_GetFileAndPath(W2A(m_StrLastSrc.GetBuffer()), NULL, tszFileSrc);
-	BaseLib_OperatorString_GetFileAndPath(W2A(m_StrLastDst.GetBuffer()), NULL, tszFileDst);
+	BaseLib_String_GetFileAndPath(W2A(m_StrLastSrc.GetBuffer()), NULL, tszFileSrc);
+	BaseLib_String_GetFileAndPath(W2A(m_StrLastDst.GetBuffer()), NULL, tszFileDst);
 
 	XCHAR tszNameSrc[MAX_PATH] = {};
 	XCHAR tszNameDst[MAX_PATH] = {};
-	BaseLib_OperatorString_GetKeyValue(tszFileSrc, ".", tszNameSrc);
-	BaseLib_OperatorString_GetKeyValue(tszFileDst, ".", tszNameDst);
+	BaseLib_String_GetKeyValue(tszFileSrc, ".", tszNameSrc);
+	BaseLib_String_GetKeyValue(tszFileDst, ".", tszNameDst);
 
 	if (atoi(tszNameSrc) > atoi(tszNameDst))
 	{

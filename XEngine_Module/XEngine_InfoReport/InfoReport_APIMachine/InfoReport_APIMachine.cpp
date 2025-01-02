@@ -104,7 +104,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
 #if XENGINE_VERSION_KERNEL >= 9
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 #else
-	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 #endif
 
 	if (0 != st_JsonRoot["code"].asInt())
@@ -188,7 +188,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, L
 #if XENGINE_VERSION_KERNEL >= 9
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 #else
-	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 #endif
 
 	if (0 != st_JsonRoot["code"].asInt())

@@ -12,7 +12,19 @@ using namespace std;
 #include "../../XEngine_Module/XEngine_AVPlayer/AVPlayer_Error.h"
 
 #ifdef _MSC_BUILD
+#ifdef _WIN64
+#ifdef _DEBUG
+#pragma comment(lib,"../../x64/Debug/XEngine_AVPlayer.lib")
+#else
+#pragma comment(lib,"../../x64/Release/XEngine_AVPlayer.lib")
+#endif
+#else
+#ifdef _DEBUG
 #pragma comment(lib,"../../Debug/XEngine_AVPlayer.lib")
+#else
+#pragma comment(lib,"../../Release/XEngine_AVPlayer.lib")
+#endif
+#endif
 #endif
 
 //Linux::g++ -std=c++17 -Wall -g AVCodec_APPPlayer.cpp -o AVCodec_APPPlayer.exe -L ../../XEngine_Module/XEngine_AVPlayer -lXEngine_AVPlayer

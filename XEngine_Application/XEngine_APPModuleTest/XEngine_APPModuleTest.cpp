@@ -18,13 +18,13 @@ int main()
     _xtprintf(_X("XEngine_Algorithm-Algorithm_String_HEXToInt:%d\n"), Algorithm_String_HEXToInt(tszMSGBuffer));
 
     _xtprintf(_X("XEngine_Core Test:\n"));
-    _xtprintf(_X("XEngine_Core-NetCore_Socket_Create:%d\n"), NetCore_Socket_Create(&hSocket));
-    NetCore_Socket_Close(hSocket);
+    _xtprintf(_X("XEngine_Core-NetCore_Socket_Create:%d\n"), BaseLib_IO_Create(&hSocket));
+    BaseLib_IO_Close(hSocket);
     _xtprintf(_X("XEngine_ManagePool-ManagePool_Memory_Create:%p\n"), xhToken = ManagePool_Memory_Create());
     ManagePool_Memory_Destory(xhToken);
     _xtprintf(_X("XEngine_Cryption-Cryption_Codec_CRC32Codec:%X\n"), Cryption_Codec_CRC32Codec(tszMSGBuffer, 3));
     _xtprintf(_X("XEngine_Protocol-Protocol_ICMPRaw_Init:%d\n"), Protocol_ICMPRaw_Init(&hSocket));
-    NetCore_Socket_Close(hSocket);
+    BaseLib_IO_Close(hSocket);
     
     _xtprintf(_X("XEngine_Client Test:\n"));
     _xtprintf(_X("XClient_Socket-XClient_UDPSelect_Create:%d\n"), XClient_UDPSelect_Create(&hSocket));

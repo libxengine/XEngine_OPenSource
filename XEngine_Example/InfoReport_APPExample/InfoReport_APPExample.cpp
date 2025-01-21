@@ -12,7 +12,19 @@ using namespace std;
 #include "../../XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
 
 #ifdef _MSC_BUILD
+#ifdef _WIN64
+#ifdef _DEBUG
+#pragma comment(lib,"../../x64/Debug/XEngine_InfoReport.lib")
+#else
+#pragma comment(lib,"../../x64/Release/XEngine_InfoReport.lib")
+#endif
+#else
+#ifdef _DEBUG
 #pragma comment(lib,"../../Debug/XEngine_InfoReport.lib")
+#else
+#pragma comment(lib,"../../Release/XEngine_InfoReport.lib")
+#endif
+#endif
 #endif
 
 //Linux Macos::g++ -std=c++17 -Wall -g InfoReport_APPExample.cpp -o InfoReport_APPExample.exe -L ../../XEngine_Module/XEngine_InfoReport -lXEngine_InfoReport

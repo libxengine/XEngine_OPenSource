@@ -38,7 +38,7 @@ jobs:
         run: |
             cd vcpkg
             ./bootstrap-vcpkg.bat
-            ./vcpkg.exe install lua:x86-windows sdl2:x86-windows
+            ./vcpkg.exe install sdl2:x86-windows
             ./vcpkg.exe integrate install
         shell: pwsh
       - name: vcpkg install (x64)
@@ -46,7 +46,7 @@ jobs:
         run: |
             cd vcpkg
             ./bootstrap-vcpkg.bat
-            ./vcpkg.exe install lua:x86-windows sdl2:x64-windows
+            ./vcpkg.exe install sdl2:x64-windows
             ./vcpkg.exe integrate install
         shell: pwsh
 

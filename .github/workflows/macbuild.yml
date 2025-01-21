@@ -61,8 +61,11 @@ jobs:
             cd jsoncpp
             make PLATFORM=mac
             cd ..
-            tinyxml2
+            cd tinyxml2
             make PLATFORM=mac
             cd ..
             cd XEngine_InfoReport
             make PLATFORM=mac
+            cd ..
+            cd XEngine_AVPlayer
+            make PLATFORM=mac            

@@ -59,7 +59,7 @@ jobs:
             cd jsoncpp
             make
             cd ..
-            tinyxml2
+            cd tinyxml2
             make
             cd ..
             cd XEngine_InfoReport

@@ -59,10 +59,10 @@ jobs:
         run: | 
             cd XEngine_Module
             cd jsoncpp
-            make
+            make PLATFORM=mac
             cd ..
             tinyxml2
-            make
+            make PLATFORM=mac
             cd ..
             cd XEngine_InfoReport
-            make
+            make PLATFORM=mac

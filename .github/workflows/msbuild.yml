@@ -76,4 +76,4 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Build Solution
-        run: msbuild XEngine_Source/XEngine.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
+        run: msbuild XEngine.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}

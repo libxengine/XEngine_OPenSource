@@ -5,3 +5,4 @@ EXPORTS
 
 	InfoReport_APIMachine_Send
 	InfoReport_APIMachine_GetTime
+	InfoReport_APIMachine_Delete

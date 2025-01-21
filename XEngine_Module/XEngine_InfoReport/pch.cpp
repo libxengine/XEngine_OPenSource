@@ -37,3 +37,7 @@ extern "C" bool InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, LPCXSTR lpszSe
 {
 	return m_APIMachine.InfoReport_APIMachine_GetTime(lpszAPIUrl, lpszServiceName, pInt_TimeNumber);
 }
+extern "C" bool InfoReport_APIMachine_Delete(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName)
+{
+	return m_APIMachine.InfoReport_APIMachine_Delete(lpszAPIUrl, lpszServiceName);
+}

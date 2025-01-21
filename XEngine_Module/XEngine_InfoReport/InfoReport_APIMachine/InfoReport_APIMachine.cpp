@@ -202,6 +202,79 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, L
 	*pInt_TimeNumber = st_JsonArray[0]["nTimeNumber"].asInt64();
 	return true;
 }
+/********************************************************************
+函数名称：InfoReport_APIMachine_Delete
+函数功能：发送一条删除请求给API服务器
+ 参数.一：lpszAPIUrl
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入请求地址
+ 参数.二：lpszServiceName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入上报的服务名称
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：lpszAPIUrl = _X("http://127.0.0.1:5501/api?function=machine");
+*********************************************************************/
+bool CInfoReport_APIMachine::InfoReport_APIMachine_Delete(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName)
+{
+	InfoReport_IsErrorOccur = false;
+
+	if (NULL == lpszAPIUrl)
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_PARAMENT;
+		return false;
+	}
+	int nLen = 0;
+	int nCode = 0;
+	XCHAR tszAPIUrl[MAX_PATH] = {};
+	XCHAR tszComputerName[MAX_PATH] = {};
+	XCLIENT_APIHTTP st_HTTPParam = {};
+
+	_xstprintf(tszAPIUrl, _X("%s&params1=1"), lpszAPIUrl);
+
+	Json::Value st_JsonRoot;
+	JSONCPP_STRING st_JsonError;
+	Json::StreamWriterBuilder st_JsonBuilder;
+	Json::CharReaderBuilder st_JsonReader;
+
+	SystemApi_System_GetSysName(NULL, tszComputerName);
+
+	st_JsonRoot["tszServiceName"] = lpszServiceName;
+	st_JsonRoot["tszMachineSystem"] = tszComputerName;
+	st_JsonBuilder["emitUTF8"] = true;
+
+	XCHAR* ptszMsgBuffer = NULL;
+	st_HTTPParam.nTimeConnect = 2000;
+	if (!APIClient_Http_Request(_X("POST"), tszAPIUrl, Json::writeString(st_JsonBuilder, st_JsonRoot).c_str(), &nCode, &ptszMsgBuffer, &nLen, NULL, NULL, &st_HTTPParam))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = APIClient_GetLastError();
+		return false;
+	}
+	st_JsonRoot.clear();
+	//开始解析配置文件
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonReader.newCharReader());
+	if (!pSt_JsonReader->parse(ptszMsgBuffer, ptszMsgBuffer + nLen, &st_JsonRoot, &st_JsonError))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_PARSE;
+		return false;
+	}
+
+	if (0 != st_JsonRoot["code"].asInt())
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_CODE;
+		return false;
+	}
+	return true;
+}
 //////////////////////////////////////////////////////////////////////////
 //                           保护函数
 //////////////////////////////////////////////////////////////////////////

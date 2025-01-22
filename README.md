@@ -37,12 +37,12 @@
 #### XEngine环境
 
 在编译之前必须安装XEngine,可以参考其Readme文档  
-GITEE:https://gitee.com/xyry/libxengine  
-GITHUB:https://github.com/libxengine/xengine
+GITEE:https://gitee.com/libxengine/libxengine  
+GITHUB:https://github.com/libxengine/libxengine
 
 ###### 快速部署
 
-git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/xengine.git  
+git clone https://gitee.com/libxengine/libxengine.git 或者 git clone https://github.com/libxengine/libxengine.git  
 window执行XEngine_WINEnv.bat 脚本  
 Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
 macos执行:./XEngine_LINEnv.sh -i 3  
@@ -56,7 +56,7 @@ XEngine_AVPlayer 需要sdl2支持
 
 #### Linux
 Linux使用Makefile编译  
-UBUNTU24.04
+支持ubuntu22.04以及rockylinux9以及以上系统版本
 
 ###### 编译命令
 

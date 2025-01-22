@@ -35,12 +35,17 @@ CInfoReport_APIMachine::~CInfoReport_APIMachine()
   类型：常量字符指针
   可空：N
   意思：输入上报的服务名称
+ 参数.三：pInt_TimeNumber
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：输出报告次数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：lpszAPIUrl = _X("http://127.0.0.1:5501/api?function=machine");
 *********************************************************************/
-bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName)
+bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName, __int64x* pInt_TimeNumber /* = NULL */)
 {
 	InfoReport_IsErrorOccur = false;
 
@@ -109,7 +114,12 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
 		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_CODE;
 		return false;
 	}
-
+	if (!st_JsonRoot["data"].isNull() && (NULL != pInt_TimeNumber))
+	{
+		Json::Value st_JsonArray = st_JsonRoot["data"];
+		*pInt_TimeNumber = st_JsonArray[0]["nTimeNumber"].asInt64();
+	}
+	
     return true;
 }
 /********************************************************************

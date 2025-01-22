@@ -38,6 +38,8 @@ else ifeq ($(PLATFORM),mac)
 	CC += -Wno-deprecated-declarations
 	PLATVER = -D __MACOS__
 	FILEEXT = dylib
+	LOADHDR += -I /opt/homebrew/opt/sdl2/include
+	LOADSO += -L /opt/homebrew/opt/sdl2/lib
 	LIBFLAG = -dynamiclib
 	LIBEX = -lSDL2 -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/../XEngine_BaseLib/

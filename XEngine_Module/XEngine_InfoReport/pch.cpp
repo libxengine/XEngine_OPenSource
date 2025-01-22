@@ -29,9 +29,9 @@ extern "C" XLONG InfoReport_GetLastError(int* pInt_ErrorCode)
 /************************************************************************/
 /*                        APIMachine报告                                */
 /************************************************************************/
-extern "C" bool InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName)
+extern "C" bool InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName, __int64x* pInt_TimeNumber)
 {
-	return m_APIMachine.InfoReport_APIMachine_Send(lpszAPIUrl, lpszServiceName);
+	return m_APIMachine.InfoReport_APIMachine_Send(lpszAPIUrl, lpszServiceName, pInt_TimeNumber);
 }
 extern "C" bool InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName, __int64x * pInt_TimeNumber)
 {

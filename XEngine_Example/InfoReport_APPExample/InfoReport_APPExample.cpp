@@ -12,16 +12,20 @@ using namespace std;
 #include "../../XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
 
 #ifdef _MSC_BUILD
-#ifdef _WIN64
 #ifdef _DEBUG
+#ifdef _M_X64
 #pragma comment(lib,"../../x64/Debug/XEngine_InfoReport.lib")
-#else
-#pragma comment(lib,"../../x64/Release/XEngine_InfoReport.lib")
+#elif _M_ARM64
+#pragma comment(lib,"../../x64/ARM64/XEngine_InfoReport.lib")
+#elif _M_IX86
+#pragma comment(lib,"../../Debug/XEngine_InfoReport.lib")
 #endif
 #else
-#ifdef _DEBUG
-#pragma comment(lib,"../../Debug/XEngine_InfoReport.lib")
-#else
+#ifdef _M_X64
+#pragma comment(lib,"../../x64/Release/XEngine_InfoReport.lib")
+#elif _M_ARM64
+#pragma comment(lib,"../../ARM64/Release/XEngine_InfoReport.lib")
+#elif _M_IX86
 #pragma comment(lib,"../../Release/XEngine_InfoReport.lib")
 #endif
 #endif

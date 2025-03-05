@@ -79,7 +79,7 @@ jobs:
           echo "XENGINE_INCLUDE=${{ github.workspace }}/XEngine_Windows" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "XENGINE_LIB32=${{ github.workspace }}/XEngine_Windows/XEngine_Windows" | Out-File -FilePath $env:GITHUB_ENV -Append
         shell: pwsh
-      - name: Set up Dependency x86_32 Environment
+      - name: Set up Dependency ARM64 Environment
         if: matrix.platform == 'ARM64'
         run: |
           $response = Invoke-RestMethod -Uri "https://api.github.com/repos/libxengine/libxengine/releases/latest" -Headers @{"Accept"="application/vnd.github.v3+json"}

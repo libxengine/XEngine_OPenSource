@@ -12,7 +12,7 @@ OBJECTS = json_reader.o json_value.o json_writer.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
-DEBUG = 
+DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
 		FLAGS = -c

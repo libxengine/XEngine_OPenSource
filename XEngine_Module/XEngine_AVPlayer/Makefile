@@ -13,7 +13,7 @@ OBJECTS = AVPlayer_Video.o AVPlayer_Audio.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
-DEBUG = 
+DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
 		FLAGS = -c

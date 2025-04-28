@@ -12,7 +12,7 @@ OBJECTS = pch.o tinyxml2.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
-DEBUG = 
+DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
 		FLAGS = -c

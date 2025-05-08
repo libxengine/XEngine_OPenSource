@@ -3,7 +3,6 @@ PLATFORM = linux
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
-RELEASE = 0
 LOADHDR = -I ./ 
 LOADSO = -L 
 LIB = 
@@ -11,7 +10,7 @@ LIBEX =
 OBJECTS = json_reader.o json_value.o json_writer.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c 
+FLAGS = -c -D _RELEASE
 DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
@@ -21,6 +20,12 @@ else
 		FLAGS = -c -lc_p
 		DEBUG = -g -pg -D _DEBUG
 	endif
+endif
+
+ifeq ($(UNICODE),1)
+override UNICODE := -D __UNICODE__
+else
+override UNICODE := -D __ANSI__
 endif
 
 ifeq ($(PLATFORM),linux)
@@ -46,11 +51,11 @@ all:$(OBJECTS)
 	$(CC) $(DEBUG) $(OBJECTS) -o libjsoncpp.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 json_reader.o:json_reader.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) json_reader.cpp
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) json_reader.cpp
 json_value.o:json_value.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) json_value.cpp
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) json_value.cpp
 json_writer.o:json_writer.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) json_writer.cpp
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) json_writer.cpp
 
 
 CleanAll:CleanObj CleanMk

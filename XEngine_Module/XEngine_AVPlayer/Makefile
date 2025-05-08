@@ -3,8 +3,6 @@ PLATFORM = linux
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
-RELEASE = 0
-UNICODE = 0
 LOADHDR = -I ./
 LOADSO = 
 LIB = -lXEngine_BaseLib
@@ -12,16 +10,22 @@ LIBEX =
 OBJECTS = AVPlayer_Video.o AVPlayer_Audio.o pch.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c 
+FLAGS = -c -D _RELEASE
 DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
 		FLAGS = -c
-		DEBUG = -g 
+		DEBUG = -g -D _DEBUG
 	else
 		FLAGS = -c -lc_p
-		DEBUG = -g -pg 
+		DEBUG = -g -pg -D _DEBUG
 	endif
+endif
+
+ifeq ($(UNICODE),1)
+override UNICODE := -D __UNICODE__
+else
+override UNICODE := -D __ANSI__
 endif
 
 ifeq ($(PLATFORM),linux)
@@ -49,12 +53,12 @@ all:$(OBJECTS)
 	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_AVPlayer.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 AVPlayer_Video.o:./AVPlayer_Video/AVPlayer_Video.cpp                      
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) ./AVPlayer_Video/AVPlayer_Video.cpp   
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./AVPlayer_Video/AVPlayer_Video.cpp   
 AVPlayer_Audio.o:./AVPlayer_Audio/AVPlayer_Audio.cpp                      
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) ./AVPlayer_Audio/AVPlayer_Audio.cpp
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./AVPlayer_Audio/AVPlayer_Audio.cpp
 	
 pch.o:./pch.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) ./pch.cpp
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./pch.cpp
 
 
 CleanAll:CleanObj CleanMk

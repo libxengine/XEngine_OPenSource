@@ -11,7 +11,7 @@ LIBEX =
 OBJECTS = pch.o tinyxml2.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c 
+FLAGS = -c -D _RELEASE
 DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
@@ -21,6 +21,12 @@ else
 		FLAGS = -c -lc_p
 		DEBUG = -g -pg -D _DEBUG
 	endif
+endif
+
+ifeq ($(UNICODE),1)
+override UNICODE := -D __UNICODE__
+else
+override UNICODE := -D __ANSI__
 endif
 
 ifeq ($(PLATFORM),linux)
@@ -46,9 +52,9 @@ all:$(OBJECTS)
 	$(CC) $(DEBUG) $(OBJECTS) -o libtinyxml2.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 pch.o:pch.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) pch.cpp
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) pch.cpp
 tinyxml2.o:tinyxml2.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) tinyxml2.cpp
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) tinyxml2.cpp
 
 CleanAll:CleanObj CleanMk
 CleanObj:

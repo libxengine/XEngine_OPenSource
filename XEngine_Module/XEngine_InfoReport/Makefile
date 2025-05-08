@@ -3,7 +3,6 @@ PLATFORM = linux
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
-RELEASE = 0
 LOADHDR = -I ./ -I ../jsoncpp
 LOADSO = -L ../jsoncpp
 LIB = -lXEngine_BaseLib -lXEngine_SystemApi -lXClient_APIHelp -ljsoncpp
@@ -11,7 +10,7 @@ LIBEX =
 OBJECTS = InfoReport_APIMachine.o pch.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c 
+FLAGS = -c -D _RELEASE
 DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
@@ -21,6 +20,12 @@ else
 		FLAGS = -c -lc_p
 		DEBUG = -g -pg -D _DEBUG
 	endif
+endif
+
+ifeq ($(UNICODE),1)
+override UNICODE := -D __UNICODE__
+else
+override UNICODE := -D __ANSI__
 endif
 
 ifeq ($(PLATFORM),linux)
@@ -46,10 +51,10 @@ all:$(OBJECTS)
 	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_InfoReport.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 InfoReport_APIMachine.o:./InfoReport_APIMachine/InfoReport_APIMachine.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) ./InfoReport_APIMachine/InfoReport_APIMachine.cpp 
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./InfoReport_APIMachine/InfoReport_APIMachine.cpp 
 
 pch.o:./pch.cpp                 		       	    
-	$(CC) $(DEBUG) $(FLAGS) $(PLATVER) $(LOADHDR) ./pch.cpp
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./pch.cpp
 
 
 CleanAll:CleanObj CleanMk

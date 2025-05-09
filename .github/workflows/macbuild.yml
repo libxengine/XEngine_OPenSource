@@ -3,8 +3,7 @@ name: macos build workflows
 on:
   push:
     branches:
-      - 'master'
-      - 'actions'
+      - 'master1'
   
 jobs:
   build:

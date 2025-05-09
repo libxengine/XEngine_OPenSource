@@ -35,7 +35,7 @@ jobs:
       - name: install system package
         run: |
             apt update -y
-            apt install libsdl2-dev
+            apt install libsdl2-dev -y
 
       - name: Set up Dependency rocky linux Environment
         run: |

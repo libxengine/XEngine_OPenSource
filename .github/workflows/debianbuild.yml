@@ -35,7 +35,7 @@ jobs:
       - name: install system package
         run: |
             apt update -y
-            apt install libsdl2-dev curl jq -y
+            apt install libsdl2-dev gcc g++ make git jq unzip -y
 
       - name: Set up Dependency rocky linux Environment
         run: |

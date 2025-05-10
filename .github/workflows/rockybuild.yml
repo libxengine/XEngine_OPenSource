@@ -3,7 +3,7 @@ name: rocky build workflows
 on:
   push:
     branches:
-      - 'master1'
+      - 'master'
 
 permissions:
   contents: read

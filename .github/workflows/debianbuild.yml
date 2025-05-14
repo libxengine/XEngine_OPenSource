@@ -32,6 +32,9 @@ jobs:
           repository: libxengine/libxengine
           path: libxengine
 
+      - name: Set TERM variable
+        run: echo "TERM=xterm" >> $GITHUB_ENV
+                  
       - name: install system package
         run: |
             apt update -y

@@ -51,7 +51,7 @@ jobs:
       - name: install system package
         run: |
             dnf update -y
-            dnf install libsdl2-dev gcc g++ make git jq unzip wget -y
+            dnf install gcc g++ make git jq unzip wget -y
 
       - name: Set TERM variable
         run: echo "TERM=xterm" >> $GITHUB_ENV

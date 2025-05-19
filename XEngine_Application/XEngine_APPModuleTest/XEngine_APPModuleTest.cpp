@@ -15,7 +15,8 @@ int main()
     _xtprintf(_X("XEngine_Client Test:\n"));
     _xtprintf(_X("XEngine_BaseLib-BaseLib_Version_XNumberStr:%s\n"), BaseLib_Version_XNumberStr());
     _xtprintf(_X("XEngine_BaseSafe-BaseSafe_String_Strcopy:%ld\n"), BaseSafe_String_Strcopy(tszMSGBuffer, _X("123"), 3));
-    _xtprintf(_X("XEngine_Algorithm-Algorithm_String_HEXToInt:%d\n"), Algorithm_String_HEXToInt(tszMSGBuffer));
+    _xtprintf(_X("XEngine_Algorithm-Algorithm_Calculation_Create:%p\n"), xhToken = Algorithm_Calculation_Create());
+    Algorithm_Calculation_Close(xhToken);
 
     _xtprintf(_X("XEngine_Core Test:\n"));
     _xtprintf(_X("XEngine_Core-NetCore_Socket_Create:%d\n"), BaseLib_IO_Create(&hSocket));

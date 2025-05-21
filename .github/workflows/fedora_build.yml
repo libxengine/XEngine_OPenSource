@@ -76,3 +76,6 @@ jobs:
             cd ..
             cd XEngine_InfoReport
             make
+            cd ..
+            cd XEngine_Token
+            make

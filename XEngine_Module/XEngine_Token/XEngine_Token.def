@@ -1,0 +1,19 @@
+LIBRARY
+
+EXPORTS
+	Session_GetLastError
+
+	Session_Token_Init
+	Session_Token_Destroy
+	Session_Token_Insert
+	Session_Token_Delete
+	Session_Token_UPDate
+	Session_Token_Get
+	Session_Token_GetUser
+	Session_Token_RenewalTime
+
+	Session_Dynamic_Init
+	Session_Dynamic_Destory
+	Session_Dynamic_Create
+	Session_Dynamic_Delete
+	Session_Dynamic_Get

@@ -48,7 +48,7 @@ else ifeq ($(PLATFORM),mac)
 endif
 
 all:$(OBJECTS)
-	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_InfoReport.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
+	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_Token.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 Session_Dynamic.o:./Session_Dynamic/Session_Dynamic.cpp             
 	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./Session_Dynamic/Session_Dynamic.cpp 

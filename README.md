@@ -17,8 +17,9 @@
 - XEngine_Example      例子源代码
 
 #### 模块结构
-- XEngine_AVPlayer    音视频播放模块
+- XEngine_Token       句柄管理模块
 - XEngine_InfoReport  信息报告模块
+- XEngine_MSGNotify   消息通知模块
 - jsoncpp             json模块
 - tinyxml2            XML模块 
 
@@ -29,7 +30,6 @@
 - XEngine_APPModuleTest        XEngine库安装完整性检查程序
 
 #### 例子结构
-- AVCodec_APPPlayer       音视频播放器
 - InfoReport_APPExample   报告模块例子
 
 ## 安装教程
@@ -47,10 +47,6 @@ window执行XEngine_WINEnv.bat 脚本
 Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
 macos执行:./XEngine_LINEnv.sh -i 3  
 
-#### 开源库依赖
-
-XEngine_AVPlayer 需要sdl2支持  
-
 #### Windows
 使用VS打开并且编译,你需要优先配置XEngine环境才能使用  
 
@@ -62,8 +58,6 @@ Linux使用Makefile编译
 
 在XEngine_Source目录下执行命令  
 make 编译  
-make FLAGS=InstallAll 安装库程序  
-make FLAGS=CleanAll 清理编译
 
 #### MacOS
 使用makefile编译,控制台运行,需要mac 13以及以上版本

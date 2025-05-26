@@ -16,8 +16,9 @@ support systems:linux,macos,windows
 - XEngine_Example      Example Source
 
 #### Module Struct
-- XEngine_AVPlayer    audio and video play module
+- XEngine_Token       Handle Management module
 - XEngine_InfoReport  information report module
+- XEngine_MSGNotify   Message Notify Modules
 - jsoncpp             json module
 - tinyxml2            XML module
 
@@ -28,7 +29,6 @@ support systems:linux,macos,windows
 - XEngine_APPModuleTest        XEngine install completed check
 
 #### Example Struct
-- AVCodec_APPPlayer       audio and video play example
 - InfoReport_APPExample   information report example
 
 ## install
@@ -46,10 +46,6 @@ window Exection XEngine_WINEnv.bat
 Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
 Macos Exection:./XEngine_LINEnv.sh -i 3  
 
-#### opensource library dependencies
-
-XEngine_AVPlayer need sdl2  
-
 #### Windows
 use vs open and complie  
 
@@ -61,8 +57,6 @@ support ubunut22.04 and rockylinux9 and above version
 
 execute command in XEngine_Source path   
 make complie  
-make FLAGS=InstallAll Install File  
-make FLAGS=CleanAll Clear Complie  
 
 #### MacOS
 

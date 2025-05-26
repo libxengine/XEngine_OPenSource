@@ -79,3 +79,6 @@ jobs:
             cd ..
             cd XEngine_Token
             make
+            cd ..
+            cd XEngine_MSGNotify
+            make

@@ -1,0 +1,6 @@
+LIBRARY
+
+EXPORTS
+	MSGNotify_GetLastError
+
+	MSGNotify_EMail_Send

@@ -63,4 +63,7 @@ jobs:
             make PLATFORM=mac
             cd ..
             cd XEngine_Token
-            make PLATFORM=mac          
+            make PLATFORM=mac
+            cd ..
+            cd XEngine_MSGNotify
+            make PLATFORM=mac

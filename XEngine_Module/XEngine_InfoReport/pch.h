@@ -55,19 +55,19 @@ extern XLONG InfoReport_dwErrorCode;
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
 #ifdef _DEBUG
 #ifdef _M_X64
-#pragma comment(lib,"../../x64/Debug/jsoncpp")
+#pragma comment(lib,"x64/Debug/jsoncpp")
 #elif _M_ARM64
-#pragma comment(lib,"../../ARM64/Debug/jsoncpp")
+#pragma comment(lib,"ARM64/Debug/jsoncpp")
 #elif _M_IX86
-#pragma comment(lib,"../../Debug/jsoncpp")
+#pragma comment(lib,"Debug/jsoncpp")
 #endif
 #else
 #ifdef _M_X64
-#pragma comment(lib,"../../x64/Release/jsoncpp")
+#pragma comment(lib,"x64/Release/jsoncpp")
 #elif _M_ARM64
-#pragma comment(lib,"../../ARM64/Release/jsoncpp")
+#pragma comment(lib,"ARM64/Release/jsoncpp")
 #elif _M_IX86
-#pragma comment(lib,"../../Release/jsoncpp")
+#pragma comment(lib,"Release/jsoncpp")
 #endif
 #endif
 #endif

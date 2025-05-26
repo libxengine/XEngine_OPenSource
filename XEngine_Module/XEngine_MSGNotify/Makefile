@@ -4,9 +4,9 @@ PLATVER =
 FILEEXT = 
 LIBFLAG = 
 LOADHDR = -I ./ -I ../jsoncpp
-LOADSO = 
+LOADSO = -L ../jsoncpp
 LIB = -lXEngine_BaseLib -lXClient_APIHelp -ljsoncpp
-LIBEX = -L ../jsoncpp
+LIBEX = 
 OBJECTS = MSGNotify_EMail.o MSGNotify_SMS.o pch.o
 
 ifeq ($(RELEASE),1)

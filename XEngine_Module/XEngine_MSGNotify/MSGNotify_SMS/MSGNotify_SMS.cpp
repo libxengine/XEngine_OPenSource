@@ -137,6 +137,49 @@ bool CMSGNotify_SMS::MSGNotify_SMS_SendTencent(LPCXSTR lpszServiceAddr, LPCXSTR 
 	}
     return true;
 }
+/********************************************************************
+函数名称：MSGNotify_SMS_SendAliyun
+函数功能：阿里云API发送短信消息
+ 参数.一：lpszServiceAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入请求地址
+ 参数.二：lpszRegion
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：请求的地区
+ 参数.三：lpszAPPID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：请求的APP ID
+ 参数.四：lpszSignName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：签名内容
+ 参数.五：lpszTemplateID
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：请求的模版ID
+ 参数.六：lpszPhoneNumber
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：发送给谁 +8613333
+ 参数.七：lpszMSGBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：发送的附加会话信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
 bool CMSGNotify_SMS::MSGNotify_SMS_SendAliyun(LPCXSTR lpszServiceAddr, LPCXSTR lpszRegion, LPCXSTR lpszAPPID, LPCXSTR lpszSignName, LPCXSTR lpszTemplateID, LPCXSTR lpszPhoneNumber, LPCXSTR lpszMSGBuffer)
 {
 	MSGNotify_IsErrorOccur = false;

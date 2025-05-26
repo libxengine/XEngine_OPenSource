@@ -31,6 +31,8 @@
 
 #### 例子结构
 - InfoReport_APPExample   报告模块例子
+- MSGNotify_APPExample    消息通知模块例子
+- TinyXML2_APPExample     XML模块例子
 
 ## 安装教程
 

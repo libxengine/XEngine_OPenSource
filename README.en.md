@@ -30,6 +30,8 @@ support systems:linux,macos,windows
 
 #### Example Struct
 - InfoReport_APPExample   information report example
+- MSGNotify_APPExample    message notify example
+- TinyXML2_APPExample     xml module example
 
 ## install
 

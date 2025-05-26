@@ -4,3 +4,6 @@ EXPORTS
 	MSGNotify_GetLastError
 
 	MSGNotify_EMail_Send
+
+	MSGNotify_SMS_SendTencent
+	MSGNotify_SMS_SendAliyun

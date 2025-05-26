@@ -27,37 +27,6 @@ jobs:
           repository: libxengine/libxengine
           path: libxengine
 
-      - name: vcpkg dependency repository
-        uses: actions/checkout@v4
-        with:
-          repository: microsoft/vcpkg
-          path: vcpkg     
-         
-      - name: vcpkg install (x86)
-        if: matrix.platform == 'x86'  
-        run: |
-            cd vcpkg
-            ./bootstrap-vcpkg.bat
-            ./vcpkg.exe install sdl2:x86-windows
-            ./vcpkg.exe integrate install
-        shell: pwsh
-      - name: vcpkg install (x64)
-        if: matrix.platform == 'x64'  
-        run: |
-            cd vcpkg
-            ./bootstrap-vcpkg.bat
-            ./vcpkg.exe install sdl2:x64-windows
-            ./vcpkg.exe integrate install
-        shell: pwsh
-      - name: vcpkg install (Arm64)
-        if: matrix.platform == 'ARM64'  
-        run: |
-            cd vcpkg
-            ./bootstrap-vcpkg.bat
-            ./vcpkg.exe install sdl2:Arm64-windows
-            ./vcpkg.exe integrate install
-        shell: pwsh
-
       - name: Set up Dependency x86_64 Environment
         if: matrix.platform == 'x64'
         run: |

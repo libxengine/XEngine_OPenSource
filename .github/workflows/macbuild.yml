@@ -32,7 +32,6 @@ jobs:
       - name: brew install
         run: |
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          brew install sdl2  
           
       - name: Set up Dependency x86_64 Environment 
         if: matrix.os == 'macos-13'
@@ -62,9 +61,6 @@ jobs:
             cd ..
             cd XEngine_InfoReport
             make PLATFORM=mac
-            cd ..
-            cd XEngine_AVPlayer
-            make PLATFORM=mac  
             cd ..
             cd XEngine_Token
             make PLATFORM=mac          

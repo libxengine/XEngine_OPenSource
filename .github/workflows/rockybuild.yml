@@ -66,8 +66,5 @@ jobs:
             cd XEngine_InfoReport
             make
             cd ..
-            cd XEngine_AVPlayer
-            make
-            cd ..
             cd XEngine_Token
             make

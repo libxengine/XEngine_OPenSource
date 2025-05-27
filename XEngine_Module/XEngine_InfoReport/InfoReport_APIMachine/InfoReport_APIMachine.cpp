@@ -58,7 +58,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
 	int nLen = 0;
 	int nCode = 0;
 
-	XCHAR tszAPIUrl[MAX_PATH] = {};
+	XCHAR tszAPIUrl[XMAX_PATH] = {};
 	XCHAR tszOSName[128] = {};
 	XCHAR tszOSVersion[128] = {};
 	XCHAR tszOSBuild[128] = {};
@@ -157,8 +157,8 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, L
 	}
 	int nLen = 0;
 	int nCode = 0;
-	XCHAR tszAPIUrl[MAX_PATH] = {};
-	XCHAR tszComputerName[MAX_PATH] = {};
+	XCHAR tszAPIUrl[XMAX_PATH] = {};
+	XCHAR tszComputerName[XMAX_PATH] = {};
 	XCLIENT_APIHTTP st_HTTPParam = {};
 
 	_xstprintf(tszAPIUrl, _X("%s&params1=2"), lpszAPIUrl);
@@ -234,8 +234,8 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Delete(LPCXSTR lpszAPIUrl, LP
 	}
 	int nLen = 0;
 	int nCode = 0;
-	XCHAR tszAPIUrl[MAX_PATH] = {};
-	XCHAR tszComputerName[MAX_PATH] = {};
+	XCHAR tszAPIUrl[XMAX_PATH] = {};
+	XCHAR tszComputerName[XMAX_PATH] = {};
 	XCLIENT_APIHTTP st_HTTPParam = {};
 
 	_xstprintf(tszAPIUrl, _X("%s&params1=1"), lpszAPIUrl);

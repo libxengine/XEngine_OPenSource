@@ -103,15 +103,15 @@ HCURSOR CXEngineAPPFileSortDlg::OnQueryDragIcon()
 bool compareNumericString(const std::string& strSource, const std::string& strDest)
 {
 	// 解析字符串中的数字部分
-	XCHAR tszSrcName[MAX_PATH] = {};
-	XCHAR tszDstName[MAX_PATH] = {};
+	XCHAR tszSrcName[XMAX_PATH] = {};
+	XCHAR tszDstName[XMAX_PATH] = {};
 	BaseLib_String_GetFileAndPath(strSource.c_str(), NULL, tszSrcName);
 	BaseLib_String_GetFileAndPath(strDest.c_str(), NULL, tszDstName);
 
-	XCHAR tszSrcKey[MAX_PATH] = {};
-	XCHAR tszSrcVlu[MAX_PATH] = {};
-	XCHAR tszDstKey[MAX_PATH] = {};
-	XCHAR tszDstVlu[MAX_PATH] = {};
+	XCHAR tszSrcKey[XMAX_PATH] = {};
+	XCHAR tszSrcVlu[XMAX_PATH] = {};
+	XCHAR tszDstKey[XMAX_PATH] = {};
+	XCHAR tszDstVlu[XMAX_PATH] = {};
 
 	BaseLib_String_GetKeyValue(tszSrcName, _X("."), tszSrcKey, tszSrcVlu);
 	BaseLib_String_GetKeyValue(tszDstName, _X("."), tszDstKey, tszDstVlu);
@@ -198,10 +198,10 @@ void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 	auto stl_ListIterator = stl_ListFile.begin();
 	for (int i = 0; stl_ListIterator != stl_ListFile.end(); stl_ListIterator++, i++, j++)
 	{
-		TCHAR tszIndexStr[MAX_PATH] = {};
-		CHAR tszFileName[MAX_PATH] = {};
-		CHAR tszFilePath[MAX_PATH] = {};
-		CHAR tszFileExt[MAX_PATH] = {};
+		TCHAR tszIndexStr[XMAX_PATH] = {};
+		CHAR tszFileName[XMAX_PATH] = {};
+		CHAR tszFilePath[XMAX_PATH] = {};
+		CHAR tszFileExt[XMAX_PATH] = {};
 
 		BaseLib_String_GetFileAndPath(stl_ListIterator->c_str(), tszFilePath, NULL, NULL, tszFileExt);
 
@@ -212,8 +212,8 @@ void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 		pClass_This->m_ListFile.SetItemText(i, 0, tszIndexStr);
 #ifdef _UNICODE
 		int nGBKLen = 0;
-		wchar_t tszUNCSrc[MAX_PATH] = {};
-		wchar_t tszUNCDst[MAX_PATH] = {};
+		wchar_t tszUNCSrc[XMAX_PATH] = {};
+		wchar_t tszUNCDst[XMAX_PATH] = {};
 		nGBKLen = stl_ListIterator->length();
 		BaseLib_Charset_AnsiToUnicode(stl_ListIterator->c_str(), tszUNCSrc, &nGBKLen);
 
@@ -239,14 +239,14 @@ void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadName(LPVOID lParam)
 	CString m_StrLastSrc = pClass_This->m_ListFile.GetItemText(pClass_This->m_ListFile.GetItemCount() - 1, 1);
 	CString m_StrLastDst = pClass_This->m_ListFile.GetItemText(pClass_This->m_ListFile.GetItemCount() - 1, 2);
 
-	XCHAR tszFileSrc[MAX_PATH] = {};
-	XCHAR tszFileDst[MAX_PATH] = {};
+	XCHAR tszFileSrc[XMAX_PATH] = {};
+	XCHAR tszFileDst[XMAX_PATH] = {};
 	USES_CONVERSION;
 	BaseLib_String_GetFileAndPath(W2A(m_StrLastSrc.GetBuffer()), NULL, tszFileSrc);
 	BaseLib_String_GetFileAndPath(W2A(m_StrLastDst.GetBuffer()), NULL, tszFileDst);
 
-	XCHAR tszNameSrc[MAX_PATH] = {};
-	XCHAR tszNameDst[MAX_PATH] = {};
+	XCHAR tszNameSrc[XMAX_PATH] = {};
+	XCHAR tszNameDst[XMAX_PATH] = {};
 	BaseLib_String_GetKeyValue(tszFileSrc, ".", tszNameSrc);
 	BaseLib_String_GetKeyValue(tszFileDst, ".", tszNameDst);
 
@@ -331,7 +331,7 @@ void CXEngineAPPFileSortDlg::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	BROWSEINFO st_BrowseInfo = { 0 };
-	TCHAR tszDIRBuffer[MAX_PATH] = {};
+	TCHAR tszDIRBuffer[XMAX_PATH] = {};
 	st_BrowseInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 
 	LPITEMIDLIST pSt_ItemList = SHBrowseForFolder(&st_BrowseInfo);

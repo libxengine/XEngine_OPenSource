@@ -33,8 +33,8 @@ using namespace std;
 *********************************************************************/
 typedef struct
 {
-	TCHAR tszFileSrc[XMAX_PATH];
-	TCHAR tszFileDst[XMAX_PATH];
+	TCHAR tszFileSrc[XPATH_MAX];
+	TCHAR tszFileDst[XPATH_MAX];
 }FILESORT_INFO;
 
 #ifdef _UNICODE

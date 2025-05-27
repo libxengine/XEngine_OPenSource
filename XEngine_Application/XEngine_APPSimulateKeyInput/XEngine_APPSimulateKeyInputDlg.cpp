@@ -119,7 +119,7 @@ int CALLBACK CXEngineAPPSimulateKeyInputDlg::Keyboard_ThreadCheck1(LPVOID lParam
 	while (pClass_This->m_bRun)
 	{
 		int nRandom = 0;
-		TCHAR tszWindowName[XMAX_PATH];
+		TCHAR tszWindowName[XPATH_MAX];
 		memset(tszWindowName, '\0', sizeof(tszWindowName));
 
 		pClass_This->m_EditTime1.GetWindowText(m_StrTime);
@@ -181,7 +181,7 @@ int CALLBACK CXEngineAPPSimulateKeyInputDlg::Keyboard_ThreadCheck2(LPVOID lParam
 	while (pClass_This->m_bRun)
 	{
 		int nRandom = 0;
-		TCHAR tszWindowName[XMAX_PATH];
+		TCHAR tszWindowName[XPATH_MAX];
 		memset(tszWindowName, '\0', sizeof(tszWindowName));
 
 		pClass_This->m_EditTime2.GetWindowText(m_StrTime);
@@ -243,7 +243,7 @@ int CALLBACK CXEngineAPPSimulateKeyInputDlg::Keyboard_ThreadCheck3(LPVOID lParam
 	while (pClass_This->m_bRun)
 	{
 		int nRandom = 0;
-		TCHAR tszWindowName[XMAX_PATH];
+		TCHAR tszWindowName[XPATH_MAX];
 		memset(tszWindowName, '\0', sizeof(tszWindowName));
 
 		pClass_This->m_EditTime3.GetWindowText(m_StrTime);
@@ -305,7 +305,7 @@ int CALLBACK CXEngineAPPSimulateKeyInputDlg::Keyboard_ThreadCheck4(LPVOID lParam
 	while (pClass_This->m_bRun)
 	{
 		int nRandom = 0;
-		TCHAR tszWindowName[XMAX_PATH];
+		TCHAR tszWindowName[XPATH_MAX];
 		memset(tszWindowName, '\0', sizeof(tszWindowName));
 
 		pClass_This->m_EditTime4.GetWindowText(m_StrTime);

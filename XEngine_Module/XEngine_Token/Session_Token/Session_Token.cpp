@@ -27,7 +27,7 @@ CSession_Token::~CSession_Token()
   In/Out：In
   类型：整数型
   可空：N
-  意思：超时时间,单位秒
+  意思：超时时间,单位秒,0不超时,永远存在
  参数.二：fpCall_TokenEvent
   In/Out：In/Out
   类型：回调函数
@@ -106,20 +106,28 @@ bool CSession_Token::Session_Token_Destroy()
   类型：数据结构指针
   可空：Y
   意思：用户信息表
+ 参数.三：nTimeout
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：单独指定超时时间,-1 不启用
 返回值
   类型：逻辑型
   意思：是否允许登陆
 备注：
 *********************************************************************/
-bool CSession_Token::Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo /* = NULL */)
+bool CSession_Token::Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo /* = NULL */, int nTimeout /* = -1 */)
 {
     Session_IsErrorOccur = false;
 
     TOKENSESSION_INFOCLIENT st_TokenClient = {};
 
+    st_TokenClient.xhToken = xhToken;
+    st_TokenClient.nTimeout = nTimeout;
     BaseLib_Time_GetSysTime(&st_TokenClient.st_LibTimer);
-    
-    if (NULL != pSt_UserInfo)
+    BaseLib_Time_GetSysTime(&st_TokenClient.st_OutTimer);
+
+	if (NULL != pSt_UserInfo)
     {
         st_TokenClient.st_UserInfo = *pSt_UserInfo;
     }
@@ -166,7 +174,7 @@ bool CSession_Token::Session_Token_Delete(XNETHANDLE xhToken)
 返回值
   类型：逻辑型
   意思：是否成功
-备注：
+备注：可以用于续期
 *********************************************************************/
 bool CSession_Token::Session_Token_UPDate(XNETHANDLE xhToken)
 {
@@ -181,7 +189,8 @@ bool CSession_Token::Session_Token_UPDate(XNETHANDLE xhToken)
         st_Locker.unlock_shared();
         return false;
     }
-    BaseLib_Time_GetSysTime(&stl_MapIterator->second.st_LibTimer);
+    stl_MapIterator->second.nRenewalTime++;
+    BaseLib_Time_GetSysTime(&stl_MapIterator->second.st_OutTimer);
     st_Locker.unlock_shared();
     return true;
 }
@@ -284,7 +293,7 @@ bool CSession_Token::Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, X
 }
 /********************************************************************
 函数名称：Session_Token_RenewalTime
-函数功能：续期时间
+函数功能：获取续期次数
  参数.一：xhToken
   In/Out：In
   类型：句柄
@@ -313,7 +322,6 @@ bool CSession_Token::Session_Token_RenewalTime(XNETHANDLE xhToken, int* pInt_Ren
         st_Locker.unlock_shared();
         return false;
     }
-    stl_MapIterator->second.nRenewalTime++;
     *pInt_RenewalTime = stl_MapIterator->second.nRenewalTime;
     st_Locker.unlock_shared();
     return true;
@@ -324,8 +332,8 @@ bool CSession_Token::Session_Token_RenewalTime(XNETHANDLE xhToken, int* pInt_Ren
 XHTHREAD CSession_Token::Session_Token_Thread(XPVOID lParam)
 {
     CSession_Token* pClass_This = (CSession_Token*)lParam;
+    std::list<TOKENSESSION_INFOCLIENT> stl_ListNotify;
     XENGINE_LIBTIME st_LibTimer;
-    std::list<XNETHANDLE> stl_ListNotify;
 
     while (pClass_This->bIsRun)
     {
@@ -337,19 +345,19 @@ XHTHREAD CSession_Token::Session_Token_Thread(XPVOID lParam)
             BaseLib_Time_GetSysTime(&st_LibTimer);                  //获取现在的系统时间
             __int64x nOnlineSpan = 0;                               //在线时间
             //用户登录了多少秒
-            BaseLib_TimeSpan_GetForStu(&stl_MapIterator->second.st_LibTimer, &st_LibTimer, &nOnlineSpan, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
-            if (stl_MapIterator->second.nTimeout > 0)
+            BaseLib_TimeSpan_GetForStu(&stl_MapIterator->second.st_OutTimer, &st_LibTimer, &nOnlineSpan, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
+            if (stl_MapIterator->second.nTimeout >= 0)
             {
-                if (nOnlineSpan > stl_MapIterator->second.nTimeout)
+                if ((stl_MapIterator->second.nTimeout > 0) && (nOnlineSpan > stl_MapIterator->second.nTimeout))
                 {
-                    stl_ListNotify.push_back(stl_MapIterator->first);
+                    stl_ListNotify.push_back(stl_MapIterator->second);
                 }
             }
             else
             {
-                if (nOnlineSpan > pClass_This->m_nTimeout)
+                if ((nOnlineSpan > pClass_This->m_nTimeout) && (pClass_This->m_nTimeout > 0))
                 {
-                    stl_ListNotify.push_back(stl_MapIterator->first);
+                    stl_ListNotify.push_back(stl_MapIterator->second);
                 }
             }
         }
@@ -357,10 +365,10 @@ XHTHREAD CSession_Token::Session_Token_Thread(XPVOID lParam)
         //判断是否有需要关闭的客户端
         if (!stl_ListNotify.empty())
         {
-            std::list<XNETHANDLE>::iterator stl_ListIterator = stl_ListNotify.begin();
+            std::list<TOKENSESSION_INFOCLIENT>::iterator stl_ListIterator = stl_ListNotify.begin();
             for (; stl_ListIterator != stl_ListNotify.end(); stl_ListIterator++)
             {
-                pClass_This->lpCall_TokenEvents(*stl_ListIterator, pClass_This->m_lParam);
+                pClass_This->lpCall_TokenEvents(stl_ListIterator->xhToken, (int)stl_ListIterator->nTimeout, stl_ListIterator->nRenewalTime, &stl_ListIterator->st_LibTimer, &stl_ListIterator->st_UserInfo, pClass_This->m_lParam);
             }
             stl_ListNotify.clear();        //清理元素
         }

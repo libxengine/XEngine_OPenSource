@@ -39,9 +39,9 @@ extern "C" bool Session_Token_Destroy()
 {
 	return m_SessionToken.Session_Token_Destroy();
 }
-extern "C" bool Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo)
+extern "C" bool Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, int nTimeout)
 {
-	return m_SessionToken.Session_Token_Insert(xhToken, pSt_UserInfo);
+	return m_SessionToken.Session_Token_Insert(xhToken, pSt_UserInfo, nTimeout);
 }
 extern "C" bool Session_Token_Delete(XNETHANDLE xhToken)
 {

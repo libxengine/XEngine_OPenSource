@@ -14,6 +14,8 @@ typedef struct
 {
 	XENGINE_PROTOCOL_USERINFO st_UserInfo;
 	XENGINE_LIBTIME st_LibTimer;                                          //登录时间结构
+	XENGINE_LIBTIME st_OutTimer;                                          //超时时间结构
+	XNETHANDLE xhToken;                                                   //当前TOKEN
 	int nTimeout;                                                         //单独指定超时
 	int nRenewalTime;                                                     //自动续期次数
 }TOKENSESSION_INFOCLIENT;
@@ -26,7 +28,7 @@ public:
 public:
 	bool Session_Token_Init(int nTimeout, CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS fpCall_TokenEvent, XPVOID lParam = NULL);
 	bool Session_Token_Destroy();
-	bool Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL);
+	bool Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
 	bool Session_Token_Delete(XNETHANDLE xhToken);
 	bool Session_Token_UPDate(XNETHANDLE xhToken);
 	bool Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL);

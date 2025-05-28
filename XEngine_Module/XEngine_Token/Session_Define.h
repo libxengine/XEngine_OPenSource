@@ -13,7 +13,8 @@
 //////////////////////////////////////////////////////////////////////////
 //                         导出的回调函数
 //////////////////////////////////////////////////////////////////////////
-typedef void(CALLBACK* CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS)(XNETHANDLE xhToken, XPVOID lParam);
+//超时的TOKEN,超时的时间,续期次数,登录时间,用户信息(如果没有就是NULL),自定义参数
+typedef void(CALLBACK* CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS)(XNETHANDLE xhToken, int nTimeout, int nTimerenewal, XENGINE_LIBTIME* pSt_LibTime, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XPVOID lParam);
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ extern "C" XLONG Session_GetLastError(int *pInt_ErrorCode = NULL);
   In/Out：In
   类型：整数型
   可空：N
-  意思：超时时间,单位秒
+  意思：超时时间,单位秒,0不超时,永远存在
  参数.二：fpCall_TokenEvent
   In/Out：In/Out
   类型：回调函数
@@ -67,12 +68,17 @@ extern "C" bool Session_Token_Destroy();
   类型：数据结构指针
   可空：Y
   意思：用户信息表
+ 参数.三：nTimeout
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：单独指定超时时间,-1 不启用
 返回值
   类型：逻辑型
   意思：是否允许登陆
 备注：
 *********************************************************************/
-extern "C" bool Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL);
+extern "C" bool Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
 /********************************************************************
 函数名称：Session_Token_Delete
 函数功能：移除一个客户端
@@ -98,7 +104,7 @@ extern "C" bool Session_Token_Delete(XNETHANDLE xhToken);
 返回值
   类型：逻辑型
   意思：是否成功
-备注：
+备注：可以用于续期
 *********************************************************************/
 extern "C" bool Session_Token_UPDate(XNETHANDLE xhToken);
 /********************************************************************
@@ -146,7 +152,7 @@ extern "C" bool Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO*
 extern "C" bool Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, XNETHANDLE* pxhToken);
 /********************************************************************
 函数名称：Session_Token_RenewalTime
-函数功能：续期时间
+函数功能：获取续期次数
  参数.一：xhToken
   In/Out：In
   类型：句柄

@@ -30,7 +30,7 @@ public:
 	bool Session_Dynamic_Delete(XNETHANDLE xhToken);
 	bool Session_Dynamic_Get(XNETHANDLE xhToken, int* pInt_DynamicCode);
 protected:
-	static XHTHREAD CALLBACK Session_Dynamic_Thread(XPVOID lParam);
+	static XHTHREAD XCALLBACK Session_Dynamic_Thread(XPVOID lParam);
 private:
 	int m_nSescond = 0;
 	bool m_bRun = false;

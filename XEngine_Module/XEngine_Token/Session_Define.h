@@ -14,7 +14,7 @@
 //                         导出的回调函数
 //////////////////////////////////////////////////////////////////////////
 //超时的TOKEN,超时的时间,续期次数,登录时间,用户信息(如果没有就是NULL),自定义参数
-typedef void(CALLBACK* CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS)(XNETHANDLE xhToken, int nTimeout, int nTimerenewal, XENGINE_LIBTIME* pSt_LibTime, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XPVOID lParam);
+typedef void(XCALLBACK* CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS)(XNETHANDLE xhToken, int nTimeout, int nTimerenewal, XENGINE_LIBTIME* pSt_LibTime, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XPVOID lParam);
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
 //////////////////////////////////////////////////////////////////////////

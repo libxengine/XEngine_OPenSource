@@ -248,7 +248,7 @@ bool CSession_Dynamic::Session_Dynamic_Get(XNETHANDLE xhToken, int* pInt_Dynamic
 //////////////////////////////////////////////////////////////////////////
 //                      保护函数
 //////////////////////////////////////////////////////////////////////////
-XHTHREAD CALLBACK CSession_Dynamic::Session_Dynamic_Thread(XPVOID lParam)
+XHTHREAD XCALLBACK CSession_Dynamic::Session_Dynamic_Thread(XPVOID lParam)
 {
 	CSession_Dynamic* pClass_This = (CSession_Dynamic*)lParam;
 	//用于处理超时的token

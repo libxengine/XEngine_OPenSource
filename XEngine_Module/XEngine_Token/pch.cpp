@@ -55,6 +55,14 @@ extern "C" bool Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO*
 {
 	return m_SessionToken.Session_Token_Get(xhToken, pSt_UserInfo);
 }
+extern "C" bool Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTIME* pSt_LoginTime, XENGINE_LIBTIME* pSt_UPTime)
+{
+	return m_SessionToken.Session_Token_GetTimeInfo(xhToken, pSt_LoginTime, pSt_UPTime);
+}
+extern "C" bool Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout)
+{
+	return m_SessionToken.Session_Token_GetTimeout(xhToken, pInt_Timeout);
+}
 extern "C" bool Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, XNETHANDLE* pxhToken)
 {
 	return m_SessionToken.Session_Token_GetUser(lpszUser, lpszPass, pxhToken);

@@ -127,6 +127,49 @@ extern "C" bool Session_Token_UPDate(XNETHANDLE xhToken);
 *********************************************************************/
 extern "C" bool Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL);
 /********************************************************************
+函数名称：Session_Token_GetTimeInfo
+函数功能：获取客户端时间信息
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：要操作的客户端
+ 参数.二：pSt_LoginTime
+  In/Out：Out
+  类型：数据结构指针
+  可空：Y
+  意思：输出客户端登录时间
+ 参数.二：pSt_UPTime
+  In/Out：Out
+  类型：数据结构指针
+  可空：Y
+  意思：输出客户端更新时间
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTIME* pSt_LoginTime = NULL, XENGINE_LIBTIME* pSt_UPTime = NULL);
+/********************************************************************
+函数名称：Session_Token_GetTimeout
+函数功能：获取客户端剩余时间
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：要操作的客户端
+ 参数.二：pInt_Timeout
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出超时时间
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout);
+/********************************************************************
 函数名称：Session_Token_GetUser
 函数功能：获取用户是否存在
  参数.一：lpszUser

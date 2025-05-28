@@ -233,6 +233,93 @@ bool CSession_Token::Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USER
     return true;
 }
 /********************************************************************
+函数名称：Session_Token_GetTimeInfo
+函数功能：获取客户端时间信息
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：要操作的客户端
+ 参数.二：pSt_LoginTime
+  In/Out：Out
+  类型：数据结构指针
+  可空：Y
+  意思：输出客户端登录时间
+ 参数.二：pSt_UPTime
+  In/Out：Out
+  类型：数据结构指针
+  可空：Y
+  意思：输出客户端更新时间
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_Token::Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTIME* pSt_LoginTime /* = NULL */, XENGINE_LIBTIME* pSt_UPTime /* = NULL */)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
+	if (stl_MapIterator == stl_MapToken.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	if (NULL != pSt_LoginTime)
+	{
+		*pSt_LoginTime = stl_MapIterator->second.st_LibTimer;
+	}
+    if (NULL != pSt_UPTime)
+    {
+        *pSt_UPTime = stl_MapIterator->second.st_OutTimer;
+    }
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：Session_Token_GetTimeout
+函数功能：获取客户端剩余时间
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：要操作的客户端
+ 参数.二：pInt_Timeout
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出超时时间
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_Token::Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
+	if (stl_MapIterator == stl_MapToken.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+    XENGINE_LIBTIME st_LibTimer = {};
+	BaseLib_Time_GetSysTime(&st_LibTimer);                  //获取现在的系统时间
+	__int64x nOnlineSpan = 0;                               //在线时间
+	//用户登录了多少秒
+	BaseLib_TimeSpan_GetForStu(&stl_MapIterator->second.st_OutTimer, &st_LibTimer, &nOnlineSpan, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
+    *pInt_Timeout = (int)nOnlineSpan;
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
 函数名称：Session_Token_GetUser
 函数功能：获取用户的TOKEN
  参数.一：lpszUser

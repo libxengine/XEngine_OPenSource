@@ -32,6 +32,8 @@ public:
 	bool Session_Token_Delete(XNETHANDLE xhToken);
 	bool Session_Token_UPDate(XNETHANDLE xhToken);
 	bool Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL);
+	bool Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTIME* pSt_LoginTime = NULL, XENGINE_LIBTIME* pSt_UPTime = NULL);
+	bool Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout);
 	bool Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, XNETHANDLE* pxhToken);
 	bool Session_Token_RenewalTime(XNETHANDLE xhToken, int* pInt_RenewalTime);
 protected:

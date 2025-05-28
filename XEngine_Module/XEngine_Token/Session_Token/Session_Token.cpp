@@ -94,6 +94,50 @@ bool CSession_Token::Session_Token_Destroy()
     return true;
 }
 /********************************************************************
+函数名称：Session_Token_Create
+函数功能：创建一个TOKEN到会话管理器
+ 参数.一：pxhToken
+  In/Out：Out
+  类型：句柄
+  可空：N
+  意思：创建成功的TOKEN
+ 参数.二：pSt_UserTable
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：用户信息表
+ 参数.三：nTimeout
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：单独指定超时时间,-1 不启用
+返回值
+  类型：逻辑型
+  意思：是否允许登陆
+备注：
+*********************************************************************/
+bool CSession_Token::Session_Token_Create(XNETHANDLE *pxhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo /* = NULL */, int nTimeout /* = -1 */)
+{
+    Session_IsErrorOccur = false;
+
+    TOKENSESSION_INFOCLIENT st_TokenClient = {};
+
+    BaseLib_Handle_Create(pxhToken);
+
+    st_TokenClient.nTimeout = nTimeout;
+    BaseLib_Time_GetSysTime(&st_TokenClient.st_LibTimer);
+    BaseLib_Time_GetSysTime(&st_TokenClient.st_OutTimer);
+
+    if (NULL != pSt_UserInfo)
+    {
+        st_TokenClient.st_UserInfo = *pSt_UserInfo;
+    }
+    st_Locker.lock();
+    stl_MapToken.insert(std::make_pair(*pxhToken, st_TokenClient));
+    st_Locker.unlock();
+    return true;
+}
+/********************************************************************
 函数名称：Session_Authorize_Insert
 函数功能：插入一个TOKEN到会话管理器
  参数.一：xhToken
@@ -122,7 +166,18 @@ bool CSession_Token::Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_U
 
     TOKENSESSION_INFOCLIENT st_TokenClient = {};
 
-    st_TokenClient.xhToken = xhToken;
+	st_TokenClient.xhToken = xhToken;
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapToken.find(st_TokenClient.xhToken);
+	if (stl_MapIterator != stl_MapToken.end())
+	{
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_EXIST;
+        st_Locker.unlock_shared();
+		return false;
+	}
+	st_Locker.unlock_shared();
+    
     st_TokenClient.nTimeout = nTimeout;
     BaseLib_Time_GetSysTime(&st_TokenClient.st_LibTimer);
     BaseLib_Time_GetSysTime(&st_TokenClient.st_OutTimer);
@@ -320,6 +375,41 @@ bool CSession_Token::Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Time
 	return true;
 }
 /********************************************************************
+函数名称：Session_Token_GetTimeRenewal
+函数功能：获取续期次数
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的TOKEN
+ 参数.二：pInt_RenewalTime
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出续期的次数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_Token::Session_Token_GetTimeRenewal(XNETHANDLE xhToken, int* pInt_RenewalTime)
+{
+    Session_IsErrorOccur = false;
+
+    st_Locker.lock_shared();
+    std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
+    if (stl_MapIterator == stl_MapToken.end())
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+        st_Locker.unlock_shared();
+        return false;
+    }
+    *pInt_RenewalTime = stl_MapIterator->second.nRenewalTime;
+    st_Locker.unlock_shared();
+    return true;
+}
+/********************************************************************
 函数名称：Session_Token_GetUser
 函数功能：获取用户的TOKEN
  参数.一：lpszUser
@@ -379,39 +469,45 @@ bool CSession_Token::Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, X
     return true;
 }
 /********************************************************************
-函数名称：Session_Token_RenewalTime
-函数功能：获取续期次数
- 参数.一：xhToken
-  In/Out：In
-  类型：句柄
+函数名称：Session_Token_GetList
+函数功能：获取所有管理的TOKEN
+ 参数.一：pppxhToken
+  In/Out：Out
+  类型：三级指针
   可空：N
-  意思：输入要操作的TOKEN
- 参数.二：pInt_RenewalTime
+  意思：输出获取到的TOKEN列表
+ 参数.二：pInt_ListCount
   In/Out：Out
   类型：整数型指针
   可空：N
-  意思：输出续期的次数
+  意思：输出获取到的列表个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CSession_Token::Session_Token_RenewalTime(XNETHANDLE xhToken, int* pInt_RenewalTime)
+bool CSession_Token::Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_ListCount)
 {
-    Session_IsErrorOccur = false;
+	Session_IsErrorOccur = false;
 
-    st_Locker.lock_shared();
-    std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
-    if (stl_MapIterator == stl_MapToken.end())
-    {
-        Session_IsErrorOccur = true;
-        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
-        st_Locker.unlock_shared();
-        return false;
-    }
-    *pInt_RenewalTime = stl_MapIterator->second.nRenewalTime;
-    st_Locker.unlock_shared();
-    return true;
+	if ((NULL == pppxhToken) || (NULL == pInt_ListCount))
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
+		return false;
+	}
+    *pInt_ListCount = stl_MapToken.size();
+    BaseLib_Memory_Malloc((XPPPMEM)pppxhToken, *pInt_ListCount, sizeof(XNETHANDLE));
+
+	st_Locker.lock_shared();
+	std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.begin();
+    for (int i = 0; stl_MapIterator != stl_MapToken.end(); stl_MapIterator++, i++)
+	{
+        *(*pppxhToken)[i] = stl_MapIterator->first;
+	}
+	st_Locker.unlock_shared();
+	
+	return true;
 }
 //////////////////////////////////////////////////////////////////////////
 //                     线程函数

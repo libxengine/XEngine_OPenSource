@@ -78,18 +78,28 @@ bool CSession_Dynamic::Session_Dynamic_Destory()
   In/Out：Out
   类型：句柄
   可空：N
-  意思：输出动态码绑定的句柄
+  意思：输出创建的TOKEN
  参数.二：pInt_DynamicCode
   In/Out：Out
-  类型：整数型
+  类型：整数型指针
   可空：N
   意思：输出动态码
+ 参数.三：nDynamicStart
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：动态码起始范围,默认5位
+ 参数.四：nDynamicEnd
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：动态码结束范围
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CSession_Dynamic::Session_Dynamic_Create(XNETHANDLE* pxhToken, XSHOT* pInt_DynamicCode)
+bool CSession_Dynamic::Session_Dynamic_Create(XNETHANDLE* pxhToken, XSHOT* pInt_DynamicCode, __int64x nDynamicStart /* = 10000 */, __int64x nDynamicEnd /* = 65535 */)
 {
 	Session_IsErrorOccur = false;
 
@@ -103,12 +113,74 @@ bool CSession_Dynamic::Session_Dynamic_Create(XNETHANDLE* pxhToken, XSHOT* pInt_
 
 	st_DynamicCode.nTimeStart = time(NULL);
 	BaseLib_Handle_Create(&st_DynamicCode.xhToken);
-	BaseLib_Handle_Create((XNETHANDLE*)&st_DynamicCode.nDynamicCode, 10001, 65535);
+	BaseLib_Handle_Create((XNETHANDLE*)&st_DynamicCode.nDynamicCode, nDynamicStart, nDynamicEnd);
 
 	*pxhToken = st_DynamicCode.xhToken;
 	*pInt_DynamicCode = st_DynamicCode.nDynamicCode;
 	st_Locker.lock();
 	stl_MapDynamicCode.insert(std::make_pair(*pxhToken, st_DynamicCode));
+	st_Locker.unlock();
+	return true;
+}
+/********************************************************************
+函数名称：Session_Dynamic_Insert
+函数功能：插入一个TOKNE并且生成对应的动态码
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入自己创建的TOKEN
+ 参数.二：pInt_DynamicCode
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：输出动态码
+ 参数.三：nDynamicStart
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：动态码起始范围,默认5位
+ 参数.四：nDynamicEnd
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：动态码结束范围
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_Dynamic::Session_Dynamic_Insert(XNETHANDLE xhToken, XSHOT* pInt_DynamicCode, __int64x nDynamicStart /* = 10000 */, __int64x nDynamicEnd /* = 65535 */)
+{
+	Session_IsErrorOccur = false;
+
+	if (NULL == pInt_DynamicCode)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_DYNAMIC_PARAMENT;
+		return false;
+	}
+	DYANMICSESSION_INFOCLIENT st_DynamicCode = {};
+
+	st_DynamicCode.nTimeStart = time(NULL);
+	st_DynamicCode.xhToken = xhToken;
+
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapDynamicCode.find(st_DynamicCode.xhToken);
+	if (stl_MapIterator != stl_MapDynamicCode.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_DYNAMIC_EXIST;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	st_Locker.unlock_shared();
+
+	BaseLib_Handle_Create((XNETHANDLE*)&st_DynamicCode.nDynamicCode, nDynamicStart, nDynamicEnd);
+
+	*pInt_DynamicCode = st_DynamicCode.nDynamicCode;
+	st_Locker.lock();
+	stl_MapDynamicCode.insert(std::make_pair(xhToken, st_DynamicCode));
 	st_Locker.unlock();
 	return true;
 }

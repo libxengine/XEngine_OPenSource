@@ -56,6 +56,30 @@ extern "C" bool Session_Token_Init(int nTimeout, CALLBACK_XENGIEN_MODULE_TOKEN_E
 *********************************************************************/
 extern "C" bool Session_Token_Destroy();
 /********************************************************************
+函数名称：Session_Token_Create
+函数功能：创建一个TOKEN到会话管理器
+ 参数.一：pxhToken
+  In/Out：Out
+  类型：句柄
+  可空：N
+  意思：创建成功的TOKEN
+ 参数.二：pSt_UserTable
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：用户信息表
+ 参数.三：nTimeout
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：单独指定超时时间,-1 不启用
+返回值
+  类型：逻辑型
+  意思：是否允许登陆
+备注：
+*********************************************************************/
+extern "C" bool Session_Token_Create(XNETHANDLE* pxhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
+/********************************************************************
 函数名称：Session_Authorize_Insert
 函数功能：插入一个TOKEN到会话管理器
  参数.一：xhToken
@@ -170,6 +194,25 @@ extern "C" bool Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTIME* p
 *********************************************************************/
 extern "C" bool Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout);
 /********************************************************************
+函数名称：Session_Token_GetTimeRenewal
+函数功能：获取续期次数
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的TOKEN
+ 参数.二：pInt_RenewalTime
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出续期的次数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Token_GetTimeRenewal(XNETHANDLE xhToken, int* pInt_RenewalTime);
+/********************************************************************
 函数名称：Session_Token_GetUser
 函数功能：获取用户是否存在
  参数.一：lpszUser
@@ -194,24 +237,24 @@ extern "C" bool Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout);
 *********************************************************************/
 extern "C" bool Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, XNETHANDLE* pxhToken);
 /********************************************************************
-函数名称：Session_Token_RenewalTime
-函数功能：获取续期次数
- 参数.一：xhToken
-  In/Out：In
-  类型：句柄
+函数名称：Session_Token_GetList
+函数功能：获取所有管理的TOKEN
+ 参数.一：pppxhToken
+  In/Out：Out
+  类型：三级指针
   可空：N
-  意思：输入要操作的TOKEN
- 参数.二：pInt_RenewalTime
+  意思：输出获取到的TOKEN列表
+ 参数.二：pInt_ListCount
   In/Out：Out
   类型：整数型指针
   可空：N
-  意思：输出续期的次数
+  意思：输出获取到的列表个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Session_Token_RenewalTime(XNETHANDLE xhToken, int* pInt_RenewalTime);
+extern "C" bool Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_ListCount);
 /************************************************************************/
 /*                    动态码导出定义                                    */
 /************************************************************************/
@@ -245,18 +288,57 @@ extern "C" bool Session_Dynamic_Destory();
   In/Out：Out
   类型：句柄
   可空：N
-  意思：输出动态码绑定的句柄
+  意思：输出创建的TOKEN
  参数.二：pInt_DynamicCode
   In/Out：Out
-  类型：整数型
+  类型：整数型指针
   可空：N
   意思：输出动态码
+ 参数.三：nDynamicStart
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：动态码起始范围,默认5位
+ 参数.四：nDynamicEnd
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：动态码结束范围
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Session_Dynamic_Create(XNETHANDLE* pxhToken, XSHOT* pInt_DynamicCode);
+extern "C" bool Session_Dynamic_Create(XNETHANDLE* pxhToken, XSHOT* pInt_DynamicCode, __int64x nDynamicStart = 10000, __int64x nDynamicEnd = 65535);
+/********************************************************************
+函数名称：Session_Dynamic_Insert
+函数功能：插入一个TOKNE并且生成对应的动态码
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入自己创建的TOKEN
+ 参数.二：pInt_DynamicCode
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：输出动态码
+ 参数.三：nDynamicStart
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：动态码起始范围,默认5位
+ 参数.四：nDynamicEnd
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：动态码结束范围
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Dynamic_Insert(XNETHANDLE xhToken, XSHOT* pInt_DynamicCode, __int64x nDynamicStart = 10000, __int64x nDynamicEnd = 65535);
 /********************************************************************
 函数名称：Session_Dynamic_Delete
 函数功能：主动删除一个动态码

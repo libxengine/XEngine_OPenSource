@@ -25,7 +25,8 @@ public:
 public:
 	bool Session_Dynamic_Init(int nSecond);
 	bool Session_Dynamic_Destory();
-	bool Session_Dynamic_Create(XNETHANDLE* pxhToken, XSHOT* pInt_DynamicCode);
+	bool Session_Dynamic_Create(XNETHANDLE* pxhToken, XSHOT* pInt_DynamicCode, __int64x nDynamicStart = 10000, __int64x nDynamicEnd = 65535);
+	bool Session_Dynamic_Insert(XNETHANDLE xhToken, XSHOT* pInt_DynamicCode, __int64x nDynamicStart = 10000, __int64x nDynamicEnd = 65535);
 	bool Session_Dynamic_Delete(XNETHANDLE xhToken);
 	bool Session_Dynamic_Get(XNETHANDLE xhToken, int* pInt_DynamicCode);
 protected:

@@ -39,6 +39,10 @@ extern "C" bool Session_Token_Destroy()
 {
 	return m_SessionToken.Session_Token_Destroy();
 }
+extern "C" bool Session_Token_Create(XNETHANDLE* pxhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, int nTimeout)
+{
+	return m_SessionToken.Session_Token_Create(pxhToken, pSt_UserInfo, nTimeout);
+}
 extern "C" bool Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, int nTimeout)
 {
 	return m_SessionToken.Session_Token_Insert(xhToken, pSt_UserInfo, nTimeout);
@@ -63,13 +67,17 @@ extern "C" bool Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout)
 {
 	return m_SessionToken.Session_Token_GetTimeout(xhToken, pInt_Timeout);
 }
+extern "C" bool Session_Token_GetTimeRenewal(XNETHANDLE xhToken, int* pInt_RenewalTime)
+{
+	return m_SessionToken.Session_Token_GetTimeRenewal(xhToken, pInt_RenewalTime);
+}
 extern "C" bool Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, XNETHANDLE* pxhToken)
 {
 	return m_SessionToken.Session_Token_GetUser(lpszUser, lpszPass, pxhToken);
 }
-extern "C" bool Session_Token_RenewalTime(XNETHANDLE xhToken, int* pInt_RenewalTime)
+extern "C" bool Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_ListCount)
 {
-	return m_SessionToken.Session_Token_RenewalTime(xhToken, pInt_RenewalTime);
+	return m_SessionToken.Session_Token_GetList(pppxhToken, pInt_ListCount);
 }
 /************************************************************************/
 /*                    动态码导出定义                                    */
@@ -82,9 +90,13 @@ extern "C" bool Session_Dynamic_Destory()
 {
 	return m_SessionDynamic.Session_Dynamic_Destory();
 }
-extern "C" bool Session_Dynamic_Create(XNETHANDLE* pxhToken, XSHOT* pInt_DynamicCode)
+extern "C" bool Session_Dynamic_Create(XNETHANDLE* pxhToken, XSHOT* pInt_DynamicCode, __int64x nDynamicStart, __int64x nDynamicEnd)
 {
-	return m_SessionDynamic.Session_Dynamic_Create(pxhToken, pInt_DynamicCode);
+	return m_SessionDynamic.Session_Dynamic_Create(pxhToken, pInt_DynamicCode, nDynamicStart, nDynamicEnd);
+}
+extern "C" bool Session_Dynamic_Insert(XNETHANDLE xhToken, XSHOT* pInt_DynamicCode, __int64x nDynamicStart, __int64x nDynamicEnd)
+{
+	return m_SessionDynamic.Session_Dynamic_Insert(xhToken, pInt_DynamicCode, nDynamicStart, nDynamicEnd);
 }
 extern "C" bool Session_Dynamic_Delete(XNETHANDLE xhToken)
 {

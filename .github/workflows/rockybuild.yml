@@ -71,3 +71,6 @@ jobs:
             cd ..
             cd XEngine_MSGNotify
             make
+            cd ..
+            cd XEngine_AIApi
+            make

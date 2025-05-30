@@ -1,0 +1,9 @@
+LIBRARY
+
+EXPORTS
+	AIApi_GetLastError
+
+	AIApi_Chat_Create
+	AIApi_Chat_Excute
+	AIApi_Chat_GetStatus
+	AIApi_Chat_Destory

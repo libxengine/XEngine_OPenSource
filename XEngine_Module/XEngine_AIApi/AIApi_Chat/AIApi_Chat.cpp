@@ -203,6 +203,7 @@ bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, L
 	st_JsonRoot["messages"] = st_JsonArray;
 
 	xstring m_StrBody = Json::writeString(st_JsonBuilder, st_JsonRoot);
+#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 21
 	if (!APIClient_Http_Excute(xhToken, m_StrBody.c_str(), m_StrBody.length(), stl_MapIterator->second->tszAPIHdr))
 	{
 		AIApi_IsErrorOccur = true;
@@ -210,6 +211,7 @@ bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, L
 		st_Locker.unlock_shared();
 		return false;
 	}
+#endif
 	st_Locker.unlock_shared();
 	return true;
 }

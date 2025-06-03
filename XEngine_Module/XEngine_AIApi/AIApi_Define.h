@@ -49,12 +49,17 @@ extern "C" XLONG AIApi_GetLastError(int *pInt_ErrorCode = NULL);
   类型：无类型指针
   可空：Y
   意思：回调函数自定义参数
+ 参数.六：bHistory
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用历史会话功能
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL);
+extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL, bool bHistory = true);
 /********************************************************************
 函数名称：AIApi_Chat_Destory
 函数功能：销毁一个对话模型
@@ -69,6 +74,39 @@ extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCX
 备注：
 *********************************************************************/
 extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false);
+/********************************************************************
+函数名称：AIApi_Chat_SetRole
+函数功能：设置系统角色
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的句柄
+ 参数.二：lpszModelName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入系统角色信息,比如:你是一个C/C++语言的开发大师
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool AIApi_Chat_SetRole(XNETHANDLE xhToken, LPCXSTR lpszRoleName);
+/********************************************************************
+函数名称：AIApi_Chat_Clear
+函数功能：清理对话历史记录
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool AIApi_Chat_Clear(XNETHANDLE xhToken);
 /********************************************************************
 函数名称：AIApi_Chat_Excute
 函数功能：执行对话
@@ -102,28 +140,18 @@ extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPC
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL);
+extern "C" bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);
 /********************************************************************
-函数名称：AIApi_Chat_GetStatus
-函数功能：获取执行状态
+函数名称：AIApi_Chat_Destory
+函数功能：销毁一个对话模型
  参数.一：xhToken
   In/Out：In
   类型：句柄
   可空：N
-  意思：输入要操作的句柄
- 参数.二：pbComplete
-  In/Out：Out
-  类型：逻辑型指针
-  可空：N
-  意思：输出是否执行完毕
- 参数.二：pInt_HTTPCode
-  In/Out：Out
-  类型：整数型指针
-  可空：Y
-  意思：输出HTTP状态码
+  意思：要操作的模型句柄
 返回值
   类型：逻辑型
   意思：是否成功
-备注：pbComplete没有执行完毕需要等待执行完毕
+备注：
 *********************************************************************/
 extern "C" bool AIApi_Chat_Destory(XNETHANDLE xhToken);

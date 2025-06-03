@@ -5,5 +5,7 @@ EXPORTS
 
 	AIApi_Chat_Create
 	AIApi_Chat_Excute
+	AIApi_Chat_SetRole
+	AIApi_Chat_Clear
 	AIApi_Chat_GetStatus
 	AIApi_Chat_Destory

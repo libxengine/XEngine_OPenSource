@@ -12,10 +12,20 @@
 *********************************************************************/
 typedef struct
 {
+	XCHAR tszRoleContent[8192];
+	XCHAR tszRoleName[128];
+}AICLIENT_HISTORY;
+typedef struct
+{
 	XCHAR tszAPIUrl[XPATH_MAX];
 	XCHAR tszAPIHdr[XPATH_MAX];
+	XCHAR tszAPIRole[XPATH_MAX];
 	XNETHANDLE xhToken;
 	time_t nTimeStart;
+
+	bool bStream;
+	bool bHistory;
+	std::unique_ptr<std::list<AICLIENT_HISTORY>> pStl_ListHistory;
 
 	XPVOID lClass;
 	XPVOID lParam;
@@ -28,9 +38,11 @@ public:
 	CAIApi_Chat();
 	~CAIApi_Chat();
 public:
-	bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL);
+	bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL, bool bHistory = true);
 	bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false);
-	bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL);
+	bool AIApi_Chat_SetRole(XNETHANDLE xhToken, LPCXSTR lpszRoleName);
+	bool AIApi_Chat_Clear(XNETHANDLE xhToken);
+	bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);
 	bool AIApi_Chat_Destory(XNETHANDLE xhToken);
 protected:
 	bool AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply);

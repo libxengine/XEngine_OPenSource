@@ -29,17 +29,25 @@ extern "C" XLONG AIApi_GetLastError(int* pInt_ErrorCode)
 /************************************************************************/
 /*                        AI对话模型导出函数                            */
 /************************************************************************/
-extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam)
+extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam, bool bHistory)
 {
-	return m_AIChat.AIApi_Chat_Create(pxhToken, lpszAPIUrl, lpszAPIKey, fpCall_Chat, lParam);
+	return m_AIChat.AIApi_Chat_Create(pxhToken, lpszAPIUrl, lpszAPIKey, fpCall_Chat, lParam, bHistory);
 }
 extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream)
 {
 	return m_AIChat.AIApi_Chat_Excute(xhToken, lpszModelName, lpszMSGBuffer, nMSGLen, bStream);
 }
-extern "C" bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode)
+extern "C" bool AIApi_Chat_SetRole(XNETHANDLE xhToken, LPCXSTR lpszRoleName)
 {
-	return m_AIChat.AIApi_Chat_GetStatus(xhToken, pbComplete, pInt_HTTPCode);
+	return m_AIChat.AIApi_Chat_SetRole(xhToken, lpszRoleName);
+}
+extern "C" bool AIApi_Chat_Clear(XNETHANDLE xhToken)
+{
+	return m_AIChat.AIApi_Chat_Clear(xhToken);
+}
+extern "C" bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode, bool bWaitExist)
+{
+	return m_AIChat.AIApi_Chat_GetStatus(xhToken, pbComplete, pInt_HTTPCode, bWaitExist);
 }
 extern "C" bool AIApi_Chat_Destory(XNETHANDLE xhToken)
 {

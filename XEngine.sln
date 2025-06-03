@@ -54,6 +54,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_AIApi", "XEngine_Mo
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AIApi_APPExample", "XEngine_Example\AIApi_APPExample\AIApi_APPExample.vcxproj", "{C0792082-058B-4BF1-894F-D4D5D7124022}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DE495AB3-201F-4288-9A3A-41DFA146AD30} = {DE495AB3-201F-4288-9A3A-41DFA146AD30}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

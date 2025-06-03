@@ -17,6 +17,7 @@
 #include <json/json.h>
 #include <thread>
 #include <memory>
+#include <list>
 #include <shared_mutex>
 #include <unordered_map>
 #include <XEngine_Include/XEngine_CommHdr.h>

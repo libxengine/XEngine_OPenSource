@@ -337,7 +337,11 @@ bool CAIApi_Chat::AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int
 		return false;
 	}
 
+#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 21
 	if (!APIClient_Http_GetResult(xhToken, pbComplete, pInt_HTTPCode, bWaitExist))
+#else
+	if (!APIClient_Http_GetResult(xhToken, pbComplete, pInt_HTTPCode))
+#endif
 	{
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = APIClient_GetLastError();

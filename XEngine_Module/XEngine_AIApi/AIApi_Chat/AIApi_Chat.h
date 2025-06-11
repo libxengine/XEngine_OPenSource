@@ -12,18 +12,20 @@
 *********************************************************************/
 typedef struct
 {
+	int nCLen;
 	XCHAR tszRoleContent[8192];
 	XCHAR tszRoleName[128];
 }AICLIENT_HISTORY;
 typedef struct
 {
+	AICLIENT_HISTORY st_HisStream;       //流式有用
 	XCHAR tszAPIUrl[XPATH_MAX];
 	XCHAR tszAPIHdr[XPATH_MAX];
 	XCHAR tszAPIRole[XPATH_MAX];
 	XNETHANDLE xhToken;
 	time_t nTimeStart;
 	int nMSGLen;
-
+	
 	bool bStream;
 	bool bHistory;
 	std::unique_ptr<std::list<AICLIENT_HISTORY>> pStl_ListHistory;

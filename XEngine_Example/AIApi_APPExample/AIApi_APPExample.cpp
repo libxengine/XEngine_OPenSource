@@ -42,11 +42,11 @@ int main()
 	XNETHANDLE xhToken = 0;
 
 	LPCXSTR lpszAPIUrl = _X("https://api.zhizengzeng.com/v1/chat/completions");
-	LPCXSTR lpszAPIKey = _X("sk-zk29d91bb8d095c79c32a2a7edaca603137678e1b2a9316a");
+	LPCXSTR lpszAPIKey = _X("sk-1");
 	LPCXSTR lpszAPIModel = _X("gpt-4o");
 
 	//LPCXSTR lpszAPIUrl = _X("https://api.hunyuan.cloud.tencent.com/v1/chat/completions");
-	//LPCXSTR lpszAPIKey = _X("sk-kguobQDvmlzonvUXFBgYyMEZjZZjjcNp17bME2Si6SjrGNKp");
+	//LPCXSTR lpszAPIKey = _X("sk-1");
 	//LPCXSTR lpszAPIModel = _X("hunyuan-turbos-latest");
 	
 	if (!AIApi_Chat_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv))
@@ -57,7 +57,7 @@ int main()
 	AIApi_Chat_SetRole(xhToken, _X("You are a helpful assistant."));
 	LPCXSTR lpszMSGBuffer = _X("hello");
 	int nMSGLen = strlen(lpszMSGBuffer);
-	if (!AIApi_Chat_Excute(xhToken, lpszAPIModel, lpszMSGBuffer, nMSGLen))
+	if (!AIApi_Chat_Excute(xhToken, lpszAPIModel, lpszMSGBuffer, nMSGLen, false))
 	{
 		printf("AIApi_Chat_Excute:%lX\n", AIApi_GetLastError());
 		return 0;
@@ -67,12 +67,21 @@ int main()
 	AIApi_Chat_GetStatus(xhToken, &bCompleted);
 	lpszMSGBuffer = _X("what can you do for me?");
 	nMSGLen = strlen(lpszMSGBuffer);
-	if (!AIApi_Chat_Excute(xhToken, lpszAPIModel, lpszMSGBuffer, nMSGLen, false))
+	if (!AIApi_Chat_Excute(xhToken, lpszAPIModel, lpszMSGBuffer, nMSGLen, true))
 	{
 		printf("AIApi_Chat_Excute:%lX\n", AIApi_GetLastError());
 		return 0;
 	}
+	bCompleted = false;
+	AIApi_Chat_GetStatus(xhToken, &bCompleted);
 
+	lpszMSGBuffer = _X("李白是谁?");
+	nMSGLen = strlen(lpszMSGBuffer);
+	if (!AIApi_Chat_Excute(xhToken, lpszAPIModel, lpszMSGBuffer, nMSGLen, true))
+	{
+		printf("AIApi_Chat_Excute:%lX\n", AIApi_GetLastError());
+		return 0;
+	}
 	bCompleted = false;
 	AIApi_Chat_GetStatus(xhToken, &bCompleted);
 	AIApi_Chat_Destory(xhToken);

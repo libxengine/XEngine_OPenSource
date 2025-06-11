@@ -188,6 +188,7 @@ bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, L
 
 		st_JsonArray.append(st_JsonSystemRole);
 	}
+	stl_MapIterator->second->bStream = bStream;
 	//准备数据
 	Json::Value st_JsonObject;
 	AICLIENT_HISTORY st_AIHistory = {};
@@ -384,6 +385,9 @@ bool CAIApi_Chat::AIApi_Chat_Destory(XNETHANDLE xhToken)
 	{
 		APIClient_Http_Close(stl_MapIterator->second->xhToken);
 
+		free(stl_MapIterator->second->ptszMSGBuffer);
+		stl_MapIterator->second->ptszMSGBuffer = NULL;
+
 		delete stl_MapIterator->second;
 		stl_MapIterator->second = NULL;
 		stl_MapAIClient.erase(stl_MapIterator);
@@ -421,10 +425,6 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 			{
 				continue;
 			}
-			if (st_JsonMessage["content"].isNull() || st_JsonMessage["role"].isNull())
-			{
-				continue;
-			}
 		}
 		else
 		{
@@ -439,20 +439,27 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 			}
 		}
 		AICLIENT_HISTORY st_AIHistory = {};
-		int nGBKLen = st_JsonMessage["content"].asString().length();
-		_xstrcpy(st_AIHistory.tszRoleName, st_JsonMessage["role"].asCString(), sizeof(st_AIHistory.tszRoleName));
-		_xstrcpy(st_AIHistory.tszRoleContent, st_JsonMessage["content"].asString().c_str(), sizeof(st_AIHistory.tszRoleContent));
-#ifdef _MSC_BUILD
-		XCHAR tszGBKBuffer[8192] = {};
-		BaseLib_Charset_UTFToAnsi(st_JsonMessage["content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
-		pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, pSt_AIClient->lParam);
-#else
-		pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), pSt_AIClient->lParam);
-#endif
 		
-		if (pSt_AIClient->bHistory)
+		if (!st_JsonMessage["role"].isNull())
 		{
-			pSt_AIClient->pStl_ListHistory->push_back(st_AIHistory);
+			_xstrcpy(st_AIHistory.tszRoleName, st_JsonMessage["role"].asCString(), sizeof(st_AIHistory.tszRoleName));
+		}
+		int nGBKLen = st_JsonMessage["content"].asString().length();
+		_xstrcpy(st_AIHistory.tszRoleContent, st_JsonMessage["content"].asString().c_str(), sizeof(st_AIHistory.tszRoleContent));
+		//某些回复没有内容
+		if (_tcsxlen(st_AIHistory.tszRoleContent) > 0)
+		{
+#ifdef _MSC_BUILD
+			XCHAR tszGBKBuffer[8192] = {};
+			BaseLib_Charset_UTFToAnsi(st_JsonMessage["content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, pSt_AIClient->lParam);
+#else
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), pSt_AIClient->lParam);
+#endif
+			if (pSt_AIClient->bHistory)
+			{
+				pSt_AIClient->pStl_ListHistory->push_back(st_AIHistory);
+			}
 		}
 	}
 	
@@ -465,44 +472,66 @@ void CAIApi_Chat::AIApi_Chat_CBRecv(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, in
 {
 	AICLIENT_CHAT* pSt_AIClient = (AICLIENT_CHAT*)lParam;
 	CAIApi_Chat* pClass_This = (CAIApi_Chat*)pSt_AIClient->lClass;
-	//SSE
-	int nPos = 0;
-	bool bSSEReply = false;
-	LPCXSTR lpszSSEStr = _X("data: ");
 
-	if (pSt_AIClient->bStream)
+	if (pSt_AIClient->nMSGLen + nMsgLen > XENGINE_MEMORY_SIZE_MAX) 
 	{
-		xstring m_StrBuffer;
-		XCHAR tszMSGBuffer[8192] = {};
-		memcpy(tszMSGBuffer, lpszMsgBuffer, nMsgLen);
-		//stream可能会有chunk回车情况
-		XCHAR* ptszTokNext = NULL;
-		XCHAR* ptszTokStr = _tcsxtok_s(tszMSGBuffer, _X("\r\n\r\n"), &ptszTokNext);
-		if (NULL == ptszTokStr)
-		{
-			m_StrBuffer = (LPCXSTR)lpszMsgBuffer;
-			//头为data:
-			if (0 == _tcsxnicmp((LPCXSTR)lpszMsgBuffer, lpszSSEStr, _tcsxlen(lpszSSEStr)))
-			{
-				nPos = _tcsxlen(lpszSSEStr);
-				bSSEReply = true;
-			}
-		}
-		else
-		{
-			while (NULL != ptszTokStr)
-			{
-				m_StrBuffer += ptszTokStr;
-				ptszTokStr = _tcsxtok_s(NULL, _X("\r\n\r\n"), &ptszTokNext);
-			}
-		}
+		//清空旧数据并重置
+		pSt_AIClient->nMSGLen = 0;
 	}
-	
 	memcpy(pSt_AIClient->ptszMSGBuffer + pSt_AIClient->nMSGLen, lpszMsgBuffer, nMsgLen);
 	pSt_AIClient->nMSGLen += nMsgLen;
-	if (pClass_This->AIApi_Chat_Parse(pSt_AIClient, (LPCXSTR)pSt_AIClient->ptszMSGBuffer + nPos, pSt_AIClient->nMSGLen - nPos, bSSEReply))
+	if (pSt_AIClient->bStream)
 	{
-		memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
-		pSt_AIClient->nMSGLen = 0;
+		//SSE
+		printf("%s\n", (LPCXSTR)lpszMsgBuffer);
+		int nPos = 0;
+		LPCXSTR lpszSSEStr = _X("data: ");
+
+		XCHAR* ptszStart = pSt_AIClient->ptszMSGBuffer;
+		XCHAR* ptszEnd = ptszStart + pSt_AIClient->nMSGLen;
+		while (true)
+		{
+			// 查找是否存在完整的一个消息（由 \n\n 分隔）
+			XCHAR* ptszSplit = _tcsxstr(ptszStart, _X("\n\n"));
+			if (NULL == ptszSplit)
+			{
+				// 不完整，等待更多数据
+				break;
+			}
+			// 得到一个完整消息的结束位置（包含 \r\n\r\n 的结尾）
+			XCHAR* ptszNextMsg = ptszSplit + 2;  // Skip "\n\n"
+			int nOneMsgLen = (int)(ptszSplit - ptszStart); // 不含 "\n\n"
+			// 检查是否是 data: 开头的 SSE 消息
+			int nPos = 0;
+			if (_tcsxnicmp(ptszStart, lpszSSEStr, _tcsxlen(lpszSSEStr)) == 0)
+			{
+				nPos = _tcsxlen(lpszSSEStr);
+			}
+			// 解析当前消息体
+			if (!pClass_This->AIApi_Chat_Parse(pSt_AIClient, ptszStart + nPos, nOneMsgLen - nPos, true))
+			{
+				break; 
+			}
+			// 计算剩余数据长度
+			int nRemainLen = (int)(ptszEnd - ptszNextMsg);
+			if (nRemainLen > 0)
+			{
+				memmove(pSt_AIClient->ptszMSGBuffer, ptszNextMsg, nRemainLen * sizeof(XCHAR));
+			}
+			// 更新指针和长度
+			pSt_AIClient->nMSGLen = nRemainLen;
+			memset(pSt_AIClient->ptszMSGBuffer + pSt_AIClient->nMSGLen, '\0', XENGINE_MEMORY_SIZE_MAX - pSt_AIClient->nMSGLen);
+
+			ptszStart = pSt_AIClient->ptszMSGBuffer;
+			ptszEnd = ptszStart + nRemainLen;
+		}
+	}
+	else
+	{
+		if (pClass_This->AIApi_Chat_Parse(pSt_AIClient, (LPCXSTR)pSt_AIClient->ptszMSGBuffer, pSt_AIClient->nMSGLen, false))
+		{
+			memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+			pSt_AIClient->nMSGLen = 0;
+		}
 	}
 }

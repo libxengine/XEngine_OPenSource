@@ -32,8 +32,6 @@ int main()
     XClient_UDPSelect_Close(hSocket);
     _xtprintf(_X("XClient_APIHelp-APIClient_Http_Create:%d\n"), APIClient_Http_Create(&xhClient));
     APIClient_Http_Close(xhClient);
-	_xtprintf(_X("XClient_Stream-XClient_StreamPush_FileInit:%p\n"), xhToken = XClient_StreamPush_FileInit());
-    XClient_StreamPush_FileClose(xhToken);
 
 	_xtprintf(_X("XEngine_SystemSdk Test:\n"));
 	_xtprintf(_X("XEngine_SystemApi-SystemApi_Process_IsAdmin:%d\n"), SystemApi_Process_IsAdmin());

@@ -91,6 +91,15 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
 		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_MALLOC;
 		return false;
 	}
+	pSt_AIClient->ptszMSGBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	if (NULL == pSt_AIClient->ptszMSGBuffer)
+	{
+		AIApi_IsErrorOccur = true;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_MALLOC;
+		return false;
+	}
+	memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+
 	if (!APIClient_Http_Create(&pSt_AIClient->xhToken, AIApi_Chat_CBRecv, pSt_AIClient))
 	{
 		AIApi_IsErrorOccur = true;
@@ -489,5 +498,11 @@ void CAIApi_Chat::AIApi_Chat_CBRecv(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, in
 		}
 	}
 	
-	pClass_This->AIApi_Chat_Parse(pSt_AIClient, (LPCXSTR)lpszMsgBuffer + nPos, nMsgLen - nPos, bSSEReply);
+	memcpy(pSt_AIClient->ptszMSGBuffer + pSt_AIClient->nMSGLen, lpszMsgBuffer, nMsgLen);
+	pSt_AIClient->nMSGLen += nMsgLen;
+	if (pClass_This->AIApi_Chat_Parse(pSt_AIClient, (LPCXSTR)pSt_AIClient->ptszMSGBuffer + nPos, pSt_AIClient->nMSGLen - nPos, bSSEReply))
+	{
+		memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+		pSt_AIClient->nMSGLen = 0;
+	}
 }

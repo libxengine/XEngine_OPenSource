@@ -22,11 +22,13 @@ typedef struct
 	XCHAR tszAPIRole[XPATH_MAX];
 	XNETHANDLE xhToken;
 	time_t nTimeStart;
+	int nMSGLen;
 
 	bool bStream;
 	bool bHistory;
 	std::unique_ptr<std::list<AICLIENT_HISTORY>> pStl_ListHistory;
 
+	XCHAR* ptszMSGBuffer;
 	XPVOID lClass;
 	XPVOID lParam;
 	CALLBACK_XENGINE_MODULE_AIAPI_CHAT lpCall_Chat;

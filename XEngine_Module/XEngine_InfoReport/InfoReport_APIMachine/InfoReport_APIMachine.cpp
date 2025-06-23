@@ -443,6 +443,8 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, i
 	XCHAR tszOSVersion[256] = {};
 	XCHAR tszOSInfo[256] = {};
 	XCHAR tszUPTime[256] = {};
+	XCHAR tszUserName[256] = {};
+	XCHAR tszComputerName[256] = {};
 	XENGINE_LIBTIME st_LibTimer = {};
 
 	if (!SystemApi_System_GetSystemVer(tszOSInfo, tszOSVersion, tszOSBuild, &nOSProcessor))
@@ -463,20 +465,26 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, i
 		InfoReport_dwErrorCode = SystemApi_GetLastError();
 		return false;
 	}
+	SystemApi_System_GetSysName(tszUserName, tszComputerName);
 
 	sprintf(tszUPTime, "%04d-%02d-%02d %02d:%02d:%02d", st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
 
 	Json::Value st_JsonRoot;
+	Json::Value st_JsonOSObject;
 	Json::Value st_JsonSystem;
 
-	st_JsonSystem["OSUPTime"] = tszUPTime;
-	st_JsonSystem["OSVersion"] = tszOSInfo;
-	st_JsonSystem["OSVersion"] = tszOSVersion;
-	st_JsonSystem["OSBuild"] = tszOSBuild;
-	st_JsonSystem["OSArch"] = (Json::Value::Int)nOSProcessor;
-	st_JsonSystem["OSProcessCount"] = nProcessCount;
+	st_JsonOSObject["OSUPTime"] = tszUPTime;
+	st_JsonOSObject["OSVersion"] = tszOSInfo;
+	st_JsonOSObject["OSVersion"] = tszOSVersion;
+	st_JsonOSObject["OSBuild"] = tszOSBuild;
+	st_JsonOSObject["OSArch"] = (Json::Value::Int)nOSProcessor;
+	st_JsonOSObject["OSProcessCount"] = nProcessCount;
 
-	st_JsonRoot["OSInfo"] = st_JsonSystem;
+	st_JsonSystem["tszUserName"] = tszUserName;
+	st_JsonSystem["tszComputerName"] = tszComputerName;
+
+	st_JsonRoot["OSInfo"] = st_JsonOSObject;
+	st_JsonRoot["SystemInfo"] = st_JsonSystem;
 
 	if (NULL != pInt_Len)
 	{

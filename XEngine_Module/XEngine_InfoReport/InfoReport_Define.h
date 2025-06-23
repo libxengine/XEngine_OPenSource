@@ -84,3 +84,41 @@ extern "C" bool InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, LPCXSTR lpszSe
 备注：lpszAPIUrl = _X("http://127.0.0.1:5501/api?function=machine");
 *********************************************************************/
 extern "C" bool InfoReport_APIMachine_Delete(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName);
+/********************************************************************
+函数名称：InfoReport_APIMachine_Hardware
+函数功能：获取硬件信息
+ 参数.一：ptszHWInfo
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：导出获取到的数据,这个数据是JSON格式
+ 参数.二：pInt_Len
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：导出数据的长度
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool InfoReport_APIMachine_Hardware(XCHAR* ptszSWInfo, int* pInt_Len = NULL);
+/********************************************************************
+函数名称：InfoReport_APIMachine_Software
+函数功能：获取软件系统信息
+ 参数.一：ptszSWInfo
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：导出系统信息JSON结构
+ 参数.二：pInt_Len
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：导出系统信息长度
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, int* pInt_Len = NULL);

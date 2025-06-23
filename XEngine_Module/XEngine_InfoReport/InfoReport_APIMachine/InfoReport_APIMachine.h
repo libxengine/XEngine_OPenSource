@@ -20,6 +20,8 @@ public:
     bool InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName, __int64x* pInt_TimeNumber = NULL);
     bool InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName, __int64x* pInt_TimeNumber);
     bool InfoReport_APIMachine_Delete(LPCXSTR lpszAPIUrl, LPCXSTR lpszServiceName);
+public:
+    bool InfoReport_APIMachine_Hardware(XCHAR* ptszSWInfo, int* pInt_Len = NULL);
+    bool InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, int* pInt_Len = NULL);
 protected:
-    bool InfoReport_APIMachine_GetText(XCHAR *ptszMSGBuffer);
 };

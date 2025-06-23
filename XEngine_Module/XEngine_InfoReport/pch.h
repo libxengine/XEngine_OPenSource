@@ -33,6 +33,8 @@
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/XSocket_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/XSocket_Error.h>
 #include "InfoReport_Define.h"
 #include "InfoReport_Error.h"
 /********************************************************************
@@ -53,6 +55,7 @@ extern XLONG InfoReport_dwErrorCode;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_XSocket")
 #ifdef _DEBUG
 #ifdef _M_X64
 #pragma comment(lib,"x64/Debug/jsoncpp")

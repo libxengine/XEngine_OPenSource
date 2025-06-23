@@ -41,3 +41,11 @@ extern "C" bool InfoReport_APIMachine_Delete(LPCXSTR lpszAPIUrl, LPCXSTR lpszSer
 {
 	return m_APIMachine.InfoReport_APIMachine_Delete(lpszAPIUrl, lpszServiceName);
 }
+extern "C" bool InfoReport_APIMachine_Hardware(XCHAR* ptszSWInfo, int* pInt_Len)
+{
+	return m_APIMachine.InfoReport_APIMachine_Hardware(ptszSWInfo, pInt_Len);
+}
+extern "C" bool InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, int* pInt_Len)
+{
+	return m_APIMachine.InfoReport_APIMachine_Software(ptszSWInfo, pInt_Len);
+}

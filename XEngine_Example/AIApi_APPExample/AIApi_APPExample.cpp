@@ -42,11 +42,11 @@ int main()
 	XNETHANDLE xhToken = 0;
 
 	LPCXSTR lpszAPIUrl = _X("https://api.zhizengzeng.com/v1/chat/completions");
-	LPCXSTR lpszAPIKey = _X("sk-1");
+	LPCXSTR lpszAPIKey = _X("sk-zk2e0065dd7c8411828ce612337c2f9d1086841436f63c48");
 	LPCXSTR lpszAPIModel = _X("gpt-4o");
 
 	//LPCXSTR lpszAPIUrl = _X("https://api.hunyuan.cloud.tencent.com/v1/chat/completions");
-	//LPCXSTR lpszAPIKey = _X("sk-1");
+	//LPCXSTR lpszAPIKey = _X("sk-dXVprOeQSWrodQcTYuHoGytHaifId7QlwaBebeWxfyPUipFk");
 	//LPCXSTR lpszAPIModel = _X("hunyuan-turbos-latest");
 	
 	if (!AIApi_Chat_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv))

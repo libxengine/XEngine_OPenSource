@@ -78,15 +78,17 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl, LPCX
 	Json::StreamWriterBuilder st_JsonBuilder;
 	Json::CharReaderBuilder st_JsonReader;
 
-	XCHAR tszMachineText[2048] = {};
-	InfoReport_APIMachine_GetText(tszMachineText);
+	XCHAR tszMachineSoftware[8192] = {};
+	XCHAR tszMachineHardware[8192] = {};
+	InfoReport_APIMachine_Hardware(tszMachineHardware);
+	InfoReport_APIMachine_Software(tszMachineSoftware);
 
 	st_JsonRoot["tszServiceName"] = lpszServiceName;
 	st_JsonRoot["tszMachineName"] = tszOSName;
 	st_JsonRoot["tszMachineUser"] = tszUserName;
 	st_JsonRoot["tszMachineSystem"] = tszComputerName;
-	st_JsonRoot["tszMachineText"] = tszMachineText;
-
+	st_JsonRoot["tszMachineSoftware"] = tszMachineSoftware;
+	st_JsonRoot["tszMachineHardware"] = tszMachineHardware;
 	st_JsonBuilder["emitUTF8"] = true;
 
 	XCHAR* ptszMsgBuffer = NULL;
@@ -277,46 +279,212 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Delete(LPCXSTR lpszAPIUrl, LP
 	}
 	return true;
 }
-//////////////////////////////////////////////////////////////////////////
-//                           保护函数
-//////////////////////////////////////////////////////////////////////////
-bool CInfoReport_APIMachine::InfoReport_APIMachine_GetText(XCHAR* ptszMSGBuffer)
+/********************************************************************
+函数名称：InfoReport_APIMachine_Hardware
+函数功能：获取硬件信息
+ 参数.一：ptszHWInfo
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：导出获取到的数据,这个数据是JSON格式
+ 参数.二：pInt_Len
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：导出数据的长度
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CInfoReport_APIMachine::InfoReport_APIMachine_Hardware(XCHAR* ptszSWInfo, int* pInt_Len /* = NULL */)
 {
 	InfoReport_IsErrorOccur = false;
 
-	XCHAR tszOSName[128] = {};
-	XCHAR tszOSVersion[128] = {};
-	XCHAR tszOSBuild[128] = {};
-	XLONG nOSArch = 0;
-	int nProcessCount = 0;
+	if ((NULL == ptszSWInfo))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_CODE;
+		return false;
+	}
+	int nDiskNumber = 0;
+	XCHAR** pptszRootName;
+	SYSTEMAPI_DISK_INFOMATION st_DiskInfo = {};
 	SYSTEMAPI_CPU_INFOMATION st_CPUInfo = {};
 	SYSTEMAPI_MEMORY_INFOMATION st_MemoryInfo = {};
+	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
+
+	if (!SystemApi_HardWare_GetDiskNumber(&pptszRootName, &nDiskNumber))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = SystemApi_GetLastError();
+		return false;
+	}
+	BaseLib_Memory_Free((XPPPMEM)&pptszRootName, nDiskNumber);
+
+	XCHAR tszDriveStr[XPATH_MAX];
+	memset(tszDriveStr, '\0', XPATH_MAX);
+#ifdef _MSC_BUILD
+	GetLogicalDriveStringsA(XPATH_MAX, tszDriveStr);
+#else
+	LPCXSTR lpszDir = _X("/");
+	strcpy(tszDriveStr, lpszDir);
+#endif
+
+	if (!SystemApi_HardWare_GetDiskInfomation(tszDriveStr, &st_DiskInfo, XENGINE_SYSTEMSDK_API_SYSTEM_SIZE_MB))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = SystemApi_GetLastError();
+		return false;
+	}
+	if (!SystemApi_HardWare_GetCpuInfomation(&st_CPUInfo))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = SystemApi_GetLastError();
+		return false;
+	}
+	if (!SystemApi_System_GetMemoryUsage(&st_MemoryInfo, XENGINE_SYSTEMSDK_API_SYSTEM_SIZE_MB))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = SystemApi_GetLastError();
+		return false;
+	}
+	if (!SystemApi_HardWare_GetSerial(&st_SDKSerial))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = SystemApi_GetLastError();
+		return false;
+	}
 
 	Json::Value st_JsonRoot;
-	Json::Value st_JsonCPUObject;
-	Json::Value st_JsonOSObject;
-	Json::Value st_JsonMEMObject;
-	Json::StreamWriterBuilder st_JsonBuilder;
+	Json::Value st_JsonDisk;
+	Json::Value st_JsonCpu;
+	Json::Value st_JsonSerial;
+	Json::Value st_JsonMemory;
+	Json::Value st_JsonNetCard;
 
-	SystemApi_System_GetSystemVer(tszOSName, tszOSVersion, tszOSBuild, &nOSArch);
-	SystemApi_HardWare_GetCpuInfomation(&st_CPUInfo);
-	SystemApi_System_GetMemoryUsage(&st_MemoryInfo, XENGINE_SYSTEMSDK_API_SYSTEM_SIZE_MB);
-	SystemApi_System_GetProcessCount(&nProcessCount);
+	st_JsonDisk["DiskNumber"] = nDiskNumber;
+	st_JsonDisk["DiskFree"] = (Json::UInt64)st_DiskInfo.dwDiskFree;
+	st_JsonDisk["DiskTotal"] = (Json::UInt64)st_DiskInfo.dwDiskTotal;
+	st_JsonDisk["DiskName"] = tszDriveStr;
 
-	st_JsonCPUObject["nCPUNumber"] = st_CPUInfo.nCPUNumber;
-	st_JsonCPUObject["nCPUSpeed"] = st_CPUInfo.nCPUSpeed;
-	st_JsonOSObject["OSArch"] = (Json::Value::Int)nOSArch;
-	st_JsonOSObject["OSVersion"] = tszOSVersion;
-	st_JsonOSObject["tszOSBuild"] = tszOSBuild;
+	st_JsonCpu["CpuNumber"] = st_CPUInfo.nCPUNumber;
+	st_JsonCpu["CpuSpeed"] = st_CPUInfo.nCPUSpeed;
+	st_JsonCpu["CpuName"] = st_CPUInfo.tszCPUName;
 
-	st_JsonMEMObject["nTotal"] = (Json::Value::UInt64)st_MemoryInfo.dwMemory_Total;
-	st_JsonMEMObject["nFree"] = (Json::Value::UInt64)st_MemoryInfo.dwMemory_Free;
+	st_JsonMemory["MemoryFree"] = (Json::UInt64)st_MemoryInfo.dwMemory_Free;
+	st_JsonMemory["MemoryTotal"] = (Json::UInt64)st_MemoryInfo.dwMemory_Total;
 
-	st_JsonRoot["nProcessCount"] = nProcessCount;
-	st_JsonRoot["st_CPUObject"] = st_JsonCPUObject;
-	st_JsonRoot["st_OSObject"] = st_JsonOSObject;
-	st_JsonRoot["st_MEMObject"] = st_JsonMEMObject;
+	st_JsonSerial["DiskSerial"] = st_SDKSerial.tszDiskSerial;
+	st_JsonSerial["CpuSerial"] = st_SDKSerial.tszCPUSerial;
+	st_JsonSerial["BoardSerial"] = st_SDKSerial.tszBoardSerial;
+	st_JsonSerial["SystemSerial"] = st_SDKSerial.tszSystemSerial;
 
-	_tcsxcpy(ptszMSGBuffer, st_JsonRoot.toStyledString().c_str());
+	int nListCount = 0;
+	XSOCKET_CARDINFO** ppSt_ListIFInfo;
+	XSocket_Api_GetCardInfo(&ppSt_ListIFInfo, &nListCount);
+	for (int i = 0; i < nListCount; i++)
+	{
+		Json::Value st_JsonIPAddr;
+		st_JsonIPAddr["tszIFName"] = ppSt_ListIFInfo[i]->tszIFName;
+		st_JsonIPAddr["tszIPAddr"] = ppSt_ListIFInfo[i]->tszIPAddr;
+		st_JsonIPAddr["tszBroadAddr"] = ppSt_ListIFInfo[i]->tszBroadAddr;
+		st_JsonIPAddr["tszDnsAddr"] = ppSt_ListIFInfo[i]->tszDnsAddr;
+		st_JsonIPAddr["tszMacAddr"] = ppSt_ListIFInfo[i]->tszMacAddr;
+		st_JsonNetCard.append(st_JsonIPAddr);
+	}
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_ListIFInfo, nListCount);
+
+	st_JsonRoot["Disk"] = st_JsonDisk;
+	st_JsonRoot["Cpu"] = st_JsonCpu;
+	st_JsonRoot["Memory"] = st_JsonMemory;
+	st_JsonRoot["Serial"] = st_JsonSerial;
+	st_JsonRoot["NetCard"] = st_JsonNetCard;
+
+	if (NULL != pInt_Len)
+	{
+		*pInt_Len = st_JsonRoot.toStyledString().length();
+	}
+	memcpy(ptszSWInfo, st_JsonRoot.toStyledString().c_str(), st_JsonRoot.toStyledString().length());
+
+	return true;
+}
+/********************************************************************
+函数名称：InfoReport_APIMachine_Software
+函数功能：获取软件系统信息
+ 参数.一：ptszSWInfo
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：导出系统信息JSON结构
+ 参数.二：pInt_Len
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：导出系统信息长度
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CInfoReport_APIMachine::InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, int* pInt_Len /* = NULL */)
+{
+	InfoReport_IsErrorOccur = false;
+
+	if ((NULL == ptszSWInfo))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = ERROR_XENGINE_THIRDPART_INFOREPORT_PARAMENT;
+		return false;
+	}
+	int nProcessCount = 0;
+	XLONG nOSProcessor = 0;
+	XCHAR tszOSBuild[256] = {};
+	XCHAR tszOSVersion[256] = {};
+	XCHAR tszOSInfo[256] = {};
+	XCHAR tszUPTime[256] = {};
+	XCHAR tszServicePacket[256] = {};
+	XENGINE_LIBTIME st_LibTimer = {};
+	SYSTEMAPI_CPU_INFOMATION st_CPUInfo = {};
+
+	if (!SystemApi_System_GetSystemVer(tszOSInfo, tszOSVersion, tszOSBuild, &nOSProcessor))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = SystemApi_GetLastError();
+		return false;
+	}
+	if (!SystemApi_System_GetProcessCount(&nProcessCount))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = SystemApi_GetLastError();
+		return false;
+	}
+	if (!SystemApi_System_GetUpTime(&st_LibTimer))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = SystemApi_GetLastError();
+		return false;
+	}
+
+	sprintf(tszUPTime, "%04d-%02d-%02d %02d:%02d:%02d", st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
+
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonSystem;
+
+	st_JsonSystem["OSUPTime"] = tszUPTime;
+	st_JsonSystem["OSVersion"] = tszOSInfo;
+	st_JsonSystem["OSVersion"] = tszOSVersion;
+	st_JsonSystem["OSBuild"] = tszOSBuild;
+	st_JsonSystem["OSArch"] = (Json::Value::Int)nOSProcessor;
+	st_JsonSystem["OSProcessCount"] = nProcessCount;
+
+	st_JsonRoot["OSInfo"] = st_JsonSystem;
+
+	if (NULL != pInt_Len)
+	{
+		*pInt_Len = st_JsonRoot.toStyledString().length();
+	}
+	memcpy(ptszSWInfo, st_JsonRoot.toStyledString().c_str(), st_JsonRoot.toStyledString().length());
+
 	return true;
 }

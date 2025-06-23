@@ -6,3 +6,6 @@ EXPORTS
 	InfoReport_APIMachine_Send
 	InfoReport_APIMachine_GetTime
 	InfoReport_APIMachine_Delete
+
+	InfoReport_APIMachine_Hardware
+	InfoReport_APIMachine_Software

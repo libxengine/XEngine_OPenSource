@@ -443,9 +443,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, i
 	XCHAR tszOSVersion[256] = {};
 	XCHAR tszOSInfo[256] = {};
 	XCHAR tszUPTime[256] = {};
-	XCHAR tszServicePacket[256] = {};
 	XENGINE_LIBTIME st_LibTimer = {};
-	SYSTEMAPI_CPU_INFOMATION st_CPUInfo = {};
 
 	if (!SystemApi_System_GetSystemVer(tszOSInfo, tszOSVersion, tszOSBuild, &nOSProcessor))
 	{

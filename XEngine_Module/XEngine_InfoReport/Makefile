@@ -5,7 +5,7 @@ FILEEXT =
 LIBFLAG = 
 LOADHDR = -I ./ -I ../jsoncpp
 LOADSO = -L ../jsoncpp
-LIB = -lXEngine_BaseLib -lXEngine_SystemApi -lXClient_APIHelp -ljsoncpp
+LIB = -lXEngine_BaseLib -lXEngine_SystemApi -lXClient_APIHelp -lNetHelp_XSocket -ljsoncpp
 LIBEX = 
 OBJECTS = InfoReport_APIMachine.o pch.o
 

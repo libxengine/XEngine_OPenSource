@@ -40,10 +40,10 @@ jobs:
 
     steps:
       - name: Checkout main repository code
-        uses: actions/checkout
+        uses: actions/checkout@v4
 
       - name: Checkout dependency repository (xengine)
-        uses: actions/checkout
+        uses: actions/checkout@v4
         with:
           repository: libxengine/libxengine
           path: libxengine

@@ -25,6 +25,12 @@
     <Filter Include="源文件\AIApi_Image">
       <UniqueIdentifier>{a13fcb1c-0028-48b8-8412-889d070db132}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\AIApi_Help">
+      <UniqueIdentifier>{90ea5304-7076-452a-b6ad-890b625b0d58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\AIApi_Help">
+      <UniqueIdentifier>{d612c628-9e84-4ba6-8612-f261a6952c73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -45,6 +51,9 @@
     <ClInclude Include="AIApi_Image\AIApi_Image.h">
       <Filter>头文件\AIApi_Image</Filter>
     </ClInclude>
+    <ClInclude Include="AIApi_Help\AIApi_Help.h">
+      <Filter>头文件\AIApi_Help</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -58,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="AIApi_Image\AIApi_Image.cpp">
       <Filter>源文件\AIApi_Image</Filter>
+    </ClCompile>
+    <ClCompile Include="AIApi_Help\AIApi_Help.cpp">
+      <Filter>源文件\AIApi_Help</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -65,14 +65,14 @@ bool CAIApi_Image::AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, 
 	if (NULL == pxhToken || NULL == lpszAPIUrl || NULL == lpszAPIKey)
 	{
 		AIApi_IsErrorOccur = true;
-		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_PARAMENT;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_IMAGE_PARAMENT;
 		return false;
 	}
 	AICLIENT_IMAGE *pSt_AIClient = new AICLIENT_IMAGE;
 	if (NULL == pSt_AIClient)
 	{
 		AIApi_IsErrorOccur = true;
-		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_MALLOC;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_IMAGE_MALLOC;
 		return false;
 	}
 	*pSt_AIClient = {};
@@ -83,14 +83,14 @@ bool CAIApi_Image::AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, 
 	_xstrcpy(pSt_AIClient->tszAPIUrl, lpszAPIUrl, sizeof(pSt_AIClient->tszAPIUrl));
 	_xsntprintf(pSt_AIClient->tszAPIHdr, sizeof(pSt_AIClient->tszAPIHdr), _X("Content-Type: application/json\r\nAuthorization: Bearer %s"), lpszAPIKey);
 
-	pSt_AIClient->ptszMSGBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
+	pSt_AIClient->ptszMSGBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_LARGE);
 	if (NULL == pSt_AIClient->ptszMSGBuffer)
 	{
 		AIApi_IsErrorOccur = true;
-		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_MALLOC;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_IMAGE_MALLOC;
 		return false;
 	}
-	memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+	memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_LARGE);
 
 	if (!APIClient_Http_Create(&pSt_AIClient->xhToken, AIApi_Image_CBRecv, pSt_AIClient))
 	{
@@ -162,7 +162,7 @@ bool CAIApi_Image::AIApi_Image_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName,
 	if (stl_MapIterator == stl_MapAIClient.end())
 	{
 		AIApi_IsErrorOccur = true;
-		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_NOTFOUND;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_IMAGE_NOTFOUND;
 		st_Locker.unlock_shared();
 		return false;
 	}
@@ -204,7 +204,6 @@ bool CAIApi_Image::AIApi_Image_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName,
 	st_JsonRoot["messages"] = st_JsonArray;
 
 	xstring m_StrBody = Json::writeString(st_JsonBuilder, st_JsonRoot);
-	printf("%s\n", m_StrBody.c_str());
 	if (!APIClient_Http_Excute(xhToken, m_StrBody.c_str(), m_StrBody.length(), stl_MapIterator->second->tszAPIHdr))
 	{
 		AIApi_IsErrorOccur = true;
@@ -252,7 +251,7 @@ bool CAIApi_Image::AIApi_Image_GetStatus(XNETHANDLE xhToken, bool* pbComplete, i
 	if (stl_MapIterator == stl_MapAIClient.end())
 	{
 		AIApi_IsErrorOccur = true;
-		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_NOTFOUND;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_IMAGE_NOTFOUND;
 		st_Locker.unlock_shared();
 		return false;
 	}
@@ -351,19 +350,8 @@ bool CAIApi_Image::AIApi_Image_Parse(AICLIENT_IMAGE* pSt_AIClient, LPCXSTR lpszM
 			XCHAR tszGBKBuffer[8192] = {};
 			BaseLib_Charset_UTFToAnsi(st_JsonMessage["content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
 			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, false, pSt_AIClient->lParam);
-			if (bSSEReply)
-			{
-				//流式数据需要单独处理保存
-				memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, tszGBKBuffer, nGBKLen);
-				pSt_AIClient->st_HisStream.nCLen += nGBKLen;
-			}
 #else
 			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), false, pSt_AIClient->lParam);
-			if (bSSEReply)
-			{
-				memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length());
-				pSt_AIClient->st_HisStream.nCLen += st_JsonMessage["content"].asString().length();
-			}
 #endif
 		}
 	}

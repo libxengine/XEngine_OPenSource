@@ -8,6 +8,7 @@
 #define PCH_H
 #ifdef _MSC_BUILD
 // 添加要在此处预编译的标头
+#define _CRT_SECURE_NO_WARNINGS
 #include "framework.h"
 #endif
 #endif //PCH_H
@@ -29,6 +30,8 @@
 #include <XEngine_Include/XEngine_BaseLib/BaseSafe_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Define.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include "AIApi_Define.h"
 #include "AIApi_Error.h"
 /********************************************************************
@@ -49,6 +52,7 @@ extern XLONG AIApi_dwErrorCode;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseSafe")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
+#pragma comment(lib,"XEngine_Core/XEngine_Cryption")
 #ifdef _DEBUG
 #ifdef _M_X64
 #pragma comment(lib,"x64/Debug/jsoncpp")

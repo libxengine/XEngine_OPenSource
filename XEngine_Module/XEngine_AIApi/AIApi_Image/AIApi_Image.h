@@ -12,14 +12,6 @@
 *********************************************************************/
 typedef struct
 {
-	int nCLen;
-	XCHAR tszThinkContent[8192];
-	XCHAR tszRoleContent[8192];
-	XCHAR tszRoleName[128];
-}AICLIENT_IMAGEHISTORY;
-typedef struct
-{
-	AICLIENT_IMAGEHISTORY st_HisStream;       //流式有用
 	XCHAR tszAPIUrl[XPATH_MAX];
 	XCHAR tszAPIHdr[XPATH_MAX];
 	XNETHANDLE xhToken;

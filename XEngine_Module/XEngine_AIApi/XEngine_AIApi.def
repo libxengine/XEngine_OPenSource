@@ -9,3 +9,8 @@ EXPORTS
 	AIApi_Chat_Clear
 	AIApi_Chat_GetStatus
 	AIApi_Chat_Destory
+
+	AIApi_Image_Create
+	AIApi_Image_Excute
+	AIApi_Image_GetStatus
+	AIApi_Image_Destory

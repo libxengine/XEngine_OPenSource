@@ -239,11 +239,13 @@
     <ClInclude Include="AIApi_Chat\AIApi_Chat.h" />
     <ClInclude Include="AIApi_Define.h" />
     <ClInclude Include="AIApi_Error.h" />
+    <ClInclude Include="AIApi_Image\AIApi_Image.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIApi_Chat\AIApi_Chat.cpp" />
+    <ClCompile Include="AIApi_Image\AIApi_Image.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

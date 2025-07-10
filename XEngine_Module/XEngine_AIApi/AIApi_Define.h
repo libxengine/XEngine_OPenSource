@@ -175,3 +175,10 @@ extern "C" bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* 
 备注：
 *********************************************************************/
 extern "C" bool AIApi_Chat_Destory(XNETHANDLE xhToken);
+/************************************************************************/
+/*                        AI图像处理模型导出函数                        */
+/************************************************************************/
+extern "C" bool AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL);
+extern "C" bool AIApi_Image_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false);
+extern "C" bool AIApi_Image_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);
+extern "C" bool AIApi_Image_Destory(XNETHANDLE xhToken);

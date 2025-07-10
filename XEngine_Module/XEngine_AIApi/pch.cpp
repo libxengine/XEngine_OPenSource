@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "AIApi_Chat/AIApi_Chat.h"
+#include "AIApi_Image/AIApi_Image.h"
 /********************************************************************
 //    Created:     2025/05/29  14:07:51
 //    File Name:   D:\XEngine_OPenSource\XEngine_Module\XEngine_AIApi\pch.cpp
@@ -15,6 +16,7 @@ bool AIApi_IsErrorOccur = false;
 XLONG AIApi_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CAIApi_Chat m_AIChat;
+CAIApi_Image m_AIImage;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -52,4 +54,23 @@ extern "C" bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* 
 extern "C" bool AIApi_Chat_Destory(XNETHANDLE xhToken)
 {
 	return m_AIChat.AIApi_Chat_Destory(xhToken);
+}
+/************************************************************************/
+/*                        AI图像处理模型导出函数                        */
+/************************************************************************/
+extern "C" bool AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam)
+{
+	return m_AIImage.AIApi_Image_Create(pxhToken, lpszAPIUrl, lpszAPIKey, fpCall_Chat, lParam);
+}
+extern "C" bool AIApi_Image_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream)
+{
+	return m_AIImage.AIApi_Image_Excute(xhToken, lpszModelName, lpszUrlBase, lpszMSGBuffer, nMSGLen, bStream);
+}
+extern "C" bool AIApi_Image_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode, bool bWaitExist)
+{
+	return m_AIImage.AIApi_Image_GetStatus(xhToken, pbComplete, pInt_HTTPCode, bWaitExist);
+}
+extern "C" bool AIApi_Image_Destory(XNETHANDLE xhToken)
+{
+	return m_AIImage.AIApi_Image_Destory(xhToken);
 }

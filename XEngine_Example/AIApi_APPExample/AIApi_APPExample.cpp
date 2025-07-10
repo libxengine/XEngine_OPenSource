@@ -33,22 +33,56 @@ using namespace std;
 
 //Linux Macos::g++ -std=c++17 -Wall -g AIApi_APPExample.cpp -o AIApi_APPExample.exe -L ../../XEngine_Module/XEngine_AIApi -lXEngine_AIApi
 
-void XCALLBACK XEngine_AIApi_CBRecv(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMsgBuffer, int nMsgLen, XPVOID lParam)
+void XCALLBACK XEngine_AIApi_CBRecv(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMsgBuffer, int nMsgLen, bool bThink, XPVOID lParam)
 {
-	printf("%lld,Name:%s:%d=%s\n", xhToken, lpszModelName, nMsgLen, lpszMsgBuffer);
+	if (bThink)
+	{
+		printf("think:%lld,Name:%s:%d=%s\n", xhToken, lpszModelName, nMsgLen, lpszMsgBuffer);
+	}
+	else
+	{
+		printf("chat:%lld,Name:%s:%d=%s\n", xhToken, lpszModelName, nMsgLen, lpszMsgBuffer);
+	}
 }
-int main()
+
+int Test_Think()
 {
 	XNETHANDLE xhToken = 0;
 
-	LPCXSTR lpszAPIUrl = _X("https://api.zhizengzeng.com/v1/chat/completions");
-	LPCXSTR lpszAPIKey = _X("sk-zk2e0065dd7c8411828ce612337c2f9d1086841436f63c48");
-	LPCXSTR lpszAPIModel = _X("gpt-4o");
+	LPCXSTR lpszAPIUrl = _X("https://ark.cn-beijing.volces.com/api/v3/chat/completions");
+	LPCXSTR lpszAPIKey = _X("1");
+	LPCXSTR lpszAPIModel = _X("doubao-seed-1-6-thinking-250615");
 
-	//LPCXSTR lpszAPIUrl = _X("https://api.hunyuan.cloud.tencent.com/v1/chat/completions");
-	//LPCXSTR lpszAPIKey = _X("sk-dXVprOeQSWrodQcTYuHoGytHaifId7QlwaBebeWxfyPUipFk");
-	//LPCXSTR lpszAPIModel = _X("hunyuan-turbos-latest");
-	
+	if (!AIApi_Chat_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv))
+	{
+		printf("AIApi_Chat_Create:%lX\n", AIApi_GetLastError());
+		return 0;
+	}
+	AIApi_Chat_SetRole(xhToken, _X("You are a helpful assistant."));
+	LPCXSTR lpszMSGBuffer = _X("李白是谁?");
+	int nMSGLen = strlen(lpszMSGBuffer);
+	if (!AIApi_Chat_Excute(xhToken, lpszAPIModel, lpszMSGBuffer, nMSGLen, true))
+	{
+		printf("AIApi_Chat_Excute:%lX\n", AIApi_GetLastError());
+		return 0;
+	}
+	bool bCompleted = false;
+	AIApi_Chat_GetStatus(xhToken, &bCompleted);
+	AIApi_Chat_Destory(xhToken);
+	return 1;
+}
+int Test_Chat()
+{
+	XNETHANDLE xhToken = 0;
+
+	//LPCXSTR lpszAPIUrl = _X("https://api.zhizengzeng.com/v1/chat/completions");
+	//LPCXSTR lpszAPIKey = _X("sk-1");
+	//LPCXSTR lpszAPIModel = _X("gpt-4o");
+
+	LPCXSTR lpszAPIUrl = _X("https://api.hunyuan.cloud.tencent.com/v1/chat/completions");
+	LPCXSTR lpszAPIKey = _X("sk-1");
+	LPCXSTR lpszAPIModel = _X("hunyuan-turbos-latest");
+
 	if (!AIApi_Chat_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv))
 	{
 		printf("AIApi_Chat_Create:%lX\n", AIApi_GetLastError());
@@ -86,4 +120,10 @@ int main()
 	AIApi_Chat_GetStatus(xhToken, &bCompleted);
 	AIApi_Chat_Destory(xhToken);
 	return 1;
+}
+int main()
+{
+	Test_Think();
+	Test_Chat();
+	return 0;
 }

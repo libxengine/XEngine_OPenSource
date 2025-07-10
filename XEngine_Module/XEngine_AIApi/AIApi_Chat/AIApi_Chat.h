@@ -13,6 +13,7 @@
 typedef struct
 {
 	int nCLen;
+	XCHAR tszThinkContent[8192];
 	XCHAR tszRoleContent[8192];
 	XCHAR tszRoleName[128];
 }AICLIENT_HISTORY;

@@ -438,15 +438,27 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 		{
 			_xstrcpy(st_AIHistory.tszRoleName, st_JsonMessage["role"].asCString(), sizeof(st_AIHistory.tszRoleName));
 		}
-		int nGBKLen = st_JsonMessage["content"].asString().length();
-		_xstrcpy(st_AIHistory.tszRoleContent, st_JsonMessage["content"].asString().c_str(), sizeof(st_AIHistory.tszRoleContent));
+		int nGBKLen = 0;
+		
+		if (st_JsonMessage["reasoning_content"].isNull())
+		{
+			//为空,表示对话
+			nGBKLen = st_JsonMessage["content"].asString().length();
+			_xstrcpy(st_AIHistory.tszRoleContent, st_JsonMessage["content"].asString().c_str(), sizeof(st_AIHistory.tszRoleContent));
+		}
+		else
+		{
+			//不为空,表示思考模型
+			nGBKLen = st_JsonMessage["reasoning_content"].asString().length();
+			_xstrcpy(st_AIHistory.tszThinkContent, st_JsonMessage["reasoning_content"].asString().c_str(), sizeof(st_AIHistory.tszThinkContent));
+		}
 		//某些回复没有内容
 		if (_tcsxlen(st_AIHistory.tszRoleContent) > 0)
 		{
 #ifdef _MSC_BUILD
 			XCHAR tszGBKBuffer[8192] = {};
 			BaseLib_Charset_UTFToAnsi(st_JsonMessage["content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, false, pSt_AIClient->lParam);
 			if (bSSEReply)
 			{
 				//流式数据需要单独处理保存
@@ -454,7 +466,7 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 				pSt_AIClient->st_HisStream.nCLen += nGBKLen;
 			}
 #else
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), false, pSt_AIClient->lParam);
 			if (bSSEReply)
 			{
 				memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length());
@@ -465,6 +477,17 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 			{
 				pSt_AIClient->pStl_ListHistory->push_back(st_AIHistory);
 			}
+		}
+		//思考对话
+		if (_tcsxlen(st_AIHistory.tszThinkContent) > 0)
+		{
+#ifdef _MSC_BUILD
+			XCHAR tszGBKBuffer[8192] = {};
+			BaseLib_Charset_UTFToAnsi(st_JsonMessage["reasoning_content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, true, pSt_AIClient->lParam);
+#else
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), true, pSt_AIClient->lParam);
+#endif
 		}
 	}
 	

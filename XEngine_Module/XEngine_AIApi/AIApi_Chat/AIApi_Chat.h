@@ -44,7 +44,7 @@ public:
 	~CAIApi_Chat();
 public:
 	bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL, bool bHistory = true);
-	bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false);
+	bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false, int nMaxToken = 0);
 	bool AIApi_Chat_SetRole(XNETHANDLE xhToken, LPCXSTR lpszRoleName);
 	bool AIApi_Chat_Clear(XNETHANDLE xhToken);
 	bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);

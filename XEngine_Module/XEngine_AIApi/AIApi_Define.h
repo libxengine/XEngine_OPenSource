@@ -61,19 +61,44 @@ extern "C" XLONG AIApi_GetLastError(int *pInt_ErrorCode = NULL);
 *********************************************************************/
 extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL, bool bHistory = true);
 /********************************************************************
-函数名称：AIApi_Chat_Destory
-函数功能：销毁一个对话模型
+函数名称：AIApi_Chat_Excute
+函数功能：执行对话
  参数.一：xhToken
   In/Out：In
   类型：句柄
   可空：N
-  意思：要操作的模型句柄
+  意思：输入要操作的句柄
+ 参数.二：lpszModelName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入模型名称
+ 参数.三：lpszMSGBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要对话的数据
+ 参数.四：nMSGLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入对话数据大小
+ 参数.五：bStream
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否使用流式数据回复
+ 参数.六：nMaxToken
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：允许的最大token个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false);
+extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false, int nMaxToken = 0);
 /********************************************************************
 函数名称：AIApi_Chat_SetRole
 函数功能：设置系统角色
@@ -108,37 +133,32 @@ extern "C" bool AIApi_Chat_SetRole(XNETHANDLE xhToken, LPCXSTR lpszRoleName);
 *********************************************************************/
 extern "C" bool AIApi_Chat_Clear(XNETHANDLE xhToken);
 /********************************************************************
-函数名称：AIApi_Chat_Excute
-函数功能：执行对话
+函数名称：AIApi_Chat_GetStatus
+函数功能：获取执行状态
  参数.一：xhToken
   In/Out：In
   类型：句柄
   可空：N
   意思：输入要操作的句柄
- 参数.二：lpszModelName
-  In/Out：In
-  类型：常量字符指针
+ 参数.二：pbComplete
+  In/Out：Out
+  类型：逻辑型指针
   可空：N
-  意思：输入模型名称
- 参数.三：lpszMSGBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要对话的数据
- 参数.四：nMSGLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入对话数据大小
- 参数.五：bStream
+  意思：输出是否执行完毕
+ 参数.三：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出HTTP状态码
+ 参数.四：bWaitExist
   In/Out：In
   类型：逻辑型
   可空：Y
-  意思：是否使用流式数据回复
+  意思：是否等待执行完毕
 返回值
   类型：逻辑型
   意思：是否成功
-备注：
+备注：pbComplete没有执行完毕需要等待执行完毕
 *********************************************************************/
 extern "C" bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);
 /********************************************************************

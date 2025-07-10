@@ -76,7 +76,7 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
 		return false;
 	}
 	*pSt_AIClient = {};
-	pSt_AIClient->bHistory = true;
+	pSt_AIClient->bHistory = bHistory;
 	pSt_AIClient->lParam = lParam;
 	pSt_AIClient->lpCall_Chat = fpCall_Chat;
 
@@ -156,12 +156,17 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
   类型：逻辑型
   可空：Y
   意思：是否使用流式数据回复
+ 参数.六：nMaxToken
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：允许的最大token个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream /* = false */)
+bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream /* = false */, int nMaxToken /* = 0 */)
 {
 	AIApi_IsErrorOccur = false;
 
@@ -218,6 +223,10 @@ bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, L
 	
 	st_JsonRoot["model"] = lpszModelName;
 	st_JsonRoot["stream"] = bStream;
+	if (nMaxToken > 0)
+	{
+		st_JsonRoot["max_tokens"] = nMaxToken;
+	}
 	st_JsonRoot["messages"] = st_JsonArray;
 
 	xstring m_StrBody = Json::writeString(st_JsonBuilder, st_JsonRoot);

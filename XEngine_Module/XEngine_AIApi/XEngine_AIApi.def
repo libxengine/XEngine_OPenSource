@@ -11,6 +11,12 @@ EXPORTS
 	AIApi_Chat_Destory
 
 	AIApi_Image_Create
-	AIApi_Image_Excute
+	AIApi_Image_ExcuteParse
+	AIApi_Image_ExcuteCrete
 	AIApi_Image_GetStatus
 	AIApi_Image_Destory
+
+	AIApi_Help_Base64EncodecFile
+	AIApi_Help_Base64EncodecMemory
+	AIApi_Help_Base64DecodecFile
+	AIApi_Help_Base64DecodecMemory

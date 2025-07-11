@@ -19,6 +19,7 @@ typedef struct
 	int nMSGLen;
 	
 	bool bStream;
+	bool bCreate;
 
 	XCHAR* ptszMSGBuffer;
 	XPVOID lClass;
@@ -33,11 +34,13 @@ public:
 	~CAIApi_Image();
 public:
 	bool AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL);
-	bool AIApi_Image_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false);
+	bool AIApi_Image_ExcuteParse(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false);
+	bool AIApi_Image_ExcuteCrete(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGSize, LPCXSTR lpszMSGBuffer, int nMSGLen, XCHAR** pptszMSGBuffer, int* pInt_MSGLen, bool bCallback = false);
 	bool AIApi_Image_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);
 	bool AIApi_Image_Destory(XNETHANDLE xhToken);
 protected:
-	bool AIApi_Image_Parse(AICLIENT_IMAGE* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply);
+	bool AIApi_Image_JsonParse(AICLIENT_IMAGE* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply);
+	bool AIApi_Image_JsonCreate(AICLIENT_IMAGE* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, XCHAR* ptszMSGBuffer = NULL, int* pInt_MSGLen = NULL);
 protected:
 	static void XCALLBACK AIApi_Image_CBRecv(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, int nMsgLen, XPVOID lParam);
 private:

@@ -22,7 +22,7 @@ CAIApi_Image::~CAIApi_Image()
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
 函数名称：AIApi_Image_Create
-函数功能：AI对话模型初始化
+函数功能：AI图像处理模型初始化
  参数.一：pxhToken
   In/Out：Out
   类型：句柄
@@ -48,11 +48,6 @@ CAIApi_Image::~CAIApi_Image()
   类型：无类型指针
   可空：Y
   意思：回调函数自定义参数
- 参数.六：bHistory
-  In/Out：In
-  类型：逻辑型
-  可空：Y
-  意思：是否启用历史会话功能
 返回值
   类型：逻辑型
   意思：是否成功
@@ -121,8 +116,8 @@ bool CAIApi_Image::AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, 
 	return true;
 }
 /********************************************************************
-函数名称：AIApi_Image_Excute
-函数功能：执行对话
+函数名称：AIApi_Image_ExcuteParse
+函数功能：处理图像理解
  参数.一：xhToken
   In/Out：In
   类型：句柄
@@ -133,17 +128,22 @@ bool CAIApi_Image::AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, 
   类型：常量字符指针
   可空：N
   意思：输入模型名称
- 参数.三：lpszMSGBuffer
+ 参数.三：lpszUrlBase
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：输入要对话的数据
- 参数.四：nMSGLen
+  意思：输入URL或者BASE64编码数据
+ 参数.四：lpszMSGBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入怎么处理图像数据
+ 参数.五：nMSGLen
   In/Out：In
   类型：整数型
   可空：N
-  意思：输入对话数据大小
- 参数.五：bStream
+  意思：输入lpszMSGBuffer大小
+ 参数.六：bStream
   In/Out：In
   类型：逻辑型
   可空：Y
@@ -153,7 +153,7 @@ bool CAIApi_Image::AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, 
   意思：是否成功
 备注：
 *********************************************************************/
-bool CAIApi_Image::AIApi_Image_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream /* = false */)
+bool CAIApi_Image::AIApi_Image_ExcuteParse(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream /* = false */)
 {
 	AIApi_IsErrorOccur = false;
 
@@ -211,6 +211,137 @@ bool CAIApi_Image::AIApi_Image_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName,
 		st_Locker.unlock_shared();
 		return false;
 	}
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：AIApi_Image_ExcuteCrete
+函数功能：AI创建图像
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的句柄
+ 参数.二：lpszModelName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入模型名称
+ 参数.三：lpszMSGSize
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入创建的分辨率1024x1024.需要根据模型来设置
+ 参数.四：lpszMSGBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：描述要创建的什么样的图像
+ 参数.五：nMSGLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入lpszMSGBuffer大小
+ 参数.六：pptszMSGBuffer
+  In/Out：Out
+  类型：二级指针
+  可空：Y
+  意思：输出创建后的图像数据,此内存需要用户释放,如果bCallback为真,那么此参数不起作用
+ 参数.七：pInt_MSGLen
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出图像数据大小,如果bCallback为真,那么此参数不起作用
+ 参数.八：bCallback
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：输入图像输出方法,可以为回调或者直接输出
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAIApi_Image::AIApi_Image_ExcuteCrete(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGSize, LPCXSTR lpszMSGBuffer, int nMSGLen, XCHAR** pptszMSGBuffer, int* pInt_MSGLen, bool bCallback /* = false */)
+{
+	AIApi_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapAIClient.find(xhToken);
+	if (stl_MapIterator == stl_MapAIClient.end())
+	{
+		AIApi_IsErrorOccur = true;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_IMAGE_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	Json::StreamWriterBuilder st_JsonBuilder;
+
+	st_JsonBuilder["emitUTF8"] = true;
+#ifdef _MSC_BUILD
+	int nGBKLen = nMSGLen;
+	XCHAR tszGBKBuffer[8192] = {};
+	BaseLib_Charset_AnsiToUTF(lpszMSGBuffer, tszGBKBuffer, &nGBKLen);
+	st_JsonRoot["prompt"] = tszGBKBuffer;
+#else
+	st_JsonRoot["prompt"] = lpszMSGBuffer;
+#endif
+	st_JsonRoot["size"] = lpszMSGSize;
+	st_JsonRoot["model"] = lpszModelName;
+	st_JsonRoot["watermark"] = false;
+	st_JsonRoot["response_format"] = _X("b64_json");
+
+	stl_MapIterator->second->bCreate = true;
+	xstring m_StrBody = Json::writeString(st_JsonBuilder, st_JsonRoot);
+
+	if (bCallback)
+	{
+		if (!APIClient_Http_Excute(xhToken, m_StrBody.c_str(), m_StrBody.length(), stl_MapIterator->second->tszAPIHdr))
+		{
+			AIApi_IsErrorOccur = true;
+			AIApi_dwErrorCode = APIClient_GetLastError();
+			st_Locker.unlock_shared();
+			return false;
+		}
+	}
+	else
+	{
+		int nHTTPCode = 0;
+		int nHTTPSize = 0;
+		XCHAR* ptszMSGBuffer = NULL;
+		XCLIENT_APIHTTP st_APIHttp = {};
+		st_APIHttp.nTimeConnect = 20000;
+		st_APIHttp.nTimeOperator = 20000;
+
+		if (!APIClient_Http_Request(_X("POST"), stl_MapIterator->second->tszAPIUrl, m_StrBody.c_str(), &nHTTPCode, &ptszMSGBuffer, &nHTTPSize, stl_MapIterator->second->tszAPIHdr, NULL, &st_APIHttp))
+		{
+			AIApi_IsErrorOccur = true;
+			AIApi_dwErrorCode = APIClient_GetLastError();
+			st_Locker.unlock_shared();
+			return false;
+		}
+		*pptszMSGBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_LARGE);
+		if (NULL == *pptszMSGBuffer)
+		{
+			AIApi_IsErrorOccur = true;
+			AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_IMAGE_MALLOC;
+			st_Locker.unlock_shared();
+			return false;
+		}
+		memset(*pptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_LARGE);
+
+		if (!AIApi_Image_JsonCreate(stl_MapIterator->second, ptszMSGBuffer, nHTTPSize, *pptszMSGBuffer, pInt_MSGLen))
+		{
+			free(ptszMSGBuffer);
+			ptszMSGBuffer = NULL;
+			st_Locker.unlock_shared();
+			return false;
+		}
+		free(ptszMSGBuffer);
+		ptszMSGBuffer = NULL;
+	}
+	
 	st_Locker.unlock_shared();
 	return true;
 }
@@ -303,7 +434,7 @@ bool CAIApi_Image::AIApi_Image_Destory(XNETHANDLE xhToken)
 //////////////////////////////////////////////////////////////////////////
 //                      保护函数
 //////////////////////////////////////////////////////////////////////////
-bool CAIApi_Image::AIApi_Image_Parse(AICLIENT_IMAGE* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply)
+bool CAIApi_Image::AIApi_Image_JsonParse(AICLIENT_IMAGE* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply)
 {
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
@@ -358,6 +489,58 @@ bool CAIApi_Image::AIApi_Image_Parse(AICLIENT_IMAGE* pSt_AIClient, LPCXSTR lpszM
 	
 	return true;
 }
+bool CAIApi_Image::AIApi_Image_JsonCreate(AICLIENT_IMAGE* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, XCHAR* ptszMSGBuffer, int* pInt_MSGLen)
+{
+	AIApi_IsErrorOccur = false;
+
+	Json::Value st_JsonRoot;
+	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_JsonBuilder;
+	//开始解析配置文件
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(lpszMSGBuffer, lpszMSGBuffer + nMSGLen, &st_JsonRoot, &st_JsonError))
+	{
+		AIApi_IsErrorOccur = true;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_IMAGE_PARSE;
+		return false;
+	}
+	if (st_JsonRoot["created"].isNull())
+	{
+		AIApi_IsErrorOccur = true;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_IMAGE_FORMAT;
+		return false;
+	}
+	Json::Value st_JsonObject = st_JsonRoot["data"];
+	for (unsigned int i = 0; i < st_JsonObject.size(); i++)
+	{
+		if (!st_JsonObject[i]["b64_json"].isNull())
+		{
+			if (NULL == ptszMSGBuffer)
+			{
+				pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonObject[i]["b64_json"].asCString(), st_JsonObject[i]["b64_json"].asString().length(), false, pSt_AIClient->lParam);
+			}
+			else
+			{
+				*pInt_MSGLen = st_JsonObject[i]["b64_json"].asString().length();
+				memcpy(ptszMSGBuffer, st_JsonObject[i]["b64_json"].asCString(), *pInt_MSGLen);
+			}
+		}
+		if (!st_JsonObject[i]["url"].isNull())
+		{
+			if (NULL == ptszMSGBuffer)
+			{
+				pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonObject[i]["url"].asCString(), st_JsonObject[i]["url"].asString().length(), false, pSt_AIClient->lParam);
+			}
+			else
+			{
+				*pInt_MSGLen = st_JsonObject[i]["b64_json"].asString().length();
+				memcpy(ptszMSGBuffer, st_JsonObject[i]["url"].asCString(), *pInt_MSGLen);
+			}
+		}
+	}
+
+	return true;
+}
 //////////////////////////////////////////////////////////////////////////
 //                      回调函数
 //////////////////////////////////////////////////////////////////////////
@@ -408,7 +591,7 @@ void CAIApi_Image::AIApi_Image_CBRecv(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, 
 				break;
 			}
 			// 解析当前消息体
-			if (!pClass_This->AIApi_Image_Parse(pSt_AIClient, ptszStart + nPos, nOneMsgLen - nPos, true))
+			if (!pClass_This->AIApi_Image_JsonParse(pSt_AIClient, ptszStart + nPos, nOneMsgLen - nPos, true))
 			{
 				break; 
 			}
@@ -428,10 +611,21 @@ void CAIApi_Image::AIApi_Image_CBRecv(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, 
 	}
 	else
 	{
-		if (pClass_This->AIApi_Image_Parse(pSt_AIClient, (LPCXSTR)pSt_AIClient->ptszMSGBuffer, pSt_AIClient->nMSGLen, false))
+		if (pSt_AIClient->bCreate)
 		{
-			memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
-			pSt_AIClient->nMSGLen = 0;
+			if (pClass_This->AIApi_Image_JsonParse(pSt_AIClient, (LPCXSTR)pSt_AIClient->ptszMSGBuffer, pSt_AIClient->nMSGLen, false))
+			{
+				memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+				pSt_AIClient->nMSGLen = 0;
+			}
+		}
+		else
+		{
+			if (pClass_This->AIApi_Image_JsonCreate(pSt_AIClient, (LPCXSTR)pSt_AIClient->ptszMSGBuffer, pSt_AIClient->nMSGLen))
+			{
+				memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+				pSt_AIClient->nMSGLen = 0;
+			}
 		}
 	}
 }

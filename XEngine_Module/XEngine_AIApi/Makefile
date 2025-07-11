@@ -16,6 +16,9 @@ else
 	ifeq ($(PLATFORM),mac)
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG
+	else ifeq ($(PLATFORM), android)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
 	else
 		FLAGS = -c -lc_p
 		DEBUG = -g -pg -D _DEBUG
@@ -45,6 +48,15 @@ else ifeq ($(PLATFORM),mac)
 	LIBFLAG = -dynamiclib
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
+else ifeq ($(PLATFORM), android)
+	PLATVER = -D __ANDROID__
+	FILEEXT = so
+	LIBFLAG = -shared
+	LOADHDR += -I $(HOME)/XEngine_Android_Arm64
+	LOADSO += -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_BaseLib -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_Core -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_Client
+	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
+	SDKPATH = $(HOME)/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
+	CC = $(SDKPATH) -Wall -fPIC -std=c++20 -target aarch64-linux-android30
 endif
 
 all:$(OBJECTS)

@@ -3,8 +3,8 @@ PLATFORM = linux
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
-LOADHDR = -I ./ -I ../jsoncpp
-LOADSO = -L ../jsoncpp
+LOADHDR = -I ./ -I ../jsoncpp 
+LOADSO = -L ../jsoncpp 
 LIB = -lXEngine_BaseLib -lXEngine_SystemApi -lXClient_APIHelp -lNetHelp_XSocket -ljsoncpp
 LIBEX = 
 OBJECTS = InfoReport_APIMachine.o pch.o
@@ -14,6 +14,9 @@ FLAGS = -c -D _RELEASE
 DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
+	else ifeq ($(PLATFORM), android)
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG
 	else
@@ -45,6 +48,15 @@ else ifeq ($(PLATFORM),mac)
 	LIBFLAG = -dynamiclib
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
+else ifeq ($(PLATFORM), android)
+	PLATVER = -D __ANDROID__
+	FILEEXT = so
+	LIBFLAG = -shared
+	LOADHDR += -I $(HOME)/XEngine_Android_Arm64
+	LOADSO += -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_BaseLib -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_SystemSdk -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_NetHelp -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_Client
+	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
+	SDKPATH = $(HOME)/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
+	CC = $(SDKPATH) -Wall -fPIC -std=c++20 -target aarch64-linux-android30
 endif
 
 all:$(OBJECTS)

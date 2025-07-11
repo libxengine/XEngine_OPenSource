@@ -3,9 +3,8 @@ PLATFORM = linux
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
-RELEASE = 0
 LOADHDR = -I ./ 
-LOADSO = -L 
+LOADSO = 
 LIB = 
 LIBEX = 
 OBJECTS = pch.o tinyxml2.o
@@ -15,6 +14,9 @@ FLAGS = -c -D _RELEASE
 DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
+	else ifeq ($(PLATFORM), android)
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG
 	else
@@ -46,6 +48,13 @@ else ifeq ($(PLATFORM),mac)
 	LIBFLAG = -dynamiclib
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
+else ifeq ($(PLATFORM), android)
+	PLATVER = -D __ANDROID__
+	FILEEXT = so
+	LIBFLAG = -shared
+	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
+	SDKPATH = $(HOME)/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
+	CC = $(SDKPATH) -Wall -fPIC -std=c++20 -target aarch64-linux-android30
 endif
 
 all:$(OBJECTS)

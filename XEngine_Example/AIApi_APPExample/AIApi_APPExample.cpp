@@ -45,12 +45,86 @@ void XCALLBACK XEngine_AIApi_CBRecv(XNETHANDLE xhToken, LPCXSTR lpszModelName, L
 	}
 }
 
+int Test_CreateImage()
+{
+	XNETHANDLE xhToken = 0;
+
+	LPCXSTR lpszAPIUrl = _X("https://ark.cn-beijing.volces.com/api/v3/images/generations");
+	LPCXSTR lpszAPIKey = _X("d68056c1-1faa-438e-8476-1");
+	LPCXSTR lpszAPIModel = _X("doubao-seedream-3-0-t2i-250415");
+
+	if (!AIApi_Vision_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv))
+	{
+		printf("AIApi_Vision_Create:%lX\n", AIApi_GetLastError());
+		return 0;
+	}
+
+	LPCXSTR lpszMSGBuffer = _X("生成一张图片:鱼眼镜头，一只猫咪的头部，画面呈现出猫咪的五官因为拍摄方式扭曲的效果。");
+	int nMSGLen = strlen(lpszMSGBuffer);
+
+	int nImageSize = 0;
+	XCHAR* ptszMSGBuffer = NULL;
+	if (!AIApi_Vision_ExcuteCrete(xhToken, lpszAPIModel, _X("1024x1024"), lpszMSGBuffer, nMSGLen, &ptszMSGBuffer, &nImageSize, false))
+	{
+		printf("AIApi_Vision_ExcuteCrete:%lX\n", AIApi_GetLastError());
+		return 0;
+	}
+	AIApi_Help_Base64DecodecFile(ptszMSGBuffer, nImageSize, _X("D:\\ai_create.png"));
+	AIApi_Vision_Destory(xhToken);
+	return 1;
+}
+int Test_ParseImage()
+{
+	XNETHANDLE xhToken = 0;
+
+	LPCXSTR lpszAPIUrl = _X("https://ark.cn-beijing.volces.com/api/v3/chat/completions");
+	LPCXSTR lpszAPIKey = _X("d68056c1-1faa-438e-8476-1");
+	LPCXSTR lpszAPIModel = _X("doubao-1-5-vision-pro-32k-250115");
+
+	if (!AIApi_Vision_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv))
+	{
+		printf("AIApi_Vision_Create:%lX\n", AIApi_GetLastError());
+		return 0;
+	}
+
+	LPCXSTR lpszMSGBuffer = _X("请描述下这个图片内容?");
+	int nMSGLen = strlen(lpszMSGBuffer);
+
+	if (true)
+	{
+		LPCXSTR lpszFileName = _X("D:\\20240419102308.png");
+
+		int nMSGLen = 0;
+		XCHAR* ptszMSGBuffer = NULL;
+		AIApi_Help_Base64EncodecFile(lpszFileName, &ptszMSGBuffer, &nMSGLen);
+		if (!AIApi_Vision_ExcuteParse(xhToken, lpszAPIModel, ptszMSGBuffer, lpszMSGBuffer, nMSGLen, true))
+		{
+			printf("AIApi_Vision_ExcuteParse:%lX\n", AIApi_GetLastError());
+			return 0;
+		}
+		free(ptszMSGBuffer);
+	}
+	else
+	{
+		LPCXSTR lpszUrlBuffer = _X("https://www.xyry.org/XEngine_StructPic/EngineFrameWork.png");
+		if (!AIApi_Vision_ExcuteParse(xhToken, lpszAPIModel, lpszUrlBuffer, lpszMSGBuffer, nMSGLen, true))
+		{
+			printf("AIApi_Vision_ExcuteParse:%lX\n", AIApi_GetLastError());
+			return 0;
+		}
+	}
+	
+	bool bCompleted = false;
+	AIApi_Vision_GetStatus(xhToken, &bCompleted);
+	AIApi_Vision_Destory(xhToken);
+	return 1;
+}
 int Test_Think()
 {
 	XNETHANDLE xhToken = 0;
 
 	LPCXSTR lpszAPIUrl = _X("https://ark.cn-beijing.volces.com/api/v3/chat/completions");
-	LPCXSTR lpszAPIKey = _X("1");
+	LPCXSTR lpszAPIKey = _X("d68056c1-1faa-438e-8476-1");
 	LPCXSTR lpszAPIModel = _X("doubao-seed-1-6-thinking-250615");
 
 	if (!AIApi_Chat_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv))
@@ -123,6 +197,8 @@ int Test_Chat()
 }
 int main()
 {
+	Test_CreateImage();
+	Test_ParseImage();
 	Test_Think();
 	Test_Chat();
 	return 0;

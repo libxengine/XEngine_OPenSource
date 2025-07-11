@@ -19,6 +19,7 @@ support systems:linux,macos,windows
 - XEngine_Token       Handle Management module
 - XEngine_InfoReport  information report module
 - XEngine_MSGNotify   Message Notify Modules
+- XEngine_AIApi       AI chat api module
 - jsoncpp             json module
 - tinyxml2            XML module
 
@@ -32,6 +33,7 @@ support systems:linux,macos,windows
 - InfoReport_APPExample   information report example
 - MSGNotify_APPExample    message notify example
 - TinyXML2_APPExample     xml module example
+- AIApi_APPExample        ai module example
 
 ## install
 
@@ -53,7 +55,6 @@ use vs open and complie
 
 #### Linux
 Linux use Makefile complie  
-support ubunut22.04 and rockylinux9 and above version
 
 ##### Compile Command
 
@@ -66,7 +67,7 @@ Linux use Makefile to complie,terminal exection,Requires mac 13 and above
 
 ##### Compile Command
 
-refer to linux
+make PLATFORM=mac
 
 ## Use
 

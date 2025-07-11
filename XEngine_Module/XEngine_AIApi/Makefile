@@ -5,7 +5,7 @@ FILEEXT =
 LIBFLAG = 
 LOADHDR = -I ./ -I ../jsoncpp
 LOADSO = -L ../jsoncpp
-LIB = -lXEngine_BaseLib -lXEngine_BaseSafe -lXClient_APIHelp -XEngine_Cryption -ljsoncpp
+LIB = -lXEngine_BaseLib -lXEngine_BaseSafe -lXClient_APIHelp -lXEngine_Cryption -ljsoncpp
 LIBEX = 
 OBJECTS = AIApi_Chat.o AIApi_Vision.o AIApi_Help.o pch.o
 

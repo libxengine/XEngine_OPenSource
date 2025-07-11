@@ -20,6 +20,7 @@
 - XEngine_Token       句柄管理模块
 - XEngine_InfoReport  信息报告模块
 - XEngine_MSGNotify   消息通知模块
+- XEngine_AIApi       AI对话接口模块
 - jsoncpp             json模块
 - tinyxml2            XML模块 
 
@@ -33,6 +34,7 @@
 - InfoReport_APPExample   报告模块例子
 - MSGNotify_APPExample    消息通知模块例子
 - TinyXML2_APPExample     XML模块例子
+- AIApi_APPExample        AI模块例子
 
 ## 安装教程
 
@@ -54,7 +56,6 @@ macos执行:./XEngine_LINEnv.sh -i 3
 
 #### Linux
 Linux使用Makefile编译  
-支持ubuntu22.04以及rockylinux9以及以上系统版本
 
 ###### 编译命令
 
@@ -66,7 +67,7 @@ make 编译
 
 ###### 编译命令
 
-参考Linux
+make PLATFORM=mac
 
 ## 使用说明
 

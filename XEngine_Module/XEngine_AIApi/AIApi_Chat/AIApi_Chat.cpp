@@ -448,7 +448,7 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 			_xstrcpy(st_AIHistory.tszRoleName, st_JsonMessage["role"].asCString(), sizeof(st_AIHistory.tszRoleName));
 		}
 		int nGBKLen = 0;
-		
+
 		if (st_JsonMessage["reasoning_content"].isNull())
 		{
 			//为空,表示对话
@@ -520,7 +520,6 @@ void CAIApi_Chat::AIApi_Chat_CBRecv(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, in
 	if (pSt_AIClient->bStream)
 	{
 		//SSE
-		int nPos = 0;
 		LPCXSTR lpszSSEStr = _X("data: ");
 		LPCXSTR lpszSSEEnd = _X("[DONE]");
 

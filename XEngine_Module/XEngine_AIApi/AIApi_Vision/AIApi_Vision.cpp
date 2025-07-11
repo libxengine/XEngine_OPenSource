@@ -559,7 +559,6 @@ void CAIApi_Vision::AIApi_Vision_CBRecv(XNETHANDLE xhToken, XPVOID lpszMsgBuffer
 	if (pSt_AIClient->bStream)
 	{
 		//SSE
-		int nPos = 0;
 		LPCXSTR lpszSSEStr = _X("data: ");
 		LPCXSTR lpszSSEEnd = _X("[DONE]");
 

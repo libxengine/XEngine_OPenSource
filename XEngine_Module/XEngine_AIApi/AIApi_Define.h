@@ -179,7 +179,7 @@ extern "C" bool AIApi_Chat_Destory(XNETHANDLE xhToken);
 /*                        AI图像处理模型导出函数                        */
 /************************************************************************/
 /********************************************************************
-函数名称：AIApi_Image_Create
+函数名称：AIApi_Vision_Create
 函数功能：AI图像处理模型初始化
  参数.一：pxhToken
   In/Out：Out
@@ -211,9 +211,9 @@ extern "C" bool AIApi_Chat_Destory(XNETHANDLE xhToken);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL);
+extern "C" bool AIApi_Vision_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL);
 /********************************************************************
-函数名称：AIApi_Image_ExcuteParse
+函数名称：AIApi_Vision_ExcuteParse
 函数功能：处理图像理解
  参数.一：xhToken
   In/Out：In
@@ -250,9 +250,9 @@ extern "C" bool AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPC
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool AIApi_Image_ExcuteParse(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false);
+extern "C" bool AIApi_Vision_ExcuteParse(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false);
 /********************************************************************
-函数名称：AIApi_Image_ExcuteCrete
+函数名称：AIApi_Vision_ExcuteCrete
 函数功能：AI创建图像
  参数.一：xhToken
   In/Out：In
@@ -299,9 +299,9 @@ extern "C" bool AIApi_Image_ExcuteParse(XNETHANDLE xhToken, LPCXSTR lpszModelNam
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool AIApi_Image_ExcuteCrete(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGSize, LPCXSTR lpszMSGBuffer, int nMSGLen, XCHAR** pptszMSGBuffer, int* pInt_MSGLen, bool bCallback = false);
+extern "C" bool AIApi_Vision_ExcuteCrete(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGSize, LPCXSTR lpszMSGBuffer, int nMSGLen, XCHAR** pptszMSGBuffer, int* pInt_MSGLen, bool bCallback = false);
 /********************************************************************
-函数名称：AIApi_Image_GetStatus
+函数名称：AIApi_Vision_GetStatus
 函数功能：获取执行状态
  参数.一：xhToken
   In/Out：In
@@ -328,9 +328,9 @@ extern "C" bool AIApi_Image_ExcuteCrete(XNETHANDLE xhToken, LPCXSTR lpszModelNam
   意思：是否成功
 备注：pbComplete没有执行完毕需要等待执行完毕
 *********************************************************************/
-extern "C" bool AIApi_Image_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);
+extern "C" bool AIApi_Vision_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);
 /********************************************************************
-函数名称：AIApi_Image_Destory
+函数名称：AIApi_Vision_Destory
 函数功能：销毁一个对话模型
  参数.一：xhToken
   In/Out：In
@@ -342,7 +342,7 @@ extern "C" bool AIApi_Image_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int*
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool AIApi_Image_Destory(XNETHANDLE xhToken);
+extern "C" bool AIApi_Vision_Destory(XNETHANDLE xhToken);
 /************************************************************************/
 /*                        AI帮助 导出函数                               */
 /************************************************************************/

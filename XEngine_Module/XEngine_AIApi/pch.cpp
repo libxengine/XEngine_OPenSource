@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "AIApi_Chat/AIApi_Chat.h"
-#include "AIApi_Image/AIApi_Image.h"
+#include "AIApi_Vision/AIApi_Vision.h"
 #include "AIApi_Help/AIApi_Help.h"
 /********************************************************************
 //    Created:     2025/05/29  14:07:51
@@ -17,7 +17,7 @@ bool AIApi_IsErrorOccur = false;
 XLONG AIApi_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CAIApi_Chat m_AIChat;
-CAIApi_Image m_AIImage;
+CAIApi_Vision m_AIVision;
 CAIApi_Help m_AIHelp;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
@@ -60,25 +60,25 @@ extern "C" bool AIApi_Chat_Destory(XNETHANDLE xhToken)
 /************************************************************************/
 /*                        AI图像处理模型导出函数                        */
 /************************************************************************/
-extern "C" bool AIApi_Image_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam)
+extern "C" bool AIApi_Vision_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam)
 {
-	return m_AIImage.AIApi_Image_Create(pxhToken, lpszAPIUrl, lpszAPIKey, fpCall_Chat, lParam);
+	return m_AIVision.AIApi_Vision_Create(pxhToken, lpszAPIUrl, lpszAPIKey, fpCall_Chat, lParam);
 }
-extern "C" bool AIApi_Image_ExcuteParse(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream)
+extern "C" bool AIApi_Vision_ExcuteParse(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszUrlBase, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream)
 {
-	return m_AIImage.AIApi_Image_ExcuteParse(xhToken, lpszModelName, lpszUrlBase, lpszMSGBuffer, nMSGLen, bStream);
+	return m_AIVision.AIApi_Vision_ExcuteParse(xhToken, lpszModelName, lpszUrlBase, lpszMSGBuffer, nMSGLen, bStream);
 }
-extern "C" bool AIApi_Image_ExcuteCrete(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGSize, LPCXSTR lpszMSGBuffer, int nMSGLen, XCHAR** pptszMSGBuffer, int* pInt_MSGLen, bool bCallback)
+extern "C" bool AIApi_Vision_ExcuteCrete(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGSize, LPCXSTR lpszMSGBuffer, int nMSGLen, XCHAR** pptszMSGBuffer, int* pInt_MSGLen, bool bCallback)
 {
-	return m_AIImage.AIApi_Image_ExcuteCrete(xhToken, lpszModelName, lpszMSGSize, lpszMSGBuffer, nMSGLen, pptszMSGBuffer, pInt_MSGLen, bCallback);
+	return m_AIVision.AIApi_Vision_ExcuteCrete(xhToken, lpszModelName, lpszMSGSize, lpszMSGBuffer, nMSGLen, pptszMSGBuffer, pInt_MSGLen, bCallback);
 }
-extern "C" bool AIApi_Image_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode, bool bWaitExist)
+extern "C" bool AIApi_Vision_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode, bool bWaitExist)
 {
-	return m_AIImage.AIApi_Image_GetStatus(xhToken, pbComplete, pInt_HTTPCode, bWaitExist);
+	return m_AIVision.AIApi_Vision_GetStatus(xhToken, pbComplete, pInt_HTTPCode, bWaitExist);
 }
-extern "C" bool AIApi_Image_Destory(XNETHANDLE xhToken)
+extern "C" bool AIApi_Vision_Destory(XNETHANDLE xhToken)
 {
-	return m_AIImage.AIApi_Image_Destory(xhToken);
+	return m_AIVision.AIApi_Vision_Destory(xhToken);
 }
 /************************************************************************/
 /*                        AI帮助 导出函数                               */

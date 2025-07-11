@@ -10,11 +10,11 @@ EXPORTS
 	AIApi_Chat_GetStatus
 	AIApi_Chat_Destory
 
-	AIApi_Image_Create
-	AIApi_Image_ExcuteParse
-	AIApi_Image_ExcuteCrete
-	AIApi_Image_GetStatus
-	AIApi_Image_Destory
+	AIApi_Vision_Create
+	AIApi_Vision_ExcuteParse
+	AIApi_Vision_ExcuteCrete
+	AIApi_Vision_GetStatus
+	AIApi_Vision_Destory
 
 	AIApi_Help_Base64EncodecFile
 	AIApi_Help_Base64EncodecMemory

@@ -19,17 +19,17 @@
     <Filter Include="源文件\AIApi_Chat">
       <UniqueIdentifier>{28c4b390-8648-40b0-9882-7b30aeb72a0d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\AIApi_Image">
-      <UniqueIdentifier>{4c6eb445-1ece-41a1-b3e3-93db24ab8476}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\AIApi_Image">
-      <UniqueIdentifier>{a13fcb1c-0028-48b8-8412-889d070db132}</UniqueIdentifier>
-    </Filter>
     <Filter Include="头文件\AIApi_Help">
       <UniqueIdentifier>{90ea5304-7076-452a-b6ad-890b625b0d58}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\AIApi_Help">
       <UniqueIdentifier>{d612c628-9e84-4ba6-8612-f261a6952c73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\AIApi_Vision">
+      <UniqueIdentifier>{4c6eb445-1ece-41a1-b3e3-93db24ab8476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\AIApi_Vision">
+      <UniqueIdentifier>{a13fcb1c-0028-48b8-8412-889d070db132}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,11 +48,11 @@
     <ClInclude Include="AIApi_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AIApi_Image\AIApi_Image.h">
-      <Filter>头文件\AIApi_Image</Filter>
-    </ClInclude>
     <ClInclude Include="AIApi_Help\AIApi_Help.h">
       <Filter>头文件\AIApi_Help</Filter>
+    </ClInclude>
+    <ClInclude Include="AIApi_Vision\AIApi_Vision.h">
+      <Filter>头文件\AIApi_Vision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -65,11 +65,11 @@
     <ClCompile Include="AIApi_Chat\AIApi_Chat.cpp">
       <Filter>源文件\AIApi_Chat</Filter>
     </ClCompile>
-    <ClCompile Include="AIApi_Image\AIApi_Image.cpp">
-      <Filter>源文件\AIApi_Image</Filter>
-    </ClCompile>
     <ClCompile Include="AIApi_Help\AIApi_Help.cpp">
       <Filter>源文件\AIApi_Help</Filter>
+    </ClCompile>
+    <ClCompile Include="AIApi_Vision\AIApi_Vision.cpp">
+      <Filter>源文件\AIApi_Vision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

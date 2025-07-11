@@ -7,7 +7,7 @@ LOADHDR = -I ./ -I ../jsoncpp
 LOADSO = -L ../jsoncpp
 LIB = -lXEngine_BaseLib -lXEngine_BaseSafe -lXClient_APIHelp -ljsoncpp
 LIBEX = 
-OBJECTS = AIApi_Chat.o AIApi_Image.o pch.o
+OBJECTS = AIApi_Chat.o AIApi_Vision.o AIApi_Help.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -D _RELEASE
@@ -52,8 +52,10 @@ all:$(OBJECTS)
 
 AIApi_Chat.o:./AIApi_Chat/AIApi_Chat.cpp             
 	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./AIApi_Chat/AIApi_Chat.cpp 
-AIApi_Image.o:./AIApi_Image/AIApi_Image.cpp             
-	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./AIApi_Image/AIApi_Image.cpp 
+AIApi_Vision.o:./AIApi_Vision/AIApi_Vision.cpp             
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./AIApi_Vision/AIApi_Vision.cpp 
+AIApi_Help.o:./AIApi_Help/AIApi_Help.cpp             
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./AIApi_Help/AIApi_Help.cpp
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./pch.cpp

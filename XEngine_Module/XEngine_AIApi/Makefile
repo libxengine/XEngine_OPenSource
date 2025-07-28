@@ -19,6 +19,9 @@ else
 	else ifeq ($(PLATFORM), android)
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG
+	else ifeq ($(PLATFORM), ios)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
 	else
 		FLAGS = -c -lc_p
 		DEBUG = -g -pg -D _DEBUG
@@ -57,6 +60,14 @@ else ifeq ($(PLATFORM), android)
 	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
 	SDKPATH = $(HOME)/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
 	CC = $(SDKPATH) -Wall -fPIC -std=c++20 -target aarch64-linux-android30
+else ifeq ($(PLATFORM), ios)
+	PLATVER = -D __IOS__
+	FILEEXT = dylib
+	LIBFLAG = -dynamiclib
+	LOADHDR += -I $(HOME)/XEngine_IOS_Arm64
+	LOADSO += -L $(HOME)/XEngine_IOS_Arm64/XEngine_IOS/XEngine_BaseLib -L $(HOME)/XEngine_IOS_Arm64/XEngine_IOS/XEngine_Core -L $(HOME)/XEngine_IOS_Arm64/XEngine_IOS/XEngine_Client
+	SDKPATH = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
+	CC = g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -miphoneos-version-min=16.0
 endif
 
 all:$(OBJECTS)

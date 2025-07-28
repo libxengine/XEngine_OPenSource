@@ -8,7 +8,7 @@
 
 开发语言:C/C++  
 开发工具:vs2022  
-支持系统:linux,macos,windows
+支持系统:linux,macos,windows,android,ios
 
 ## 目录结构
 
@@ -68,6 +68,20 @@ make 编译
 ###### 编译命令
 
 make PLATFORM=mac
+
+#### Adnroid
+使用makefile编译
+
+###### 编译命令
+
+make PLATFORM=android
+
+#### IOS
+使用makefile编译
+
+###### 编译命令
+
+make PLATFORM=ios
 
 ## 使用说明
 

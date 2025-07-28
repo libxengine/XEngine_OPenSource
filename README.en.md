@@ -7,7 +7,7 @@ This repository is the repository for XEngine's open source modules and examples
 
 Development language:c c++  
 Development tools:vs2022  
-support systems:linux,macos,windows
+support systems:linux,macos,windows,android,ios
 
 ## Dir Struct
 
@@ -68,6 +68,22 @@ Linux use Makefile to complie,terminal exection,Requires mac 13 and above
 ##### Compile Command
 
 make PLATFORM=mac
+
+#### Android
+
+use Makefile to complie
+
+##### Compile Command
+
+make PLATFORM=android
+
+#### Android
+
+use Makefile to complie
+
+##### Compile Command
+
+make PLATFORM=ios
 
 ## Use
 

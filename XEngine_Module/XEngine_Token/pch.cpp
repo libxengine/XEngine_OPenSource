@@ -63,9 +63,9 @@ extern "C" bool Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTIME* p
 {
 	return m_SessionToken.Session_Token_GetTimeInfo(xhToken, pSt_LoginTime, pSt_UPTime);
 }
-extern "C" bool Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout)
+extern "C" bool Session_Token_GetTimeout(XNETHANDLE xhToken, __int64x* pInt_TimeLogin, __int64x* pInt_Timeout)
 {
-	return m_SessionToken.Session_Token_GetTimeout(xhToken, pInt_Timeout);
+	return m_SessionToken.Session_Token_GetTimeout(xhToken, pInt_TimeLogin, pInt_Timeout);
 }
 extern "C" bool Session_Token_GetTimeRenewal(XNETHANDLE xhToken, int* pInt_RenewalTime)
 {

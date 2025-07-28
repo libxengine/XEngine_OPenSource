@@ -182,17 +182,22 @@ extern "C" bool Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTIME* p
   类型：句柄
   可空：N
   意思：要操作的客户端
- 参数.二：pInt_Timeout
+ 参数.二：pInt_TimeLogin
   In/Out：Out
   类型：整数型指针
   可空：N
-  意思：输出超时时间
+  意思：输出在线时间
+ 参数.三：pInt_Timeout
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出剩余超时时间
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout);
+extern "C" bool Session_Token_GetTimeout(XNETHANDLE xhToken, __int64x* pInt_TimeLogin = NULL, __int64x* pInt_Timeout = NULL);
 /********************************************************************
 函数名称：Session_Token_GetTimeRenewal
 函数功能：获取续期次数

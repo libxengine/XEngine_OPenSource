@@ -110,7 +110,7 @@ bool CSession_Token::Session_Token_Destroy()
   In/Out：In
   类型：整数型
   可空：Y
-  意思：单独指定超时时间,-1 不启用
+  意思：单独指定超时时间,-1 不启用,0 不超时,> 0 超时秒
 返回值
   类型：逻辑型
   意思：是否允许登陆
@@ -154,7 +154,7 @@ bool CSession_Token::Session_Token_Create(XNETHANDLE *pxhToken, XENGINE_PROTOCOL
   In/Out：In
   类型：整数型
   可空：Y
-  意思：单独指定超时时间,-1 不启用
+  意思：单独指定超时时间,-1 不启用,0 不超时,> 0 超时秒
 返回值
   类型：逻辑型
   意思：是否允许登陆
@@ -342,17 +342,22 @@ bool CSession_Token::Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTI
   类型：句柄
   可空：N
   意思：要操作的客户端
- 参数.二：pInt_Timeout
+ 参数.二：pInt_TimeLogin
   In/Out：Out
   类型：整数型指针
   可空：N
-  意思：输出超时时间
+  意思：输出在线时间
+ 参数.三：pInt_Timeout
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出剩余超时时间
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CSession_Token::Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Timeout)
+bool CSession_Token::Session_Token_GetTimeout(XNETHANDLE xhToken, __int64x* pInt_TimeLogin, __int64x* pInt_Timeout)
 {
 	Session_IsErrorOccur = false;
 
@@ -367,10 +372,41 @@ bool CSession_Token::Session_Token_GetTimeout(XNETHANDLE xhToken, int* pInt_Time
 	}
     XENGINE_LIBTIME st_LibTimer = {};
 	BaseLib_Time_GetSysTime(&st_LibTimer);                  //获取现在的系统时间
-	__int64x nOnlineSpan = 0;                               //在线时间
 	//用户登录了多少秒
-	BaseLib_TimeSpan_GetForStu(&stl_MapIterator->second.st_OutTimer, &st_LibTimer, &nOnlineSpan, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
-    *pInt_Timeout = (int)nOnlineSpan;
+    if (NULL != pInt_TimeLogin)
+    {
+        BaseLib_TimeSpan_GetForStu(&stl_MapIterator->second.st_OutTimer, &st_LibTimer, pInt_TimeLogin, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
+    }
+    //用户超时时间
+	time_t nTimeEnd = 0;
+	time_t nTimeStart = 0;
+    BaseLib_Time_StuTimeToTTime(&stl_MapIterator->second.st_OutTimer, &nTimeStart);
+    if (NULL != pInt_Timeout)
+    {
+		if (-1 == stl_MapIterator->second.nTimeout)
+		{
+			//全局时间
+			if (m_nTimeout > 0)
+			{
+				BaseLib_Time_StuTimeToTTime(&st_LibTimer, &nTimeEnd);
+				nTimeEnd += m_nTimeout;
+			}
+			else
+			{
+                *pInt_Timeout = 0; //不超时
+			}
+		}
+		else if (0 == stl_MapIterator->second.nTimeout)
+		{
+            *pInt_Timeout = 0; //不超时
+		}
+		else
+		{
+			BaseLib_Time_StuTimeToTTime(&st_LibTimer, &nTimeEnd);
+			nTimeEnd += stl_MapIterator->second.nTimeout;
+		}
+        BaseLib_TimeSpan_GetForTime(nTimeStart, nTimeEnd, pInt_Timeout, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
+    }
 	st_Locker.unlock_shared();
 	return true;
 }

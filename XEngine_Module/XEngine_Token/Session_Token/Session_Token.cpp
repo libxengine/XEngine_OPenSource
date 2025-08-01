@@ -864,6 +864,7 @@ XHTHREAD CSession_Token::Session_Token_Thread(XPVOID lParam)
 			std::list<TOKENSESSION_INFOCLIENT>::iterator stl_ListIterator = stl_ListNotify.begin();
 			for (; stl_ListIterator != stl_ListNotify.end(); stl_ListIterator++)
 			{
+                ::Session_Token_DeleteStr(stl_ListIterator->tszTokenStr);
 				pClass_This->lpCall_TokenEvents(stl_ListIterator->tszTokenStr, stl_ListIterator->nTimeout, stl_ListIterator->nRenewalTime, &stl_ListIterator->st_LibTimer, &stl_ListIterator->st_UserInfo, pClass_This->m_lParam);
 			}
 			stl_ListNotify.clear();        //清理元素

@@ -26,7 +26,7 @@ public:
 	CSession_Token();
 	~CSession_Token();
 public:
-	bool Session_Token_Init(int nTimeout, CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS fpCall_TokenEvent, XPVOID lParam = NULL);
+	bool Session_Token_Init(int nTimeout, bool bRemove, CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS fpCall_TokenEvent, XPVOID lParam = NULL);
 	bool Session_Token_Destroy();
 	bool Session_Token_Create(XNETHANDLE *pxhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
 	bool Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
@@ -54,6 +54,7 @@ protected:
 private:
 	int m_nTimeout = 0;
 	bool bIsRun = false;
+	bool m_bRemove = false;
 	std::unique_ptr<std::thread> pSTDThread;
 private:
 	XPVOID m_lParam = NULL;

@@ -31,9 +31,9 @@ extern "C" XLONG Session_GetLastError(int* pInt_ErrorCode)
 /************************************************************************/
 /*                         TOKEN会话导出函数                            */
 /************************************************************************/
-extern "C" bool Session_Token_Init(int nTimeout, CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS fpCall_TokenEvent, XPVOID lParam)
+extern "C" bool Session_Token_Init(int nTimeout, bool bRemove, CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS fpCall_TokenEvent, XPVOID lParam)
 {
-	return m_SessionToken.Session_Token_Init(nTimeout, fpCall_TokenEvent, lParam);
+	return m_SessionToken.Session_Token_Init(nTimeout, bRemove, fpCall_TokenEvent, lParam);
 }
 extern "C" bool Session_Token_Destroy()
 {

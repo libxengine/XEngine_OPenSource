@@ -28,12 +28,17 @@ CSession_Token::~CSession_Token()
   类型：整数型
   可空：N
   意思：超时时间,单位秒,0不超时,永远存在
- 参数.二：fpCall_TokenEvent
+ 参数.二：bRemove
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：是否允许自动删除
+ 参数.三：fpCall_TokenEvent
   In/Out：In/Out
   类型：回调函数
   可空：N
   意思：TOKEN登录的客户端连接超时回调
- 参数.三：lParam
+ 参数.四：lParam
   In/Out：In/Out
   类型：无类型指针
   可空：Y
@@ -43,7 +48,7 @@ CSession_Token::~CSession_Token()
   意思：是否初始化成功
 备注：
 *********************************************************************/
-bool CSession_Token::Session_Token_Init(int nTimeout, CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS fpCall_TokenEvent, XPVOID lParam /* = NULL */)
+bool CSession_Token::Session_Token_Init(int nTimeout, bool bRemove, CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS fpCall_TokenEvent, XPVOID lParam /* = NULL */)
 {
     Session_IsErrorOccur = false;
 
@@ -55,6 +60,7 @@ bool CSession_Token::Session_Token_Init(int nTimeout, CALLBACK_XENGIEN_MODULE_TO
     }
     m_nTimeout = nTimeout;
     m_lParam = lParam;
+    m_bRemove = bRemove;
     lpCall_TokenEvents = fpCall_TokenEvent;
 
     bIsRun = true;
@@ -864,7 +870,10 @@ XHTHREAD CSession_Token::Session_Token_Thread(XPVOID lParam)
 			std::list<TOKENSESSION_INFOCLIENT>::iterator stl_ListIterator = stl_ListNotify.begin();
 			for (; stl_ListIterator != stl_ListNotify.end(); stl_ListIterator++)
 			{
-                ::Session_Token_DeleteStr(stl_ListIterator->tszTokenStr);
+                if (pClass_This->m_bRemove)
+                {
+                    ::Session_Token_DeleteStr(stl_ListIterator->tszTokenStr);
+                }
 				pClass_This->lpCall_TokenEvents(stl_ListIterator->tszTokenStr, stl_ListIterator->nTimeout, stl_ListIterator->nRenewalTime, &stl_ListIterator->st_LibTimer, &stl_ListIterator->st_UserInfo, pClass_This->m_lParam);
 			}
 			stl_ListNotify.clear();        //清理元素

@@ -30,12 +30,17 @@ extern "C" XLONG Session_GetLastError(int *pInt_ErrorCode = NULL);
   类型：整数型
   可空：N
   意思：超时时间,单位秒,0不超时,永远存在
- 参数.二：fpCall_TokenEvent
+ 参数.二：bRemove
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：是否允许自动删除
+ 参数.三：fpCall_TokenEvent
   In/Out：In/Out
   类型：回调函数
   可空：N
   意思：TOKEN登录的客户端连接超时回调
- 参数.三：lParam
+ 参数.四：lParam
   In/Out：In/Out
   类型：无类型指针
   可空：Y
@@ -45,7 +50,7 @@ extern "C" XLONG Session_GetLastError(int *pInt_ErrorCode = NULL);
   意思：是否初始化成功
 备注：
 *********************************************************************/
-extern "C" bool Session_Token_Init(int nTimeout, CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS fpCall_TokenEvent, XPVOID lParam = NULL);
+extern "C" bool Session_Token_Init(int nTimeout, bool bRemove, CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS fpCall_TokenEvent, XPVOID lParam = NULL);
 /********************************************************************
 函数名称：Session_Token_Destroy
 函数功能：销毁服务

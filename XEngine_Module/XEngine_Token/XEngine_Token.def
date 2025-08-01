@@ -16,6 +16,17 @@ EXPORTS
 	Session_Token_GetUser
 	Session_Token_GetList
 
+	Session_Token_CreateStr
+	Session_Token_InsertStr
+	Session_Token_DeleteStr
+	Session_Token_UPDateStr
+	Session_Token_GetStr
+	Session_Token_GetTimeInfoStr
+	Session_Token_GetTimeoutStr
+	Session_Token_GetTimeRenewalStr
+	Session_Token_GetUserStr
+	Session_Token_GetListStr
+
 	Session_Dynamic_Init
 	Session_Dynamic_Destory
 	Session_Dynamic_Create

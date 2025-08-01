@@ -79,6 +79,46 @@ extern "C" bool Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_ListCo
 {
 	return m_SessionToken.Session_Token_GetList(pppxhToken, pInt_ListCount);
 }
+extern "C" bool Session_Token_CreateStr(XCHAR* ptszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, int nTimeout)
+{
+	return m_SessionToken.Session_Token_CreateStr(ptszToken, pSt_UserInfo, nTimeout);
+}
+extern "C" bool Session_Token_InsertStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, int nTimeout)
+{
+	return m_SessionToken.Session_Token_InsertStr(lpszToken, pSt_UserInfo, nTimeout);
+}
+extern "C" bool Session_Token_DeleteStr(LPCXSTR lpszToken)
+{
+	return m_SessionToken.Session_Token_DeleteStr(lpszToken);
+}
+extern "C" bool Session_Token_UPDateStr(LPCXSTR lpszToken)
+{
+	return m_SessionToken.Session_Token_UPDateStr(lpszToken);
+}
+extern "C" bool Session_Token_GetStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo)
+{
+	return m_SessionToken.Session_Token_GetStr(lpszToken, pSt_UserInfo);
+}
+extern "C" bool Session_Token_GetTimeInfoStr(LPCXSTR lpszToken, XENGINE_LIBTIME* pSt_LoginTime, XENGINE_LIBTIME* pSt_UPTime)
+{
+	return m_SessionToken.Session_Token_GetTimeInfoStr(lpszToken, pSt_LoginTime, pSt_UPTime);
+}
+extern "C" bool Session_Token_GetTimeoutStr(LPCXSTR lpszToken, __int64x* pInt_TimeLogin, __int64x* pInt_Timeout)
+{
+	return m_SessionToken.Session_Token_GetTimeoutStr(lpszToken, pInt_TimeLogin, pInt_Timeout);
+}
+extern "C" bool Session_Token_GetTimeRenewalStr(LPCXSTR lpszToken, int* pInt_RenewalTime)
+{
+	return m_SessionToken.Session_Token_GetTimeRenewalStr(lpszToken, pInt_RenewalTime);
+}
+extern "C" bool Session_Token_GetUserStr(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszToken)
+{
+	return m_SessionToken.Session_Token_GetUserStr(lpszUser, lpszPass, ptszToken);
+}
+extern "C" bool Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_ListCount)
+{
+	return m_SessionToken.Session_Token_GetListStr(ppptszToken, pInt_ListCount);
+}
 /************************************************************************/
 /*                    动态码导出定义                                    */
 /************************************************************************/

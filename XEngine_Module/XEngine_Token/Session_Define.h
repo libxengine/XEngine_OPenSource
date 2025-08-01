@@ -14,7 +14,7 @@
 //                         导出的回调函数
 //////////////////////////////////////////////////////////////////////////
 //超时的TOKEN,超时的时间,续期次数,登录时间,用户信息(如果没有就是NULL),自定义参数
-typedef void(XCALLBACK* CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS)(XNETHANDLE xhToken, int nTimeout, int nTimerenewal, XENGINE_LIBTIME* pSt_LibTime, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XPVOID lParam);
+typedef void(XCALLBACK* CALLBACK_XENGIEN_MODULE_TOKEN_EVENTS)(LPCXSTR lpszTokenStr, int nTimeout, int nTimerenewal, XENGINE_LIBTIME* pSt_LibTime, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XPVOID lParam);
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -260,6 +260,17 @@ extern "C" bool Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, XNETHA
 备注：
 *********************************************************************/
 extern "C" bool Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_ListCount);
+//////////////////////////////////////////////////////////////////////////字符串形式的token
+extern "C" bool Session_Token_CreateStr(XCHAR* ptszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
+extern "C" bool Session_Token_InsertStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
+extern "C" bool Session_Token_DeleteStr(LPCXSTR lpszToken);
+extern "C" bool Session_Token_UPDateStr(LPCXSTR lpszToken);
+extern "C" bool Session_Token_GetStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL);
+extern "C" bool Session_Token_GetTimeInfoStr(LPCXSTR lpszToken, XENGINE_LIBTIME* pSt_LoginTime = NULL, XENGINE_LIBTIME* pSt_UPTime = NULL);
+extern "C" bool Session_Token_GetTimeoutStr(LPCXSTR lpszToken, __int64x* pInt_TimeLogin = NULL, __int64x* pInt_Timeout = NULL);
+extern "C" bool Session_Token_GetTimeRenewalStr(LPCXSTR lpszToken, int* pInt_RenewalTime);
+extern "C" bool Session_Token_GetUserStr(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszToken);
+extern "C" bool Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_ListCount);
 /************************************************************************/
 /*                    动态码导出定义                                    */
 /************************************************************************/

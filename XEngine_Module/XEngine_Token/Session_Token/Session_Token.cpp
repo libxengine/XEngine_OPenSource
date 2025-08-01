@@ -89,7 +89,7 @@ bool CSession_Token::Session_Token_Destroy()
     }
     //释放客户端资源
     st_Locker.lock();
-    stl_MapToken.clear();
+    stl_MapTokenStr.clear();
     st_Locker.unlock();
     return true;
 }
@@ -123,17 +123,17 @@ bool CSession_Token::Session_Token_Create(XNETHANDLE *pxhToken, XENGINE_PROTOCOL
     TOKENSESSION_INFOCLIENT st_TokenClient = {};
 
     BaseLib_Handle_Create(pxhToken);
-
     st_TokenClient.nTimeout = nTimeout;
     BaseLib_Time_GetSysTime(&st_TokenClient.st_LibTimer);
     BaseLib_Time_GetSysTime(&st_TokenClient.st_OutTimer);
 
+	_xstprintf(st_TokenClient.tszTokenStr, _X("%lld"), *pxhToken);
     if (NULL != pSt_UserInfo)
     {
         st_TokenClient.st_UserInfo = *pSt_UserInfo;
     }
     st_Locker.lock();
-    stl_MapToken.insert(std::make_pair(*pxhToken, st_TokenClient));
+    stl_MapTokenStr.insert(std::make_pair(st_TokenClient.tszTokenStr, st_TokenClient));
     st_Locker.unlock();
     return true;
 }
@@ -165,11 +165,11 @@ bool CSession_Token::Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_U
     Session_IsErrorOccur = false;
 
     TOKENSESSION_INFOCLIENT st_TokenClient = {};
+    _xstprintf(st_TokenClient.tszTokenStr, _X("%lld"), xhToken);
 
-	st_TokenClient.xhToken = xhToken;
 	st_Locker.lock_shared();
-	auto stl_MapIterator = stl_MapToken.find(st_TokenClient.xhToken);
-	if (stl_MapIterator != stl_MapToken.end())
+	auto stl_MapIterator = stl_MapTokenStr.find(st_TokenClient.tszTokenStr);
+	if (stl_MapIterator != stl_MapTokenStr.end())
 	{
         Session_IsErrorOccur = true;
         Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_EXIST;
@@ -187,7 +187,7 @@ bool CSession_Token::Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_U
         st_TokenClient.st_UserInfo = *pSt_UserInfo;
     }
     st_Locker.lock();
-    stl_MapToken.insert(std::make_pair(xhToken, st_TokenClient));
+    stl_MapTokenStr.insert(std::make_pair(st_TokenClient.tszTokenStr, st_TokenClient));
     st_Locker.unlock();
     return true;
 }
@@ -208,12 +208,15 @@ bool CSession_Token::Session_Token_Delete(XNETHANDLE xhToken)
 {
     Session_IsErrorOccur = false;
 
+	XCHAR tszTokenStr[XPATH_MID] = {};
+	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
+
     st_Locker.lock();
-    std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
-    if (stl_MapIterator != stl_MapToken.end())
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
+    if (stl_MapIterator != stl_MapTokenStr.end())
     {
         //移除元素
-        stl_MapToken.erase(stl_MapIterator);
+        stl_MapTokenStr.erase(stl_MapIterator);
     }
     st_Locker.unlock();
     return true;
@@ -235,9 +238,12 @@ bool CSession_Token::Session_Token_UPDate(XNETHANDLE xhToken)
 {
     Session_IsErrorOccur = false;
 
+	XCHAR tszTokenStr[XPATH_MID] = {};
+	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
+
     st_Locker.lock_shared();
-    std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
-    if (stl_MapIterator == stl_MapToken.end())
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
+    if (stl_MapIterator == stl_MapTokenStr.end())
     {
         Session_IsErrorOccur = true;
         Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
@@ -271,9 +277,12 @@ bool CSession_Token::Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USER
 {
     Session_IsErrorOccur = false;
 
+	XCHAR tszTokenStr[XPATH_MID] = {};
+	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
+
     st_Locker.lock_shared();
-    std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
-    if (stl_MapIterator == stl_MapToken.end())
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
+    if (stl_MapIterator == stl_MapTokenStr.end())
     {
         Session_IsErrorOccur = true;
         Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
@@ -314,9 +323,12 @@ bool CSession_Token::Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTI
 {
 	Session_IsErrorOccur = false;
 
+	XCHAR tszTokenStr[XPATH_MID] = {};
+	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
+
 	st_Locker.lock_shared();
-	std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
-	if (stl_MapIterator == stl_MapToken.end())
+	std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
+	if (stl_MapIterator == stl_MapTokenStr.end())
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
@@ -361,9 +373,12 @@ bool CSession_Token::Session_Token_GetTimeout(XNETHANDLE xhToken, __int64x* pInt
 {
 	Session_IsErrorOccur = false;
 
+	XCHAR tszTokenStr[XPATH_MID] = {};
+	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
+
 	st_Locker.lock_shared();
-	std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
-	if (stl_MapIterator == stl_MapToken.end())
+	std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
+	if (stl_MapIterator == stl_MapTokenStr.end())
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
@@ -432,9 +447,12 @@ bool CSession_Token::Session_Token_GetTimeRenewal(XNETHANDLE xhToken, int* pInt_
 {
     Session_IsErrorOccur = false;
 
+	XCHAR tszTokenStr[XPATH_MID] = {};
+	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
+
     st_Locker.lock_shared();
-    std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.find(xhToken);
-    if (stl_MapIterator == stl_MapToken.end())
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
+    if (stl_MapIterator == stl_MapTokenStr.end())
     {
         Session_IsErrorOccur = true;
         Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
@@ -478,10 +496,11 @@ bool CSession_Token::Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, X
         Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
         return false;
     }
+
     bool bFound = false;
     st_Locker.lock_shared();
-    std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.begin();
-    for (; stl_MapIterator != stl_MapToken.end(); stl_MapIterator++)
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.begin();
+    for (; stl_MapIterator != stl_MapTokenStr.end(); stl_MapIterator++)
     {
         //用户名
         if (0 == _tcsxncmp(lpszUser, stl_MapIterator->second.st_UserInfo.tszUserName, _tcsxlen(lpszUser)))
@@ -489,7 +508,7 @@ bool CSession_Token::Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, X
             //密码,验证密码防治冲突
             if (0 == _tcsxncmp(lpszPass, stl_MapIterator->second.st_UserInfo.tszUserPass, _tcsxlen(lpszPass)))
             {
-                *pxhToken = stl_MapIterator->first;
+                *pxhToken = _ttxoi(stl_MapIterator->second.tszTokenStr);
                 bFound = true;
                 break;
             }
@@ -532,18 +551,276 @@ bool CSession_Token::Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_L
 		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
 		return false;
 	}
-    *pInt_ListCount = stl_MapToken.size();
+    *pInt_ListCount = stl_MapTokenStr.size();
     BaseLib_Memory_Malloc((XPPPMEM)pppxhToken, *pInt_ListCount, sizeof(XNETHANDLE));
 
 	st_Locker.lock_shared();
-	std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapToken.begin();
-    for (int i = 0; stl_MapIterator != stl_MapToken.end(); stl_MapIterator++, i++)
+	std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.begin();
+    for (int i = 0; stl_MapIterator != stl_MapTokenStr.end(); stl_MapIterator++, i++)
 	{
-        *(*pppxhToken)[i] = stl_MapIterator->first;
+        *(*pppxhToken)[i] = _ttxoi(stl_MapIterator->second.tszTokenStr);
 	}
 	st_Locker.unlock_shared();
 	
 	return true;
+}
+//////////////////////////////////////////////////////////////////////////
+bool CSession_Token::Session_Token_CreateStr(XCHAR* ptszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo /* = NULL */, int nTimeout /* = -1 */)
+{
+    Session_IsErrorOccur = false;
+
+    TOKENSESSION_INFOCLIENT st_TokenClient = {};
+
+    BaseLib_Handle_CreateStr(ptszToken);
+
+    st_TokenClient.nTimeout = nTimeout;
+    BaseLib_Time_GetSysTime(&st_TokenClient.st_LibTimer);
+    BaseLib_Time_GetSysTime(&st_TokenClient.st_OutTimer);
+	_tcsxcpy(st_TokenClient.tszTokenStr, ptszToken);
+
+    if (NULL != pSt_UserInfo)
+    {
+        st_TokenClient.st_UserInfo = *pSt_UserInfo;
+    }
+    st_Locker.lock();
+    stl_MapTokenStr.insert(std::make_pair(ptszToken, st_TokenClient));
+    st_Locker.unlock();
+    return true;
+}
+bool CSession_Token::Session_Token_InsertStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo /* = NULL */, int nTimeout /* = -1 */)
+{
+    Session_IsErrorOccur = false;
+
+    TOKENSESSION_INFOCLIENT st_TokenClient = {};
+
+    st_Locker.lock_shared();
+    auto stl_MapIterator = stl_MapTokenStr.find(lpszToken);
+    if (stl_MapIterator != stl_MapTokenStr.end())
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_EXIST;
+        st_Locker.unlock_shared();
+        return false;
+    }
+    st_Locker.unlock_shared();
+
+    st_TokenClient.nTimeout = nTimeout;
+    BaseLib_Time_GetSysTime(&st_TokenClient.st_LibTimer);
+    BaseLib_Time_GetSysTime(&st_TokenClient.st_OutTimer);
+	_tcsxcpy(st_TokenClient.tszTokenStr, lpszToken);
+    if (NULL != pSt_UserInfo)
+    {
+        st_TokenClient.st_UserInfo = *pSt_UserInfo;
+    }
+    st_Locker.lock();
+    stl_MapTokenStr.insert(std::make_pair(lpszToken, st_TokenClient));
+    st_Locker.unlock();
+    return true;
+}
+bool CSession_Token::Session_Token_DeleteStr(LPCXSTR lpszToken)
+{
+    Session_IsErrorOccur = false;
+
+    st_Locker.lock();
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(lpszToken);
+    if (stl_MapIterator != stl_MapTokenStr.end())
+    {
+        //移除元素
+        stl_MapTokenStr.erase(stl_MapIterator);
+    }
+    st_Locker.unlock();
+    return true;
+}
+bool CSession_Token::Session_Token_UPDateStr(LPCXSTR lpszToken)
+{
+    Session_IsErrorOccur = false;
+
+    st_Locker.lock_shared();
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(lpszToken);
+    if (stl_MapIterator == stl_MapTokenStr.end())
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+        st_Locker.unlock_shared();
+        return false;
+    }
+    stl_MapIterator->second.nRenewalTime++;
+    BaseLib_Time_GetSysTime(&stl_MapIterator->second.st_OutTimer);
+    st_Locker.unlock_shared();
+    return true;
+}
+bool CSession_Token::Session_Token_GetStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo /* = NULL */)
+{
+    Session_IsErrorOccur = false;
+
+    st_Locker.lock_shared();
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(lpszToken);
+    if (stl_MapIterator == stl_MapTokenStr.end())
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+        st_Locker.unlock_shared();
+        return false;
+    }
+    if (NULL != pSt_UserInfo)
+    {
+        *pSt_UserInfo = stl_MapIterator->second.st_UserInfo;
+    }
+    st_Locker.unlock_shared();
+    return true;
+}
+bool CSession_Token::Session_Token_GetTimeInfoStr(LPCXSTR lpszToken, XENGINE_LIBTIME* pSt_LoginTime /* = NULL */, XENGINE_LIBTIME* pSt_UPTime /* = NULL */)
+{
+    Session_IsErrorOccur = false;
+
+    st_Locker.lock_shared();
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(lpszToken);
+    if (stl_MapIterator == stl_MapTokenStr.end())
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+        st_Locker.unlock_shared();
+        return false;
+    }
+    if (NULL != pSt_LoginTime)
+    {
+        *pSt_LoginTime = stl_MapIterator->second.st_LibTimer;
+    }
+    if (NULL != pSt_UPTime)
+    {
+        *pSt_UPTime = stl_MapIterator->second.st_OutTimer;
+    }
+    st_Locker.unlock_shared();
+    return true;
+}
+bool CSession_Token::Session_Token_GetTimeoutStr(LPCXSTR lpszToken, __int64x* pInt_TimeLogin /* = NULL */, __int64x* pInt_Timeout /* = NULL */)
+{
+    Session_IsErrorOccur = false;
+
+    st_Locker.lock_shared();
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(lpszToken);
+    if (stl_MapIterator == stl_MapTokenStr.end())
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+        st_Locker.unlock_shared();
+        return false;
+    }
+    XENGINE_LIBTIME st_LibTimer = {};
+    BaseLib_Time_GetSysTime(&st_LibTimer);                  //获取现在的系统时间
+    //用户登录了多少秒
+    if (NULL != pInt_TimeLogin)
+    {
+        BaseLib_TimeSpan_GetForStu(&stl_MapIterator->second.st_OutTimer, &st_LibTimer, pInt_TimeLogin, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
+    }
+    //用户超时时间
+    time_t nTimeEnd = 0;
+    time_t nTimeStart = 0;
+    BaseLib_Time_StuTimeToTTime(&stl_MapIterator->second.st_OutTimer, &nTimeStart);
+    if (NULL != pInt_Timeout)
+    {
+        if (-1 == stl_MapIterator->second.nTimeout)
+        {
+            //全局时间
+            if (m_nTimeout > 0)
+            {
+                BaseLib_Time_StuTimeToTTime(&st_LibTimer, &nTimeEnd);
+                nTimeEnd += m_nTimeout;
+            }
+            else
+            {
+                *pInt_Timeout = 0; //不超时
+            }
+        }
+        else if (0 == stl_MapIterator->second.nTimeout)
+        {
+            *pInt_Timeout = 0; //不超时
+        }
+        else
+        {
+            BaseLib_Time_StuTimeToTTime(&st_LibTimer, &nTimeEnd);
+            nTimeEnd += stl_MapIterator->second.nTimeout;
+        }
+        BaseLib_TimeSpan_GetForTime(nTimeStart, nTimeEnd, pInt_Timeout, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
+    }
+    st_Locker.unlock_shared();
+    return true;
+}
+bool CSession_Token::Session_Token_GetTimeRenewalStr(LPCXSTR lpszToken, int* pInt_RenewalTime)
+{
+    Session_IsErrorOccur = false;
+
+    st_Locker.lock_shared();
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(lpszToken);
+    if (stl_MapIterator == stl_MapTokenStr.end())
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+        st_Locker.unlock_shared();
+        return false;
+    }
+    *pInt_RenewalTime = stl_MapIterator->second.nRenewalTime;
+    st_Locker.unlock_shared();
+    return true;
+}
+bool CSession_Token::Session_Token_GetUserStr(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszToken)
+{
+    Session_IsErrorOccur = false;
+
+    if ((NULL == lpszUser) || (NULL == lpszPass))
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
+        return false;
+    }
+    bool bFound = false;
+    st_Locker.lock_shared();
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.begin();
+    for (; stl_MapIterator != stl_MapTokenStr.end(); stl_MapIterator++)
+    {
+        //用户名
+        if (0 == _tcsxncmp(lpszUser, stl_MapIterator->second.st_UserInfo.tszUserName, _tcsxlen(lpszUser)))
+        {
+            //密码,验证密码防治冲突
+            if (0 == _tcsxncmp(lpszPass, stl_MapIterator->second.st_UserInfo.tszUserPass, _tcsxlen(lpszPass)))
+            {
+                _tcsxcpy(ptszToken, stl_MapIterator->first.c_str());
+                bFound = true;
+                break;
+            }
+        }
+    }
+    st_Locker.unlock_shared();
+    if (!bFound)
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+        return false;
+    }
+    return true;
+}
+bool CSession_Token::Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_ListCount)
+{
+    Session_IsErrorOccur = false;
+
+    if ((NULL == ppptszToken) || (NULL == pInt_ListCount))
+    {
+        Session_IsErrorOccur = true;
+        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
+        return false;
+    }
+    *pInt_ListCount = stl_MapTokenStr.size();
+    BaseLib_Memory_Malloc((XPPPMEM)ppptszToken, *pInt_ListCount, sizeof(XPATH_MID));
+
+    st_Locker.lock_shared();
+    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.begin();
+    for (int i = 0; stl_MapIterator != stl_MapTokenStr.end(); stl_MapIterator++, i++)
+    {
+        _tcsxcpy((*ppptszToken)[i], stl_MapIterator->first.c_str());
+    }
+    st_Locker.unlock_shared();
+
+    return true;
 }
 //////////////////////////////////////////////////////////////////////////
 //                     线程函数
@@ -558,39 +835,40 @@ XHTHREAD CSession_Token::Session_Token_Thread(XPVOID lParam)
     {
         //开始轮训用户
         pClass_This->st_Locker.lock_shared();
-        std::unordered_map<XNETHANDLE, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = pClass_This->stl_MapToken.begin();
-        for (; stl_MapIterator != pClass_This->stl_MapToken.end(); stl_MapIterator++)
-        {
-            BaseLib_Time_GetSysTime(&st_LibTimer);                  //获取现在的系统时间
-            __int64x nOnlineSpan = 0;                               //在线时间
-            //用户登录了多少秒
-            BaseLib_TimeSpan_GetForStu(&stl_MapIterator->second.st_OutTimer, &st_LibTimer, &nOnlineSpan, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
-            if (stl_MapIterator->second.nTimeout >= 0)
-            {
-                if ((stl_MapIterator->second.nTimeout > 0) && (nOnlineSpan > stl_MapIterator->second.nTimeout))
-                {
-                    stl_ListNotify.push_back(stl_MapIterator->second);
-                }
-            }
-            else
-            {
-                if ((nOnlineSpan > pClass_This->m_nTimeout) && (pClass_This->m_nTimeout > 0))
-                {
-                    stl_ListNotify.push_back(stl_MapIterator->second);
-                }
-            }
-        }
+		std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = pClass_This->stl_MapTokenStr.begin();
+		for (; stl_MapIterator != pClass_This->stl_MapTokenStr.end(); stl_MapIterator++)
+		{
+			BaseLib_Time_GetSysTime(&st_LibTimer);                  //获取现在的系统时间
+			__int64x nOnlineSpan = 0;                               //在线时间
+			//用户登录了多少秒
+			BaseLib_TimeSpan_GetForStu(&stl_MapIterator->second.st_OutTimer, &st_LibTimer, &nOnlineSpan, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
+			if (stl_MapIterator->second.nTimeout >= 0)
+			{
+				if ((stl_MapIterator->second.nTimeout > 0) && (nOnlineSpan > stl_MapIterator->second.nTimeout))
+				{
+					stl_ListNotify.push_back(stl_MapIterator->second);
+				}
+			}
+			else
+			{
+				if ((nOnlineSpan > pClass_This->m_nTimeout) && (pClass_This->m_nTimeout > 0))
+				{
+					stl_ListNotify.push_back(stl_MapIterator->second);
+				}
+			}
+		}
         pClass_This->st_Locker.unlock_shared();
-        //判断是否有需要关闭的客户端
-        if (!stl_ListNotify.empty())
-        {
-            std::list<TOKENSESSION_INFOCLIENT>::iterator stl_ListIterator = stl_ListNotify.begin();
-            for (; stl_ListIterator != stl_ListNotify.end(); stl_ListIterator++)
-            {
-                pClass_This->lpCall_TokenEvents(stl_ListIterator->xhToken, (int)stl_ListIterator->nTimeout, stl_ListIterator->nRenewalTime, &stl_ListIterator->st_LibTimer, &stl_ListIterator->st_UserInfo, pClass_This->m_lParam);
-            }
-            stl_ListNotify.clear();        //清理元素
-        }
+		//判断是否有需要关闭的客户端
+		if (!stl_ListNotify.empty())
+		{
+			std::list<TOKENSESSION_INFOCLIENT>::iterator stl_ListIterator = stl_ListNotify.begin();
+			for (; stl_ListIterator != stl_ListNotify.end(); stl_ListIterator++)
+			{
+				pClass_This->lpCall_TokenEvents(stl_ListIterator->tszTokenStr, stl_ListIterator->nTimeout, stl_ListIterator->nRenewalTime, &stl_ListIterator->st_LibTimer, &stl_ListIterator->st_UserInfo, pClass_This->m_lParam);
+			}
+			stl_ListNotify.clear();        //清理元素
+		}
+
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     return 0;

@@ -86,3 +86,6 @@ jobs:
             cd ..
             cd XEngine_AIApi
             make
+            cd ..
+            cd XEngine_Verification
+            make

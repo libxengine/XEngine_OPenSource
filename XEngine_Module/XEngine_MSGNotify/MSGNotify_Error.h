@@ -10,7 +10,7 @@
 //    Purpose:     消息通知错误码
 //    History:
 *********************************************************************/
-#define ERROR_XENGINE_THIRDPART_MSGNOTIFY_PARAMENT 0x01B0001          //参数错误
-#define ERROR_XENGINE_THIRDPART_MSGNOTIFY_PARSEJSON 0x01B0002         //解析JSON失败
-#define ERROR_XENGINE_THIRDPART_MSGNOTIFY_PAYLOAD 0x01B0003           //负载内容格式不正确
-#define ERROR_XENGINE_THIRDPART_MSGNOTIFY_FAILED 0x01B0004            //服务器处理失败
+#define ERROR_XENGINE_THIRDPART_MSGNOTIFY_PARAMENT 0x01C0001          //参数错误
+#define ERROR_XENGINE_THIRDPART_MSGNOTIFY_PARSEJSON 0x01C0002         //解析JSON失败
+#define ERROR_XENGINE_THIRDPART_MSGNOTIFY_PAYLOAD 0x01C0003           //负载内容格式不正确
+#define ERROR_XENGINE_THIRDPART_MSGNOTIFY_FAILED 0x01C0004            //服务器处理失败

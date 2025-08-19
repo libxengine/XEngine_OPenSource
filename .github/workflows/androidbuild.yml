@@ -57,3 +57,6 @@ jobs:
             cd ..
             cd XEngine_AIApi
             make PLATFORM=android
+            cd ..
+            cd XEngine_Verification
+            make PLATFORM=android

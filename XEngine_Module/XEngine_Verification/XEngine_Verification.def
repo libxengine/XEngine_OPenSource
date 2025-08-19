@@ -1,0 +1,9 @@
+LIBRARY
+
+EXPORTS
+	Verification_GetLastError
+
+	Verification_HTTP_BasicClientPacket
+	Verification_HTTP_DigestClientPacket
+	Verification_HTTP_BasicServerPacket
+	Verification_HTTP_DigestServerPacket

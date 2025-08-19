@@ -17,12 +17,13 @@
 - XEngine_Example      例子源代码
 
 #### 模块结构
-- XEngine_Token       句柄管理模块
-- XEngine_InfoReport  信息报告模块
-- XEngine_MSGNotify   消息通知模块
-- XEngine_AIApi       AI对话接口模块
-- jsoncpp             json模块
-- tinyxml2            XML模块 
+- XEngine_Token        句柄管理模块
+- XEngine_InfoReport   信息报告模块
+- XEngine_MSGNotify    消息通知模块
+- XEngine_AIApi        AI对话接口模块
+- XEngine_Verification 验证模块
+- jsoncpp              json模块
+- tinyxml2             XML模块 
 
 #### 工具结构
 - XEngine_APPFileSort          文件排序工具

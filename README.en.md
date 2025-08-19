@@ -16,12 +16,13 @@ support systems:linux,macos,windows,android,ios
 - XEngine_Example      Example Source
 
 #### Module Struct
-- XEngine_Token       Handle Management module
-- XEngine_InfoReport  information report module
-- XEngine_MSGNotify   Message Notify Modules
-- XEngine_AIApi       AI chat api module
-- jsoncpp             json module
-- tinyxml2            XML module
+- XEngine_Token        Handle Management module
+- XEngine_InfoReport   information report module
+- XEngine_MSGNotify    Message Notify Modules
+- XEngine_AIApi        AI chat api module
+- XEngine_Verification verification module
+- jsoncpp              json module
+- tinyxml2             XML module
 
 #### 工具结构
 - XEngine_APPFileSort          file sort tools

@@ -232,7 +232,29 @@ bool CVerification_HTTP::Verification_HTTP_DigestServerPacket(XCHAR* ptszMSGBuff
 
 	return true;
 }
-
+/********************************************************************
+函数名称：Verification_HTTP_GetType
+函数功能：获得HTTP验证类型
+ 参数.一：pptszListHdr
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入HTTP头
+ 参数.二：nHdrCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入HTTP头个数
+ 参数.三：pInt_Type
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：输出HTTP验证类型1：BASIC验证 2：摘要验证
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
 bool CVerification_HTTP::Verification_HTTP_GetType(XCHAR** pptszListHdr, int nHdrCount, int* pInt_Type)
 {
 	Verification_IsErrorOccur = false;
@@ -263,8 +285,8 @@ bool CVerification_HTTP::Verification_HTTP_GetType(XCHAR** pptszListHdr, int nHd
 	return true;
 }
 /********************************************************************
-函数名称：AuthHelp_APIHelp_HttpAuth
-函数功能：HTTP验证
+函数名称：Verification_HTTP_Basic
+函数功能：HTTP基本验证
  参数.一：ptszUser
   In/Out：Out
   类型：字符指针
@@ -311,6 +333,31 @@ bool CVerification_HTTP::Verification_HTTP_Basic(XCHAR* ptszUser, XCHAR* ptszPas
 		return false;
 	}
 	Verification_HTTP_BasicDecoder(tszAuthStr, ptszUser, ptszPass);
+	return true;
+}
+bool CVerification_HTTP::Verification_HTTP_DigestVer(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR** pptszListHdr, int nHdrCount)
+{
+	Verification_IsErrorOccur = false;
+	int nAuthType = 0;
+	int nAuthLen = XPATH_MAX;
+	XCHAR tszAuthStr[XPATH_MAX] = {};
+
+	if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = HttpProtocol_GetLastError();
+		return false;
+	}
+	//是否是摘要验证
+	if (2 != nAuthType)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NOTSUPPORT;
+		return false;
+	}
+	XCHAR tszUser[XPATH_MIN] = {};
+	XCHAR tszPass[XPATH_MIN] = {};
+	
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -472,7 +519,7 @@ bool CVerification_HTTP::Verification_HTTP_BasicEncoder(LPCXSTR lpszUser, LPCXST
 	}
 	if (bADD)
 	{
-		_xstprintf(ptszMsgBuffer, _X("WWW-Authenticate: Basic %s"), tszBaseBuffer);
+		_xstprintf(ptszMsgBuffer, _X("Authorization: Basic %s"), tszBaseBuffer);
 	}
 	else
 	{

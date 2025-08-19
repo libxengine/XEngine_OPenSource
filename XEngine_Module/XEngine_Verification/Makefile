@@ -53,7 +53,7 @@ else ifeq ($(PLATFORM), android)
 	FILEEXT = so
 	LIBFLAG = -shared
 	LOADHDR += -I $(HOME)/XEngine_Android_Arm64
-	LOADSO += -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_BaseLib $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_Core $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_RfcComponents
+	LOADSO += -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_BaseLib -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_Core -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_RfcComponents
 	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
 	SDKPATH = $(HOME)/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
 	CC = $(SDKPATH) -Wall -fPIC -std=c++20 -target aarch64-linux-android30

@@ -60,6 +60,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AIApi_APPExample", "XEngine
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_Verification", "XEngine_Module\XEngine_Verification\XEngine_Verification.vcxproj", "{A8E43EC0-698A-4807-8A61-B2BE5FAB7256}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Verification_APPExample", "XEngine_Example\Verification_APPExample\Verification_APPExample.vcxproj", "{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -250,6 +252,18 @@ Global
 		{A8E43EC0-698A-4807-8A61-B2BE5FAB7256}.Release|x64.Build.0 = Release|x64
 		{A8E43EC0-698A-4807-8A61-B2BE5FAB7256}.Release|x86.ActiveCfg = Release|Win32
 		{A8E43EC0-698A-4807-8A61-B2BE5FAB7256}.Release|x86.Build.0 = Release|Win32
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Debug|ARM64.ActiveCfg = Debug|x64
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Debug|ARM64.Build.0 = Debug|x64
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Debug|x64.ActiveCfg = Debug|x64
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Debug|x64.Build.0 = Debug|x64
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Debug|x86.ActiveCfg = Debug|Win32
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Debug|x86.Build.0 = Debug|Win32
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Release|ARM64.ActiveCfg = Release|x64
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Release|ARM64.Build.0 = Release|x64
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Release|x64.ActiveCfg = Release|x64
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Release|x64.Build.0 = Release|x64
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Release|x86.ActiveCfg = Release|Win32
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -270,6 +284,7 @@ Global
 		{DE495AB3-201F-4288-9A3A-41DFA146AD30} = {26417B01-459E-4287-9524-7B0293BAD18A}
 		{C0792082-058B-4BF1-894F-D4D5D7124022} = {58092034-5B83-4806-B7FE-CCDD7414C4AE}
 		{A8E43EC0-698A-4807-8A61-B2BE5FAB7256} = {26417B01-459E-4287-9524-7B0293BAD18A}
+		{EEFE5A12-A7C8-4C60-BB92-84DCCD0B5EE5} = {58092034-5B83-4806-B7FE-CCDD7414C4AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {16D43B4F-E3D4-4036-A44C-5DDD64988164}

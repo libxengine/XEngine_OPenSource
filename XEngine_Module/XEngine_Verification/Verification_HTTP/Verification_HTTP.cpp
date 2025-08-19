@@ -132,14 +132,13 @@ bool CVerification_HTTP::Verification_HTTP_DigestClientPacket(XCHAR* ptszMSGBuff
 	Verification_HTTP_DigestVer(tszResponseStr, lpszUser, lpszPass, lpszRequestMethod, lpszRequestUri, lpszNonceStr, tszCNonceStr);
 
 	int nRet = 0;
-	XCHAR tszMSGBuffer[1024] = {};
 	if (bQOPBody)
 	{
 
 	}
 	else
 	{
-		nRet = _xstprintf(tszMSGBuffer, _X("Authorization: Digest username=\"%s\","
+		nRet = _xstprintf(ptszMSGBuffer, _X("Authorization: Digest username=\"%s\","
 			"realm=\"%s\","
 			"nonce=\"%s\","
 			"uri=\"%s\","
@@ -149,7 +148,7 @@ bool CVerification_HTTP::Verification_HTTP_DigestClientPacket(XCHAR* ptszMSGBuff
 			"response=\"%s\","
 			"opaque=\"%s\"\r\n"), lpszUser, lpszRealm, lpszNonceStr, lpszRequestUri, tszCNonceStr, tszResponseStr, lpszOpaqueStr);
 	}
-
+	*pInt_MSGLen = nRet;
 	return true;
 }
 /********************************************************************
@@ -229,7 +228,7 @@ bool CVerification_HTTP::Verification_HTTP_DigestServerPacket(XCHAR* ptszMSGBuff
 			"nonce=\"%s\","
 			"opaque=\"%s\"\r\n"), lpszRealm, ptszNonceStr, ptszOpaqueStr);
 	}
-
+	*pInt_MSGLen = nRet;
 	return true;
 }
 /********************************************************************

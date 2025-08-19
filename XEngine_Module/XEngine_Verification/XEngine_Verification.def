@@ -7,3 +7,6 @@ EXPORTS
 	Verification_HTTP_DigestClientPacket
 	Verification_HTTP_BasicServerPacket
 	Verification_HTTP_DigestServerPacket
+	Verification_HTTP_GetType
+	Verification_HTTP_Basic
+	Verification_HTTP_Digest

@@ -15,3 +15,6 @@
 /************************************************************************/
 #define ERROR_XENGINE_MODULE_VERIFICATION_HTTP_PARAMENT 0x01E0001         //参数错误，无法继续
 #define ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NOTSUPPORT 0x01E0002       //不支持
+#define ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NONCE 0x01E0003            //Nonce错误
+#define ERROR_XENGINE_MODULE_VERIFICATION_HTTP_OPAQUE 0x01E0004           //Opaque错误
+#define ERROR_XENGINE_MODULE_VERIFICATION_HTTP_RESULT 0x01E0005           //验证结果错误

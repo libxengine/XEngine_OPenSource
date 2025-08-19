@@ -45,3 +45,15 @@ extern "C" bool Verification_HTTP_DigestServerPacket(XCHAR* ptszMSGBuffer, int* 
 {
 	return m_HTTPVerification.Verification_HTTP_DigestServerPacket(ptszMSGBuffer, pInt_MSGLen, ptszNonceStr, ptszOpaqueStr, bQOPBody);
 }
+extern "C" bool Verification_HTTP_GetType(XCHAR** pptszListHdr, int nHdrCount, int* pInt_Type)
+{
+	return m_HTTPVerification.Verification_HTTP_GetType(pptszListHdr, nHdrCount, pInt_Type);
+}
+extern "C" bool Verification_HTTP_Basic(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR** pptszListHdr, int nHdrCount)
+{
+	return m_HTTPVerification.Verification_HTTP_Basic(lpszUser, lpszPass, pptszListHdr, nHdrCount);
+}
+extern "C" bool Verification_HTTP_Digest(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszMethod, XCHAR** pptszListHdr, int nHdrCount, LPCXSTR lpszNonceStr, LPCXSTR lpszOpaqueStr)
+{
+	return m_HTTPVerification.Verification_HTTP_Digest(lpszUser, lpszPass, lpszMethod, pptszListHdr, nHdrCount, lpszNonceStr, lpszOpaqueStr);
+}

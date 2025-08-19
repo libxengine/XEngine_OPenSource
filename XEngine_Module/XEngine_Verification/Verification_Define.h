@@ -138,3 +138,100 @@ extern "C" bool Verification_HTTP_BasicServerPacket(XCHAR* ptszMSGBuffer, int* p
 备注：
 *********************************************************************/
 extern "C" bool Verification_HTTP_DigestServerPacket(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, XCHAR* ptszNonceStr, XCHAR* ptszOpaqueStr, bool bQOPBody = false);
+/********************************************************************
+函数名称：Verification_HTTP_GetType
+函数功能：获得HTTP验证类型
+ 参数.一：pptszListHdr
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入HTTP头
+ 参数.二：nHdrCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入HTTP头个数
+ 参数.三：pInt_Type
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：输出HTTP验证类型1：BASIC验证 2：摘要验证
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_HTTP_GetType(XCHAR** pptszListHdr, int nHdrCount, int* pInt_Type);
+/********************************************************************
+函数名称：Verification_HTTP_Basic
+函数功能：HTTP基本验证
+ 参数.一：lpszUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要验证的用户名
+ 参数.二：lpszPass
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要验证的密码
+ 参数.三：pptszListHdr
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入要解析的HTTP头
+ 参数.四：nHdrCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的HTTP头列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_HTTP_Basic(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR** pptszListHdr, int nHdrCount);
+/********************************************************************
+函数名称：Verification_HTTP_Digest
+函数功能：HTTP摘要验证
+ 参数.一：lpszUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要验证的用户名
+ 参数.二：lpszPass
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要验证的密码
+ 参数.三：lpszMethod
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：客户端请求的方法
+ 参数.四：pptszListHdr
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入要解析的HTTP头
+ 参数.五：nHdrCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的HTTP头列表个数
+ 参数.六：lpszNonceStr
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要验证服务端设置的NONCE字符串
+ 参数.七：lpszOpaqueStr
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要验证服务端设置的OPAQUE字符串
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_HTTP_Digest(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszMethod, XCHAR** pptszListHdr, int nHdrCount, LPCXSTR lpszNonceStr = NULL, LPCXSTR lpszOpaqueStr = NULL);

@@ -129,7 +129,7 @@ bool CVerification_HTTP::Verification_HTTP_DigestClientPacket(XCHAR* ptszMSGBuff
 	XCHAR tszCNonceStr[XPATH_MIN] = {};
 	XCHAR tszResponseStr[XPATH_MAX] = {};
 	BaseLib_Handle_CreateStr(tszCNonceStr, 32);
-	Verification_HTTP_Digest(tszResponseStr, lpszUser, lpszPass, lpszRequestMethod, lpszRequestUri, lpszNonceStr, tszCNonceStr);
+	Verification_HTTP_DigestVer(tszResponseStr, lpszUser, lpszPass, lpszRequestMethod, lpszRequestUri, lpszNonceStr, tszCNonceStr);
 
 	int nRet = 0;
 	XCHAR tszMSGBuffer[1024] = {};
@@ -147,7 +147,7 @@ bool CVerification_HTTP::Verification_HTTP_DigestClientPacket(XCHAR* ptszMSGBuff
 			"nc=00000001,"
 			"cnonce=\"%s\","
 			"response=\"%s\","
-			"opaque=\"%s\""), lpszUser, lpszRealm, lpszNonceStr, lpszRequestUri, tszCNonceStr, tszResponseStr, lpszOpaqueStr);
+			"opaque=\"%s\"\r\n"), lpszUser, lpszRealm, lpszNonceStr, lpszRequestUri, tszCNonceStr, tszResponseStr, lpszOpaqueStr);
 	}
 
 	return true;
@@ -224,10 +224,10 @@ bool CVerification_HTTP::Verification_HTTP_DigestServerPacket(XCHAR* ptszMSGBuff
 	}
 	else
 	{
-		nRet = _xsntprintf(ptszMSGBuffer,XPATH_MAX, _X("WWW-Authenticate: Digest realm=\"XEngine Verification\","
+		nRet = _xsntprintf(ptszMSGBuffer,XPATH_MAX, _X("WWW-Authenticate: Digest realm=\"%s\","
 			"qop=\"auth\","
 			"nonce=\"%s\","
-			"opaque=\"%s\""), ptszNonceStr, ptszOpaqueStr);
+			"opaque=\"%s\"\r\n"), lpszRealm, ptszNonceStr, ptszOpaqueStr);
 	}
 
 	return true;
@@ -275,7 +275,7 @@ bool CVerification_HTTP::Verification_HTTP_GetType(XCHAR** pptszListHdr, int nHd
 		return false;
 	}
 
-	if (1 != nAuthType || 2 != nAuthType)
+	if (1 != nAuthType && 2 != nAuthType)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NOTSUPPORT;
@@ -287,16 +287,16 @@ bool CVerification_HTTP::Verification_HTTP_GetType(XCHAR** pptszListHdr, int nHd
 /********************************************************************
 函数名称：Verification_HTTP_Basic
 函数功能：HTTP基本验证
- 参数.一：ptszUser
-  In/Out：Out
-  类型：字符指针
+ 参数.一：lpszUser
+  In/Out：In
+  类型：常量字符指针
   可空：N
-  意思：输出用户名
- 参数.二：ptszPass
-  In/Out：Out
-  类型：字符指针
+  意思：要验证的用户名
+ 参数.二：lpszPass
+  In/Out：In
+  类型：常量字符指针
   可空：N
-  意思：输出密码
+  意思：要验证的密码
  参数.三：pptszListHdr
   In/Out：In
   类型：指向指针的指针
@@ -312,10 +312,16 @@ bool CVerification_HTTP::Verification_HTTP_GetType(XCHAR** pptszListHdr, int nHd
   意思：是否成功
 备注：
 *********************************************************************/
-bool CVerification_HTTP::Verification_HTTP_Basic(XCHAR* ptszUser, XCHAR* ptszPass, XCHAR** pptszListHdr, int nHdrCount)
+bool CVerification_HTTP::Verification_HTTP_Basic(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR** pptszListHdr, int nHdrCount)
 {
 	Verification_IsErrorOccur = false;
 
+	if ((NULL == lpszUser) || (NULL == lpszPass))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_PARAMENT;
+		return false;
+	}
 	int nAuthType = 0;
 	int nAuthLen = XPATH_MAX;
 	XCHAR tszAuthStr[XPATH_MAX] = {};
@@ -332,12 +338,80 @@ bool CVerification_HTTP::Verification_HTTP_Basic(XCHAR* ptszUser, XCHAR* ptszPas
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NOTSUPPORT;
 		return false;
 	}
-	Verification_HTTP_BasicDecoder(tszAuthStr, ptszUser, ptszPass);
+	XCHAR tszUserStr[XPATH_MIN] = {};
+	XCHAR tszPassStr[XPATH_MIN] = {};
+	if (!Verification_HTTP_BasicDecoder(tszAuthStr, tszUserStr, tszPassStr))
+	{
+		return false;
+	}
+	if (0 != _tcsxnicmp(lpszUser, tszUserStr, _tcsxlen(lpszUser)))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_RESULT;
+		return false;
+	}
+	if (0 != _tcsxnicmp(lpszPass, tszPassStr, _tcsxlen(lpszPass)))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_RESULT;
+		return false;
+	}
 	return true;
 }
-bool CVerification_HTTP::Verification_HTTP_DigestVer(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR** pptszListHdr, int nHdrCount)
+/********************************************************************
+函数名称：Verification_HTTP_Digest
+函数功能：HTTP摘要验证
+ 参数.一：lpszUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要验证的用户名
+ 参数.二：lpszPass
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要验证的密码
+ 参数.三：lpszMethod
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：客户端请求的方法
+ 参数.四：pptszListHdr
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入要解析的HTTP头
+ 参数.五：nHdrCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的HTTP头列表个数
+ 参数.六：lpszNonceStr
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要验证服务端设置的NONCE字符串
+ 参数.七：lpszOpaqueStr
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要验证服务端设置的OPAQUE字符串
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_HTTP::Verification_HTTP_Digest(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszMethod, XCHAR** pptszListHdr, int nHdrCount, LPCXSTR lpszNonceStr /* = NULL */, LPCXSTR lpszOpaqueStr /* = NULL */)
 {
 	Verification_IsErrorOccur = false;
+
+	if ((NULL == lpszUser) || (NULL == lpszPass))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_PARAMENT;
+		return false;
+	}
+
 	int nAuthType = 0;
 	int nAuthLen = XPATH_MAX;
 	XCHAR tszAuthStr[XPATH_MAX] = {};
@@ -355,8 +429,104 @@ bool CVerification_HTTP::Verification_HTTP_DigestVer(LPCXSTR lpszUser, LPCXSTR l
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NOTSUPPORT;
 		return false;
 	}
-	XCHAR tszUser[XPATH_MIN] = {};
-	XCHAR tszPass[XPATH_MIN] = {};
+	XCHAR tszStrUser[XPATH_MIN] = {};
+	XCHAR tszStrReal[XPATH_MIN] = {};
+	XCHAR tszStrNonce[XPATH_MIN] = {};
+	XCHAR tszStrUri[XPATH_MIN] = {};
+	XCHAR tszStrResponse[XPATH_MIN] = {};
+	XCHAR tszStrOpaque[XPATH_MIN] = {};
+	XCHAR tszStrQop[XPATH_MIN] = {};
+	XCHAR tszStrNC[XPATH_MIN] = {};
+	XCHAR tszStrCnoce[XPATH_MIN] = {};
+	//username="123123aa", realm="XEngine_Verification", nonce="e97lo7PMLx0e9StKBOE3oi76rzwmdoHv", uri="/", response="45c1f3bf882edea4e12e8119eee58397", opaque="NJrbSpvHXI7iruMOODb7K8RyYQ8bUKM4", qop=auth, nc=00000002, cnonce="2ba467fb3ee6b932"
+	XCHAR* ptszTokTmp = NULL;
+	XCHAR* ptszTokStr = _tcsxtok_s(tszAuthStr, _X(","), &ptszTokTmp);
+	while (NULL != ptszTokStr)
+	{
+		int nPos = 0;
+		//是否有空格
+		if (' ' == ptszTokStr[0])
+		{
+			nPos++;
+		}
+		XCHAR tszStrKey[64] = {};
+		XCHAR tszStrVlu[64] = {};
+		LPCXSTR lpszStrUser = _X("username");
+		LPCXSTR lpszStrReal = _X("realm");
+		LPCXSTR lpszStrNonce = _X("nonce");
+		LPCXSTR lpszStrUri = _X("uri");
+		LPCXSTR lpszStrResponse = _X("response");
+		LPCXSTR lpszStrOpaque = _X("opaque");
+		LPCXSTR lpszStrQop = _X("qop");
+		LPCXSTR lpszStrNC = _X("nc");
+		LPCXSTR lpszStrCnoce = _X("cnonce");
+		BaseLib_String_GetKeyValueA(ptszTokStr + nPos, _X("="), tszStrKey, tszStrVlu);
+		if (0 == _tcsxnicmp(lpszStrUser, tszStrKey, _tcsxlen(lpszStrUser)))
+		{
+			BaseLib_String_GetStartEnd(tszStrVlu, tszStrUser, _X("\""), _X("\""));
+		}
+		else if (0 == _tcsxnicmp(lpszStrReal, tszStrKey, _tcsxlen(lpszStrReal)))
+		{
+			BaseLib_String_GetStartEnd(tszStrVlu, tszStrReal, _X("\""), _X("\""));
+		}
+		else if (0 == _tcsxnicmp(lpszStrNonce, tszStrKey, _tcsxlen(lpszStrNonce)))
+		{
+			BaseLib_String_GetStartEnd(tszStrVlu, tszStrNonce, _X("\""), _X("\""));
+		}
+		else if (0 == _tcsxnicmp(lpszStrUri, tszStrKey, _tcsxlen(lpszStrUri)))
+		{
+			BaseLib_String_GetStartEnd(tszStrVlu, tszStrUri, _X("\""), _X("\""));
+		}
+		else if (0 == _tcsxnicmp(lpszStrResponse, tszStrKey, _tcsxlen(lpszStrResponse)))
+		{
+			BaseLib_String_GetStartEnd(tszStrVlu, tszStrResponse, _X("\""), _X("\""));
+		}
+		else if (0 == _tcsxnicmp(lpszStrOpaque, tszStrKey, _tcsxlen(lpszStrOpaque)))
+		{
+			BaseLib_String_GetStartEnd(tszStrVlu, tszStrOpaque, _X("\""), _X("\""));
+		}
+		else if (0 == _tcsxnicmp(lpszStrQop, tszStrKey, _tcsxlen(lpszStrQop)))
+		{
+			_tcsxcpy(tszStrQop, tszStrVlu);
+		}
+		else if (0 == _tcsxnicmp(lpszStrNC, tszStrKey, _tcsxlen(lpszStrNC)))
+		{
+			_tcsxcpy(tszStrNC, tszStrVlu);
+		}
+		else if (0 == _tcsxnicmp(lpszStrCnoce, tszStrKey, _tcsxlen(lpszStrCnoce)))
+		{
+			BaseLib_String_GetStartEnd(tszStrVlu, tszStrCnoce, _X("\""), _X("\""));
+		}
+		ptszTokStr = _tcsxtok_s(NULL, _X(","), &ptszTokTmp);
+	}
+	//信息检查
+	if (NULL != lpszNonceStr)
+	{
+		if (0 == _tcsxnicmp(lpszNonceStr, tszStrNonce, _tcsxlen(lpszNonceStr)))
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NONCE;
+			return false;
+		}
+	}
+	if (NULL != lpszOpaqueStr)
+	{
+		if (0 == _tcsxnicmp(lpszOpaqueStr, tszStrOpaque, _tcsxlen(lpszOpaqueStr)))
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_OPAQUE;
+			return false;
+		}
+	}
+	
+	XCHAR tszResponseStr[XPATH_MAX] = {};
+	Verification_HTTP_DigestVer(tszResponseStr, lpszUser, lpszPass, lpszMethod, tszStrUri, tszStrNonce, tszStrCnoce, tszStrNC);
+	if (0 != _tcsxnicmp(tszStrResponse, tszResponseStr, _tcsxlen(tszResponseStr)))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_RESULT;
+		return false;
+	}
 	
 	return true;
 }
@@ -364,7 +534,7 @@ bool CVerification_HTTP::Verification_HTTP_DigestVer(LPCXSTR lpszUser, LPCXSTR l
 //                      保护函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-函数名称：Verification_HTTP_Digest
+函数名称：Verification_HTTP_DigestVer
 函数功能：摘要计算函数
  参数.一：ptszResponseStr
   In/Out：Out
@@ -411,15 +581,15 @@ bool CVerification_HTTP::Verification_HTTP_DigestVer(LPCXSTR lpszUser, LPCXSTR l
   意思：是否成功
 备注：信息摘要支持QOP=AUTH 算法MD5的验证模式
 *********************************************************************/
-bool CVerification_HTTP::Verification_HTTP_Digest(XCHAR* ptszResponseStr, LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszMethod, LPCXSTR lpszUrl, LPCXSTR lpszNonce, LPCXSTR lpszCNonce, LPCXSTR lpszNC /* = _X("00000001") */, bool bQOPBody /* = false */, LPCXSTR lpszMSGBody /* = NULL */)
+bool CVerification_HTTP::Verification_HTTP_DigestVer(XCHAR* ptszResponseStr, LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszMethod, LPCXSTR lpszUrl, LPCXSTR lpszNonce, LPCXSTR lpszCNonce, LPCXSTR lpszNC /* = _X("00000001") */, bool bQOPBody /* = false */, LPCXSTR lpszMSGBody /* = NULL */)
 {
 	Verification_IsErrorOccur = false;
 
 	XCHAR tszMD1Com[XPATH_MIN] = {};
 	XBYTE tszMD1Hex[XPATH_MIN] = {};
 	XCHAR tszMD1Str[XPATH_MIN] = {};
-	//计算HA1 的MD5字符串 MD5(USER:PASS:REAL)
-	int nRet = _xstprintf(tszMD1Com, _X("%s:XEngine_Verification:%s"), lpszUser, lpszPass);
+	//计算HA1 的MD5字符串 MD5(USER:REAL:PASS)
+	int nRet = _xstprintf(tszMD1Com, _X("%s:%s:%s"), lpszUser, lpszRealm, lpszPass);
 	if (!Cryption_Api_Digest(tszMD1Com, tszMD1Hex, &nRet, false, ENUM_XENGINE_CRYPTION_DIGEST_MD5))
 	{
 		Verification_IsErrorOccur = true;
@@ -427,6 +597,7 @@ bool CVerification_HTTP::Verification_HTTP_Digest(XCHAR* ptszResponseStr, LPCXST
 		return false;
 	}
 	BaseLib_String_StrToHex((XCHAR*)tszMD1Hex, nRet, tszMD1Str);
+	Verification_HTTP_ConvertToLower(tszMD1Str);
 	//计算HA2 的MD5字符串,根据验证模式来计算
 	XCHAR tszMD2Com[XPATH_MIN] = {};
 	XBYTE tszMD2Hex[XPATH_MIN] = {};
@@ -446,6 +617,7 @@ bool CVerification_HTTP::Verification_HTTP_Digest(XCHAR* ptszResponseStr, LPCXST
 		return false;
 	}
 	BaseLib_String_StrToHex((XCHAR*)tszMD2Hex, nRet, tszMD2Str);
+	Verification_HTTP_ConvertToLower(tszMD2Str);
 	//计算RESPONSE值
 	XCHAR tszResponseStr[XPATH_MAX] = {};
 	XBYTE tszResponseMD5[XPATH_MID] = {};
@@ -464,6 +636,7 @@ bool CVerification_HTTP::Verification_HTTP_Digest(XCHAR* ptszResponseStr, LPCXST
 		return false;
 	}
 	BaseLib_String_StrToHex((XCHAR*)tszResponseMD5, nRet, ptszResponseStr);
+	Verification_HTTP_ConvertToLower(ptszResponseStr);
 	return true;
 }
 /********************************************************************
@@ -519,7 +692,7 @@ bool CVerification_HTTP::Verification_HTTP_BasicEncoder(LPCXSTR lpszUser, LPCXST
 	}
 	if (bADD)
 	{
-		_xstprintf(ptszMsgBuffer, _X("Authorization: Basic %s"), tszBaseBuffer);
+		_xstprintf(ptszMsgBuffer, _X("Authorization: Basic %s\r\n"), tszBaseBuffer);
 	}
 	else
 	{
@@ -595,6 +768,31 @@ bool CVerification_HTTP::Verification_HTTP_BasicDecoder(LPCXSTR lpszMsgBuffer, X
 	}
 	_tcsxcpy(ptszUser, ptszUserString);
 	_tcsxcpy(ptszPass, ptszPassString);
+
+	return true;
+}
+/********************************************************************
+函数名称：Verification_HTTP_ConvertToLower
+函数功能：转换为小写
+ 参数.一：ptszMD5Str
+  In/Out：In/Out
+  类型：字符指针
+  可空：N
+  意思：输入要转换的字符串,输出转换后的字符串
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_HTTP::Verification_HTTP_ConvertToLower(XCHAR* ptszMD5Str)
+{
+	Verification_IsErrorOccur = false;
+
+	while (*ptszMD5Str)
+	{
+		*ptszMD5Str = tolower((unsigned char)*ptszMD5Str);
+		ptszMD5Str++;
+	}
 
 	return true;
 }

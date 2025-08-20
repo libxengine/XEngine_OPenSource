@@ -26,6 +26,8 @@ EXPORTS
 	Session_Token_GetTimeRenewalStr
 	Session_Token_GetUserStr
 	Session_Token_GetListStr
+	Session_Token_OAuthSetInfo
+	Session_Token_OAuthSetToken
 
 	Session_Dynamic_Init
 	Session_Dynamic_Destory

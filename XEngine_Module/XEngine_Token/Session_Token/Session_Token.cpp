@@ -637,7 +637,7 @@ bool CSession_Token::Session_Token_DeleteStr(LPCXSTR lpszToken)
     st_Locker.unlock();
     return true;
 }
-bool CSession_Token::Session_Token_UPDateStr(LPCXSTR lpszToken)
+bool CSession_Token::Session_Token_UPDateStr(LPCXSTR lpszToken, LPCXSTR lpszRefreshToken /* = NULL */, LPCXSTR lpszNewToken /* = NULL */)
 {
     Session_IsErrorOccur = false;
 
@@ -652,7 +652,29 @@ bool CSession_Token::Session_Token_UPDateStr(LPCXSTR lpszToken)
     }
     stl_MapIterator->second.nRenewalTime++;
     BaseLib_Time_GetSysTime(&stl_MapIterator->second.st_OutTimer);
-    st_Locker.unlock_shared();
+    //判断类型
+    if (1 == stl_MapIterator->second.nTokenType)
+    {
+        //判断刷新token是否一致
+        if (0 != _tcsxnicmp(stl_MapIterator->second.st_TokenInfo.tszTokenRefresh, lpszRefreshToken, _tcsxlen(lpszRefreshToken)))
+        {
+			Session_IsErrorOccur = true;
+			Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_TOKEN;
+			st_Locker.unlock_shared();
+			return false;
+        }
+        st_Locker.unlock_shared();
+        //OAuth2类型需要重置
+        st_Locker.lock();
+        TOKENSESSION_INFOCLIENT st_ClientInfo = std::move(stl_MapIterator->second);  // 取出旧的值
+        stl_MapTokenStr.erase(stl_MapIterator);                               // 删除旧 key
+        stl_MapTokenStr.emplace(lpszNewToken, std::move(st_ClientInfo));                 // 插入新 key
+        st_Locker.unlock();
+    }
+    else
+    {
+        st_Locker.unlock_shared();
+    }
     return true;
 }
 bool CSession_Token::Session_Token_GetStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo /* = NULL */)
@@ -827,6 +849,55 @@ bool CSession_Token::Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_Li
     st_Locker.unlock_shared();
 
     return true;
+}
+bool CSession_Token::Session_Token_OAuthSetInfo(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo)
+{
+	Session_IsErrorOccur = false;
+
+	if ((NULL == lpszToken) || (NULL == pSt_OAuthInfo))
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapTokenStr.find(lpszToken);
+    if (stl_MapIterator == stl_MapTokenStr.end())
+    {
+        st_Locker.unlock_shared();
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+		return false;
+    }
+    stl_MapIterator->second.nTokenType = 1;
+    stl_MapIterator->second.st_OAuthInfo = *pSt_OAuthInfo;
+	st_Locker.unlock_shared();
+	return true;
+}
+bool CSession_Token::Session_Token_OAuthSetToken(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo)
+{
+	Session_IsErrorOccur = false;
+
+	if ((NULL == lpszToken) || (NULL == pSt_TokenInfo))
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	auto stl_MapIterator = stl_MapTokenStr.find(lpszToken);
+	if (stl_MapIterator == stl_MapTokenStr.end())
+	{
+		st_Locker.unlock_shared();
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
+		return false;
+	}
+	stl_MapIterator->second.st_TokenInfo = *pSt_TokenInfo;
+    //影响过期时间
+	stl_MapIterator->second.nTimeout = pSt_TokenInfo->nExpiredTime; //更新超时时间
+	st_Locker.unlock_shared();
+	return true;
 }
 //////////////////////////////////////////////////////////////////////////
 //                     线程函数

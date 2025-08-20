@@ -269,13 +269,15 @@ extern "C" bool Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_ListCo
 extern "C" bool Session_Token_CreateStr(XCHAR* ptszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
 extern "C" bool Session_Token_InsertStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
 extern "C" bool Session_Token_DeleteStr(LPCXSTR lpszToken);
-extern "C" bool Session_Token_UPDateStr(LPCXSTR lpszToken);
+extern "C" bool Session_Token_UPDateStr(LPCXSTR lpszToken, LPCXSTR lpszRefreshToken = NULL, LPCXSTR lpszNewToken = NULL);
 extern "C" bool Session_Token_GetStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL);
 extern "C" bool Session_Token_GetTimeInfoStr(LPCXSTR lpszToken, XENGINE_LIBTIME* pSt_LoginTime = NULL, XENGINE_LIBTIME* pSt_UPTime = NULL);
 extern "C" bool Session_Token_GetTimeoutStr(LPCXSTR lpszToken, __int64x* pInt_TimeLogin = NULL, __int64x* pInt_Timeout = NULL);
 extern "C" bool Session_Token_GetTimeRenewalStr(LPCXSTR lpszToken, int* pInt_RenewalTime);
 extern "C" bool Session_Token_GetUserStr(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszToken);
 extern "C" bool Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_ListCount);
+extern "C" bool Session_Token_OAuthSetInfo(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo);
+extern "C" bool Session_Token_OAuthSetToken(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo);
 /************************************************************************/
 /*                    动态码导出定义                                    */
 /************************************************************************/

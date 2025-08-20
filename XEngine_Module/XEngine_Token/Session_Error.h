@@ -17,6 +17,7 @@
 #define ERROR_XENGINE_MODULE_SESSION_TOKEN_THREAD 0x0020001               //创建线程失败
 #define ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND 0x0020002             //没有找到客户端
 #define ERROR_XENGINE_MODULE_SESSION_TOKEN_EXIST 0x0020003                //没有找到客户端
+#define ERROR_XENGINE_MODULE_SESSION_TOKEN_TOKEN 0x0020004                //TOKEN错误,令牌不一致
 /************************************************************************/
 /*                         TOKEN会话错误                                */
 /************************************************************************/

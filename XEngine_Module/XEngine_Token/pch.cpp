@@ -91,9 +91,9 @@ extern "C" bool Session_Token_DeleteStr(LPCXSTR lpszToken)
 {
 	return m_SessionToken.Session_Token_DeleteStr(lpszToken);
 }
-extern "C" bool Session_Token_UPDateStr(LPCXSTR lpszToken)
+extern "C" bool Session_Token_UPDateStr(LPCXSTR lpszToken, LPCXSTR lpszRefreshToken, LPCXSTR lpszNewToken)
 {
-	return m_SessionToken.Session_Token_UPDateStr(lpszToken);
+	return m_SessionToken.Session_Token_UPDateStr(lpszToken, lpszRefreshToken, lpszNewToken);
 }
 extern "C" bool Session_Token_GetStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo)
 {
@@ -118,6 +118,14 @@ extern "C" bool Session_Token_GetUserStr(LPCXSTR lpszUser, LPCXSTR lpszPass, XCH
 extern "C" bool Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_ListCount)
 {
 	return m_SessionToken.Session_Token_GetListStr(ppptszToken, pInt_ListCount);
+}
+extern "C" bool Session_Token_OAuthSetInfo(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo)
+{
+	return m_SessionToken.Session_Token_OAuthSetInfo(lpszToken, pSt_OAuthInfo);
+}
+extern "C" bool Session_Token_OAuthSetToken(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo)
+{
+	return m_SessionToken.Session_Token_OAuthSetToken(lpszToken, pSt_TokenInfo);
 }
 /************************************************************************/
 /*                    动态码导出定义                                    */

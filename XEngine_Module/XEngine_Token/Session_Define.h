@@ -130,12 +130,22 @@ extern "C" bool Session_Token_Delete(XNETHANDLE xhToken);
   类型：句柄
   可空：N
   意思：要操作的客户端
+ 参数.二：lpszRefreshToken
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：如果是OAUTH的TOKEN模式,需要输入刷新的TOKEN
+ 参数.三：lpszNewToken
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：如果是OAUTH的TOKEN模式,输入创建的TOKEN
 返回值
   类型：逻辑型
   意思：是否成功
-备注：可以用于续期
+备注：可以用于续期,OAUTH模式设置后,参数二三必传
 *********************************************************************/
-extern "C" bool Session_Token_UPDate(XNETHANDLE xhToken);
+extern "C" bool Session_Token_UPDate(XNETHANDLE xhToken, LPCXSTR lpszRefreshToken = NULL, LPCXSTR lpszNewToken = NULL);
 /********************************************************************
 函数名称：Session_Token_Get
 函数功能：获取客户端信息
@@ -265,6 +275,44 @@ extern "C" bool Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, XNETHA
 备注：
 *********************************************************************/
 extern "C" bool Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_ListCount);
+/********************************************************************
+函数名称：Session_Token_OAuthSetMode
+函数功能：设置OAuth2模式
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的TOKEN
+ 参数.二：pSt_OAuthInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要设置的OAuth2信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：此参数将设置TOKEN管理器为OAUTH模式
+*********************************************************************/
+extern "C" bool Session_Token_OAuthSetMode(XNETHANDLE xhToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo);
+/********************************************************************
+函数名称：Session_Token_OAuthSetToken
+函数功能：设置TOKEN信息
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的TOKEN
+ 参数.二：pSt_TokenInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入TOKEN信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：此参数将修改创建的过期时间为此TOKEN过期时间
+*********************************************************************/
+extern "C" bool Session_Token_OAuthSetToken(XNETHANDLE xhToken, VERIFICATION_TOKENINFO* pSt_TokenInfo);
 //////////////////////////////////////////////////////////////////////////字符串形式的token
 extern "C" bool Session_Token_CreateStr(XCHAR* ptszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
 extern "C" bool Session_Token_InsertStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
@@ -276,8 +324,8 @@ extern "C" bool Session_Token_GetTimeoutStr(LPCXSTR lpszToken, __int64x* pInt_Ti
 extern "C" bool Session_Token_GetTimeRenewalStr(LPCXSTR lpszToken, int* pInt_RenewalTime);
 extern "C" bool Session_Token_GetUserStr(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszToken);
 extern "C" bool Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_ListCount);
-extern "C" bool Session_Token_OAuthSetInfo(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo);
-extern "C" bool Session_Token_OAuthSetToken(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo);
+extern "C" bool Session_Token_OAuthSetModeStr(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo);
+extern "C" bool Session_Token_OAuthSetTokenStr(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo);
 /************************************************************************/
 /*                    动态码导出定义                                    */
 /************************************************************************/

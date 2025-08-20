@@ -51,9 +51,9 @@ extern "C" bool Session_Token_Delete(XNETHANDLE xhToken)
 {
 	return m_SessionToken.Session_Token_Delete(xhToken);
 }
-extern "C" bool Session_Token_UPDate(XNETHANDLE xhToken)
+extern "C" bool Session_Token_UPDate(XNETHANDLE xhToken, LPCXSTR lpszRefreshToken, LPCXSTR lpszNewToken)
 {
-	return m_SessionToken.Session_Token_UPDate(xhToken);
+	return m_SessionToken.Session_Token_UPDate(xhToken, lpszRefreshToken, lpszNewToken);
 }
 extern "C" bool Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo)
 {
@@ -79,6 +79,15 @@ extern "C" bool Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_ListCo
 {
 	return m_SessionToken.Session_Token_GetList(pppxhToken, pInt_ListCount);
 }
+extern "C" bool Session_Token_OAuthSetMode(XNETHANDLE xhToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo)
+{
+	return m_SessionToken.Session_Token_OAuthSetMode(xhToken, pSt_OAuthInfo);
+}
+extern "C" bool Session_Token_OAuthSetToken(XNETHANDLE xhToken, VERIFICATION_TOKENINFO* pSt_TokenInfo)
+{
+	return m_SessionToken.Session_Token_OAuthSetToken(xhToken, pSt_TokenInfo);
+}
+//////////////////////////////////////////////////////////////////////////
 extern "C" bool Session_Token_CreateStr(XCHAR* ptszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, int nTimeout)
 {
 	return m_SessionToken.Session_Token_CreateStr(ptszToken, pSt_UserInfo, nTimeout);
@@ -119,13 +128,13 @@ extern "C" bool Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_ListCou
 {
 	return m_SessionToken.Session_Token_GetListStr(ppptszToken, pInt_ListCount);
 }
-extern "C" bool Session_Token_OAuthSetInfo(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo)
+extern "C" bool Session_Token_OAuthSetModeStr(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo)
 {
-	return m_SessionToken.Session_Token_OAuthSetInfo(lpszToken, pSt_OAuthInfo);
+	return m_SessionToken.Session_Token_OAuthSetModeStr(lpszToken, pSt_OAuthInfo);
 }
-extern "C" bool Session_Token_OAuthSetToken(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo)
+extern "C" bool Session_Token_OAuthSetTokenStr(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo)
 {
-	return m_SessionToken.Session_Token_OAuthSetToken(lpszToken, pSt_TokenInfo);
+	return m_SessionToken.Session_Token_OAuthSetTokenStr(lpszToken, pSt_TokenInfo);
 }
 /************************************************************************/
 /*                    动态码导出定义                                    */

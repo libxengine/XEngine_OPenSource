@@ -126,22 +126,8 @@ bool CSession_Token::Session_Token_Create(XNETHANDLE *pxhToken, XENGINE_PROTOCOL
 {
     Session_IsErrorOccur = false;
 
-    TOKENSESSION_INFOCLIENT st_TokenClient = {};
-
     BaseLib_Handle_Create(pxhToken);
-    st_TokenClient.nTimeout = nTimeout;
-    BaseLib_Time_GetSysTime(&st_TokenClient.st_LibTimer);
-    BaseLib_Time_GetSysTime(&st_TokenClient.st_OutTimer);
-
-	_xstprintf(st_TokenClient.tszTokenStr, _X("%lld"), *pxhToken);
-    if (NULL != pSt_UserInfo)
-    {
-        st_TokenClient.st_UserInfo = *pSt_UserInfo;
-    }
-    st_Locker.lock();
-    stl_MapTokenStr.insert(std::make_pair(st_TokenClient.tszTokenStr, st_TokenClient));
-    st_Locker.unlock();
-    return true;
+    return Session_Token_Insert(*pxhToken, pSt_UserInfo, nTimeout);
 }
 /********************************************************************
 函数名称：Session_Authorize_Insert
@@ -170,32 +156,10 @@ bool CSession_Token::Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_U
 {
     Session_IsErrorOccur = false;
 
-    TOKENSESSION_INFOCLIENT st_TokenClient = {};
-    _xstprintf(st_TokenClient.tszTokenStr, _X("%lld"), xhToken);
-
-	st_Locker.lock_shared();
-	auto stl_MapIterator = stl_MapTokenStr.find(st_TokenClient.tszTokenStr);
-	if (stl_MapIterator != stl_MapTokenStr.end())
-	{
-        Session_IsErrorOccur = true;
-        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_EXIST;
-        st_Locker.unlock_shared();
-		return false;
-	}
-	st_Locker.unlock_shared();
+    XCHAR tszTokenStr[XPATH_MID] = {};
+    _xstprintf(tszTokenStr, _X("%lld"), xhToken);
     
-    st_TokenClient.nTimeout = nTimeout;
-    BaseLib_Time_GetSysTime(&st_TokenClient.st_LibTimer);
-    BaseLib_Time_GetSysTime(&st_TokenClient.st_OutTimer);
-
-	if (NULL != pSt_UserInfo)
-    {
-        st_TokenClient.st_UserInfo = *pSt_UserInfo;
-    }
-    st_Locker.lock();
-    stl_MapTokenStr.insert(std::make_pair(st_TokenClient.tszTokenStr, st_TokenClient));
-    st_Locker.unlock();
-    return true;
+    return Session_Token_InsertStr(tszTokenStr, pSt_UserInfo, nTimeout);
 }
 /********************************************************************
 函数名称：Session_Token_Delete
@@ -217,15 +181,7 @@ bool CSession_Token::Session_Token_Delete(XNETHANDLE xhToken)
 	XCHAR tszTokenStr[XPATH_MID] = {};
 	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
 
-    st_Locker.lock();
-    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
-    if (stl_MapIterator != stl_MapTokenStr.end())
-    {
-        //移除元素
-        stl_MapTokenStr.erase(stl_MapIterator);
-    }
-    st_Locker.unlock();
-    return true;
+    return Session_Token_DeleteStr(tszTokenStr);
 }
 /********************************************************************
 函数名称：Session_Token_UPDate
@@ -235,31 +191,29 @@ bool CSession_Token::Session_Token_Delete(XNETHANDLE xhToken)
   类型：句柄
   可空：N
   意思：要操作的客户端
+ 参数.二：lpszRefreshToken
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：如果是OAUTH的TOKEN模式,需要输入刷新的TOKEN
+ 参数.三：lpszNewToken
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：如果是OAUTH的TOKEN模式,输入创建的TOKEN
 返回值
   类型：逻辑型
   意思：是否成功
-备注：可以用于续期
+备注：可以用于续期,OAUTH模式设置后,参数二三必传
 *********************************************************************/
-bool CSession_Token::Session_Token_UPDate(XNETHANDLE xhToken)
+bool CSession_Token::Session_Token_UPDate(XNETHANDLE xhToken, LPCXSTR lpszRefreshToken /* = NULL */, LPCXSTR lpszNewToken /* = NULL */)
 {
     Session_IsErrorOccur = false;
 
 	XCHAR tszTokenStr[XPATH_MID] = {};
 	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
 
-    st_Locker.lock_shared();
-    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
-    if (stl_MapIterator == stl_MapTokenStr.end())
-    {
-        Session_IsErrorOccur = true;
-        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
-        st_Locker.unlock_shared();
-        return false;
-    }
-    stl_MapIterator->second.nRenewalTime++;
-    BaseLib_Time_GetSysTime(&stl_MapIterator->second.st_OutTimer);
-    st_Locker.unlock_shared();
-    return true;
+    return Session_Token_UPDateStr(tszTokenStr, lpszRefreshToken, lpszNewToken);
 }
 /********************************************************************
 函数名称：Session_Token_Get
@@ -286,21 +240,7 @@ bool CSession_Token::Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USER
 	XCHAR tszTokenStr[XPATH_MID] = {};
 	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
 
-    st_Locker.lock_shared();
-    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
-    if (stl_MapIterator == stl_MapTokenStr.end())
-    {
-        Session_IsErrorOccur = true;
-        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
-        st_Locker.unlock_shared();
-        return false;
-    }
-    if (NULL != pSt_UserInfo)
-    {
-		*pSt_UserInfo = stl_MapIterator->second.st_UserInfo;
-    }
-    st_Locker.unlock_shared();
-    return true;
+    return Session_Token_GetStr(tszTokenStr, pSt_UserInfo);
 }
 /********************************************************************
 函数名称：Session_Token_GetTimeInfo
@@ -332,25 +272,7 @@ bool CSession_Token::Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTI
 	XCHAR tszTokenStr[XPATH_MID] = {};
 	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
 
-	st_Locker.lock_shared();
-	std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
-	if (stl_MapIterator == stl_MapTokenStr.end())
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
-		st_Locker.unlock_shared();
-		return false;
-	}
-	if (NULL != pSt_LoginTime)
-	{
-		*pSt_LoginTime = stl_MapIterator->second.st_LibTimer;
-	}
-    if (NULL != pSt_UPTime)
-    {
-        *pSt_UPTime = stl_MapIterator->second.st_OutTimer;
-    }
-	st_Locker.unlock_shared();
-	return true;
+    return Session_Token_GetTimeInfoStr(tszTokenStr, pSt_LoginTime, pSt_UPTime);
 }
 /********************************************************************
 函数名称：Session_Token_GetTimeout
@@ -382,54 +304,7 @@ bool CSession_Token::Session_Token_GetTimeout(XNETHANDLE xhToken, __int64x* pInt
 	XCHAR tszTokenStr[XPATH_MID] = {};
 	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
 
-	st_Locker.lock_shared();
-	std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
-	if (stl_MapIterator == stl_MapTokenStr.end())
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
-		st_Locker.unlock_shared();
-		return false;
-	}
-    XENGINE_LIBTIME st_LibTimer = {};
-	BaseLib_Time_GetSysTime(&st_LibTimer);                  //获取现在的系统时间
-	//用户登录了多少秒
-    if (NULL != pInt_TimeLogin)
-    {
-        BaseLib_TimeSpan_GetForStu(&stl_MapIterator->second.st_OutTimer, &st_LibTimer, pInt_TimeLogin, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
-    }
-    //用户超时时间
-	time_t nTimeEnd = 0;
-	time_t nTimeStart = 0;
-    BaseLib_Time_StuTimeToTTime(&stl_MapIterator->second.st_OutTimer, &nTimeStart);
-    if (NULL != pInt_Timeout)
-    {
-		if (-1 == stl_MapIterator->second.nTimeout)
-		{
-			//全局时间
-			if (m_nTimeout > 0)
-			{
-				BaseLib_Time_StuTimeToTTime(&st_LibTimer, &nTimeEnd);
-				nTimeEnd += m_nTimeout;
-			}
-			else
-			{
-                *pInt_Timeout = 0; //不超时
-			}
-		}
-		else if (0 == stl_MapIterator->second.nTimeout)
-		{
-            *pInt_Timeout = 0; //不超时
-		}
-		else
-		{
-			BaseLib_Time_StuTimeToTTime(&st_LibTimer, &nTimeEnd);
-			nTimeEnd += stl_MapIterator->second.nTimeout;
-		}
-        BaseLib_TimeSpan_GetForTime(nTimeStart, nTimeEnd, pInt_Timeout, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
-    }
-	st_Locker.unlock_shared();
-	return true;
+    return Session_Token_GetTimeoutStr(tszTokenStr, pInt_TimeLogin, pInt_Timeout);
 }
 /********************************************************************
 函数名称：Session_Token_GetTimeRenewal
@@ -456,18 +331,7 @@ bool CSession_Token::Session_Token_GetTimeRenewal(XNETHANDLE xhToken, int* pInt_
 	XCHAR tszTokenStr[XPATH_MID] = {};
 	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
 
-    st_Locker.lock_shared();
-    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.find(tszTokenStr);
-    if (stl_MapIterator == stl_MapTokenStr.end())
-    {
-        Session_IsErrorOccur = true;
-        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
-        st_Locker.unlock_shared();
-        return false;
-    }
-    *pInt_RenewalTime = stl_MapIterator->second.nRenewalTime;
-    st_Locker.unlock_shared();
-    return true;
+    return Session_Token_GetTimeRenewalStr(tszTokenStr, pInt_RenewalTime);
 }
 /********************************************************************
 函数名称：Session_Token_GetUser
@@ -496,37 +360,13 @@ bool CSession_Token::Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, X
 {
     Session_IsErrorOccur = false;
 
-    if ((NULL == lpszUser) || (NULL == lpszPass))
+	XCHAR tszTokenStr[XPATH_MID] = {};
+    if (!Session_Token_GetUserStr(lpszUser, lpszPass, tszTokenStr))
     {
-        Session_IsErrorOccur = true;
-        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
         return false;
     }
+	*pxhToken = _ttxoll(tszTokenStr);
 
-    bool bFound = false;
-    st_Locker.lock_shared();
-    std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.begin();
-    for (; stl_MapIterator != stl_MapTokenStr.end(); stl_MapIterator++)
-    {
-        //用户名
-        if (0 == _tcsxncmp(lpszUser, stl_MapIterator->second.st_UserInfo.tszUserName, _tcsxlen(lpszUser)))
-        {
-            //密码,验证密码防治冲突
-            if (0 == _tcsxncmp(lpszPass, stl_MapIterator->second.st_UserInfo.tszUserPass, _tcsxlen(lpszPass)))
-            {
-                *pxhToken = _ttxoi(stl_MapIterator->second.tszTokenStr);
-                bFound = true;
-                break;
-            }
-        }
-    }
-    st_Locker.unlock_shared();
-    if (!bFound)
-    {
-        Session_IsErrorOccur = true;
-        Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_NOTFOUND;
-        return false;
-    }
     return true;
 }
 /********************************************************************
@@ -551,24 +391,75 @@ bool CSession_Token::Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_L
 {
 	Session_IsErrorOccur = false;
 
-	if ((NULL == pppxhToken) || (NULL == pInt_ListCount))
-	{
-		Session_IsErrorOccur = true;
-		Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
-		return false;
-	}
-    *pInt_ListCount = stl_MapTokenStr.size();
+    int nListCount = 0;
+    XCHAR** pptszTokenStr;
+    if (!Session_Token_GetListStr(&pptszTokenStr, &nListCount))
+    {
+        return false;
+    }
+    *pInt_ListCount = nListCount;
     BaseLib_Memory_Malloc((XPPPMEM)pppxhToken, *pInt_ListCount, sizeof(XNETHANDLE));
-
-	st_Locker.lock_shared();
-	std::unordered_map<xstring, TOKENSESSION_INFOCLIENT>::iterator stl_MapIterator = stl_MapTokenStr.begin();
-    for (int i = 0; stl_MapIterator != stl_MapTokenStr.end(); stl_MapIterator++, i++)
+    for (int i = 0; i < nListCount; i++)
 	{
-        *(*pppxhToken)[i] = _ttxoi(stl_MapIterator->second.tszTokenStr);
+        *(*pppxhToken)[i] = _ttxoll(pptszTokenStr[i]);
 	}
-	st_Locker.unlock_shared();
 	
+    BaseLib_Memory_Free((XPPPMEM)&pptszTokenStr, nListCount);
 	return true;
+}
+/********************************************************************
+函数名称：Session_Token_OAuthSetMode
+函数功能：设置OAuth2模式
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的TOKEN
+ 参数.二：pSt_OAuthInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要设置的OAuth2信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：此参数将设置TOKEN管理器为OAUTH模式
+*********************************************************************/
+bool CSession_Token::Session_Token_OAuthSetMode(XNETHANDLE xhToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo)
+{
+	Session_IsErrorOccur = false;
+
+	XCHAR tszTokenStr[XPATH_MID] = {};
+	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
+
+	return Session_Token_OAuthSetModeStr(tszTokenStr, pSt_OAuthInfo);
+}
+/********************************************************************
+函数名称：Session_Token_OAuthSetToken
+函数功能：设置TOKEN信息
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的TOKEN
+ 参数.二：pSt_TokenInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入TOKEN信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：此参数将修改创建的过期时间为此TOKEN过期时间
+*********************************************************************/
+bool CSession_Token::Session_Token_OAuthSetToken(XNETHANDLE xhToken, VERIFICATION_TOKENINFO* pSt_TokenInfo)
+{
+	Session_IsErrorOccur = false;
+
+	XCHAR tszTokenStr[XPATH_MID] = {};
+	_xstprintf(tszTokenStr, _X("%lld"), xhToken);
+
+	return Session_Token_OAuthSetTokenStr(tszTokenStr, pSt_TokenInfo);
 }
 //////////////////////////////////////////////////////////////////////////
 bool CSession_Token::Session_Token_CreateStr(XCHAR* ptszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo /* = NULL */, int nTimeout /* = -1 */)
@@ -850,7 +741,7 @@ bool CSession_Token::Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_Li
 
     return true;
 }
-bool CSession_Token::Session_Token_OAuthSetInfo(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo)
+bool CSession_Token::Session_Token_OAuthSetModeStr(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo)
 {
 	Session_IsErrorOccur = false;
 
@@ -874,7 +765,7 @@ bool CSession_Token::Session_Token_OAuthSetInfo(LPCXSTR lpszToken, VERIFICATION_
 	st_Locker.unlock_shared();
 	return true;
 }
-bool CSession_Token::Session_Token_OAuthSetToken(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo)
+bool CSession_Token::Session_Token_OAuthSetTokenStr(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo)
 {
 	Session_IsErrorOccur = false;
 

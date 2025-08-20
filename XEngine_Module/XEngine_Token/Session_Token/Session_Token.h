@@ -36,13 +36,15 @@ public:
 	bool Session_Token_Create(XNETHANDLE *pxhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
 	bool Session_Token_Insert(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
 	bool Session_Token_Delete(XNETHANDLE xhToken);
-	bool Session_Token_UPDate(XNETHANDLE xhToken);
+	bool Session_Token_UPDate(XNETHANDLE xhToken, LPCXSTR lpszRefreshToken = NULL, LPCXSTR lpszNewToken = NULL);
 	bool Session_Token_Get(XNETHANDLE xhToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL);
 	bool Session_Token_GetTimeInfo(XNETHANDLE xhToken, XENGINE_LIBTIME* pSt_LoginTime = NULL, XENGINE_LIBTIME* pSt_UPTime = NULL);
 	bool Session_Token_GetTimeout(XNETHANDLE xhToken, __int64x* pInt_TimeLogin = NULL, __int64x* pInt_Timeout = NULL);
 	bool Session_Token_GetTimeRenewal(XNETHANDLE xhToken, int* pInt_RenewalTime);
 	bool Session_Token_GetUser(LPCXSTR lpszUser, LPCXSTR lpszPass, XNETHANDLE* pxhToken);
 	bool Session_Token_GetList(XNETHANDLE*** pppxhToken, int* pInt_ListCount);
+	bool Session_Token_OAuthSetMode(XNETHANDLE xhToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo);
+	bool Session_Token_OAuthSetToken(XNETHANDLE xhToken, VERIFICATION_TOKENINFO* pSt_TokenInfo);
 public:
 	bool Session_Token_CreateStr(XCHAR* ptszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
 	bool Session_Token_InsertStr(LPCXSTR lpszToken, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo = NULL, int nTimeout = -1);
@@ -54,9 +56,8 @@ public:
 	bool Session_Token_GetTimeRenewalStr(LPCXSTR lpszToken, int* pInt_RenewalTime);
 	bool Session_Token_GetUserStr(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszToken);
 	bool Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_ListCount);
-
-	bool Session_Token_OAuthSetInfo(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo);
-	bool Session_Token_OAuthSetToken(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo);
+	bool Session_Token_OAuthSetModeStr(LPCXSTR lpszToken, VERIFICATION_OAUTHINFO* pSt_OAuthInfo);
+	bool Session_Token_OAuthSetTokenStr(LPCXSTR lpszToken, VERIFICATION_TOKENINFO* pSt_TokenInfo);
 protected:
 	static XHTHREAD Session_Token_Thread(XPVOID lParam);
 private:

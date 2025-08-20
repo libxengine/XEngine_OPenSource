@@ -5,7 +5,7 @@ FILEEXT =
 LIBFLAG = 
 LOADHDR = -I ./ -I ../jsoncpp
 LOADSO = -L ../jsoncpp
-LIB = -lXEngine_BaseLib -lXEngine_Cryption -lRfcComponents_HttpProtocol -ljsoncpp
+LIB = -lXEngine_BaseLib -lXEngine_BaseSafe -lXEngine_Cryption -lRfcComponents_HttpProtocol -ljsoncpp
 LIBEX = 
 OBJECTS = Verification_HTTP.o Verification_OAuth.o pch.o
 

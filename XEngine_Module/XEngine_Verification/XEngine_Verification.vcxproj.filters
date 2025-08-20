@@ -19,6 +19,12 @@
     <Filter Include="源文件\Verification_HTTP">
       <UniqueIdentifier>{382b1349-1bbc-4b6a-a141-f17a57affa87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Verification_OAuth">
+      <UniqueIdentifier>{0c64d27a-57dd-432a-8e28-4e67137ca4b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Verification_OAuth">
+      <UniqueIdentifier>{55e30ca7-a09c-4bba-be86-7b23783c0aea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -36,6 +42,9 @@
     <ClInclude Include="Verification_HTTP\Verification_HTTP.h">
       <Filter>头文件\Verification_HTTP</Filter>
     </ClInclude>
+    <ClInclude Include="Verification_OAuth\Verification_OAuth.h">
+      <Filter>头文件\Verification_OAuth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -46,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="Verification_HTTP\Verification_HTTP.cpp">
       <Filter>源文件\Verification_HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="Verification_OAuth\Verification_OAuth.cpp">
+      <Filter>源文件\Verification_OAuth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -10,3 +10,7 @@ EXPORTS
 	Verification_HTTP_GetType
 	Verification_HTTP_Basic
 	Verification_HTTP_Digest
+
+	Verification_OAuth_Parse
+	Verification_OAuth_PacketToken
+	Verification_OAuth_PacketError

@@ -18,3 +18,7 @@
 #define ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NONCE 0x01E0003            //Nonce错误
 #define ERROR_XENGINE_MODULE_VERIFICATION_HTTP_OPAQUE 0x01E0004           //Opaque错误
 #define ERROR_XENGINE_MODULE_VERIFICATION_HTTP_RESULT 0x01E0005           //验证结果错误
+/************************************************************************/
+/*                         OAUTH验证错误                                */
+/************************************************************************/
+#define ERROR_XENGINE_MODULE_VERIFICATION_OAUTH_PARAMENT 0x01E1001        //参数错误，无法继续

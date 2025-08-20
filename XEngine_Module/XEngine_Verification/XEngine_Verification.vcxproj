@@ -98,27 +98,27 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(XEngine_Include);..\XEngine_Verification;$(IncludePath)</IncludePath>
-    <LibraryPath>$(XEngine_Lib32);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(XEngine_Include);..\XEngine_Verification;../jsoncpp;$(IncludePath)</IncludePath>
+    <LibraryPath>$(XEngine_Lib32);../;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
+    <IncludePath>$(XEngine_Include);../jsoncpp;$(IncludePath)</IncludePath>
     <LibraryPath>$(XEngine_Lib32);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
+    <IncludePath>$(XEngine_Include);../jsoncpp;$(IncludePath)</IncludePath>
     <LibraryPath>$(XEngine_Lib64);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
+    <IncludePath>$(XEngine_Include);../jsoncpp;$(IncludePath)</IncludePath>
     <LibraryPath>$(XEngine_LibArm64);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
+    <IncludePath>$(XEngine_Include);../jsoncpp;$(IncludePath)</IncludePath>
     <LibraryPath>$(XEngine_Lib64);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <IncludePath>$(XEngine_Include);$(IncludePath)</IncludePath>
+    <IncludePath>$(XEngine_Include);../jsoncpp;$(IncludePath)</IncludePath>
     <LibraryPath>$(XEngine_LibArm64);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -135,6 +135,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>XEngine_Verification.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -229,6 +230,7 @@
     <ClInclude Include="Verification_Define.h" />
     <ClInclude Include="Verification_Error.h" />
     <ClInclude Include="Verification_HTTP\Verification_HTTP.h" />
+    <ClInclude Include="Verification_OAuth\Verification_OAuth.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -241,6 +243,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Verification_HTTP\Verification_HTTP.cpp" />
+    <ClCompile Include="Verification_OAuth\Verification_OAuth.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="XEngine_Verification.def" />

@@ -3,11 +3,11 @@ PLATFORM = linux
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
-LOADHDR = -I ./
-LOADSO = 
-LIB = -lXEngine_BaseLib -lXEngine_Cryption -lRfcComponents_HttpProtocol
+LOADHDR = -I ./ -I ../jsoncpp
+LOADSO = -L ../jsoncpp
+LIB = -lXEngine_BaseLib -lXEngine_Cryption -lRfcComponents_HttpProtocol -ljsoncpp
 LIBEX = 
-OBJECTS = Verification_HTTP.o pch.o
+OBJECTS = Verification_HTTP.o Verification_OAuth.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -D _RELEASE
@@ -64,6 +64,8 @@ all:$(OBJECTS)
 
 Verification_HTTP.o:./Verification_HTTP/Verification_HTTP.cpp             
 	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./Verification_HTTP/Verification_HTTP.cpp 
+Verification_OAuth.o:./Verification_OAuth/Verification_OAuth.cpp             
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./Verification_OAuth/Verification_OAuth.cpp 
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./pch.cpp

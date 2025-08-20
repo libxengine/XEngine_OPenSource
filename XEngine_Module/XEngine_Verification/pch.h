@@ -16,11 +16,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <shared_mutex>
+#include <unordered_map>
+#include <json/json.h>
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseSafe_Define.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseSafe_Error.h>
 #include <XEngine_Include/XEngine_Core/Cryption_Define.h>
 #include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Define.h>
@@ -44,6 +49,24 @@ extern XLONG Verification_dwErrorCode;
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseSafe")
 #pragma comment(lib,"XEngine_Core/XEngine_Cryption")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol")
+#ifdef _DEBUG
+#ifdef _M_X64
+#pragma comment(lib,"x64/Debug/jsoncpp")
+#elif _M_ARM64
+#pragma comment(lib,"ARM64/Debug/jsoncpp")
+#elif _M_IX86
+#pragma comment(lib,"Debug/jsoncpp")
+#endif
+#else
+#ifdef _M_X64
+#pragma comment(lib,"x64/Release/jsoncpp")
+#elif _M_ARM64
+#pragma comment(lib,"ARM64/Release/jsoncpp")
+#elif _M_IX86
+#pragma comment(lib,"Release/jsoncpp")
+#endif
+#endif
 #endif

@@ -153,9 +153,13 @@ int Test_Chat()
 	//LPCXSTR lpszAPIKey = _X("sk-1");
 	//LPCXSTR lpszAPIModel = _X("gpt-4o");
 
-	LPCXSTR lpszAPIUrl = _X("https://api.hunyuan.cloud.tencent.com/v1/chat/completions");
-	LPCXSTR lpszAPIKey = _X("sk-1");
-	LPCXSTR lpszAPIModel = _X("hunyuan-turbos-latest");
+	//LPCXSTR lpszAPIUrl = _X("https://api.hunyuan.cloud.tencent.com/v1/chat/completions");
+	//LPCXSTR lpszAPIKey = _X("sk-1");
+	//LPCXSTR lpszAPIModel = _X("hunyuan-turbos-latest");
+
+	LPCXSTR lpszAPIUrl = _X("https://ark.cn-beijing.volces.com/api/v3/chat/completions");
+	LPCXSTR lpszAPIKey = _X("d68056c1-1");
+	LPCXSTR lpszAPIModel = _X("doubao-seed-1-6-flash-250828");
 
 	if (!AIApi_Chat_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv))
 	{
@@ -197,9 +201,9 @@ int Test_Chat()
 }
 int main()
 {
-	Test_CreateImage();
-	Test_ParseImage();
-	Test_Think();
+	//Test_CreateImage();
+	//Test_ParseImage();
+	//Test_Think();
 	Test_Chat();
 	return 0;
 }

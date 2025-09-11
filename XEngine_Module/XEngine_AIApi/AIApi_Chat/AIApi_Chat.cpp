@@ -353,16 +353,22 @@ bool CAIApi_Chat::AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int
 		st_Locker.unlock_shared();
 		return false;
 	}
-
-	if (!APIClient_Http_GetResult(xhToken, pbComplete, pInt_HTTPCode, bWaitExist))
+	int nHTTPCode = 0;
+	if (!APIClient_Http_GetResult(xhToken, pbComplete, &nHTTPCode, bWaitExist))
 	{
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = APIClient_GetLastError();
 		st_Locker.unlock_shared();
 		return false;
 	}
-
 	st_Locker.unlock_shared();
+
+	if (200 != nHTTPCode)
+	{
+		AIApi_IsErrorOccur = true;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_HTTPCODE;
+		return false;
+	}
 	return true;
 }
 /********************************************************************
@@ -415,6 +421,11 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 	Json::Value st_JsonChoices = st_JsonRoot["choices"];
 	if (st_JsonChoices.isNull())
 	{
+		Json::Value st_JsonError = st_JsonRoot["error"];
+		if (!st_JsonError.isNull())
+		{
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonError["type"].asCString(), st_JsonError["message"].asCString(), st_JsonError["message"].size(), false, pSt_AIClient->lParam);
+		}
 		return false;
 	}
 

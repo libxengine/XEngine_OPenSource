@@ -16,6 +16,7 @@
 #define ERROR_XENGINE_MODULE_AIAPI_CHAT_PARAMENT 0x01D0001               //参数错误，无法继续
 #define ERROR_XENGINE_MODULE_AIAPI_CHAT_MALLOC 0x01D0002                 //申请内存失败
 #define ERROR_XENGINE_MODULE_AIAPI_CHAT_NOTFOUND 0x01D0003               //没有找到
+#define ERROR_XENGINE_MODULE_AIAPI_CHAT_HTTPCODE 0x01D0004               //HTTPCODE错误
 /************************************************************************/
 /*                         AI视觉图像模型接口错误                       */
 /************************************************************************/

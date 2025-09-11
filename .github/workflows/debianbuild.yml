@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ${{ matrix.runner }}
     container:
-      image: debian:${{ matrix.version }}
+      image: debian:${{ matrix.name }}
       options: --platform ${{ matrix.platform }}
     strategy:
       matrix:
@@ -21,12 +21,14 @@ jobs:
             runner: ubuntu-24.04
             platform: linux/amd64
             artifact: x86-64
-            version: bookworm
+            name: bookworm
+            version: 12
           - arch: amd64
             runner: ubuntu-24.04
             platform: linux/amd64
             artifact: x86-64
-            version: trixie
+            name: trixie
+            version: 13
 
     steps:
       - name: Checkout main repository code

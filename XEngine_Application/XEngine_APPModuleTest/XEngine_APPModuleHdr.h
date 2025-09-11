@@ -46,8 +46,6 @@ using namespace std;
 #include <XEngine_Include/XEngine_Client/XClient_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
-#include <XEngine_Include/XEngine_Client/StreamClient_Define.h>
-#include <XEngine_Include/XEngine_Client/StreamClient_Error.h>
 //系统组件
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
@@ -139,7 +137,6 @@ using namespace std;
 
 #pragma comment(lib,"XEngine_Client/XClient_Socket")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
-#pragma comment(lib,"XEngine_Client/XClient_Stream")
 
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 

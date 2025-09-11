@@ -82,7 +82,6 @@ int main()
     _xtprintf(_X("XEngine_AudioCodec-AudioCodec_Stream_EnInit:%d\n"), AudioCodec_Stream_EnInit(NULL, NULL));
     _xtprintf(_X("XEngine_AVCollect-AVCollect_Video_Start:%d\n"), AVCollect_Video_Start(NULL));
     _xtprintf(_X("XEngine_AVFilter-AVFilter_Audio_Destroy:%d\n"), AVFilter_Audio_Destroy(0));
-    _xtprintf(_X("XEngine_AVFormat-AVFormat_Convert_Stop:%d\n"), AVFormat_Convert_Stop(0));
     _xtprintf(_X("XEngine_AVFrame-AVFrame_Frame_ParseClose:%d\n"), AVFrame_Frame_ParseClose(0));
     _xtprintf(_X("XEngine_AVHelp-AVHelp_Parse_NaluHdr:%d\n"), AVHelp_Parse_NaluHdr(NULL, 0, NULL, NULL));
     _xtprintf(_X("XEngine_VideoCodec-VideoCodec_Stream_EnInit:%d\n"), VideoCodec_Stream_EnInit(NULL, NULL));

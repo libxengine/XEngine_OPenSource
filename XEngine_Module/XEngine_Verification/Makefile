@@ -7,7 +7,7 @@ LOADHDR = -I ./ -I ../jsoncpp
 LOADSO = -L ../jsoncpp
 LIB = -lXEngine_BaseLib -lXEngine_BaseSafe -lXEngine_Cryption -lRfcComponents_HttpProtocol -ljsoncpp
 LIBEX = 
-OBJECTS = Verification_HTTP.o Verification_OAuth.o pch.o
+OBJECTS = Verification_HTTP.o Verification_OAuth.o Verification_XAuthKey.o Verification_XAuthNet.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -D _RELEASE
@@ -66,6 +66,10 @@ Verification_HTTP.o:./Verification_HTTP/Verification_HTTP.cpp
 	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./Verification_HTTP/Verification_HTTP.cpp 
 Verification_OAuth.o:./Verification_OAuth/Verification_OAuth.cpp             
 	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./Verification_OAuth/Verification_OAuth.cpp 
+Verification_XAuthKey.o:./Verification_XAuth/Verification_XAuthKey.cpp             
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./Verification_XAuth/Verification_XAuthKey.cpp
+Verification_XAuthNet.o:./Verification_XAuth/Verification_XAuthNet.cpp             
+	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./Verification_XAuth/Verification_XAuthNet.cpp
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(UNICODE) $(FLAGS) $(PLATVER) $(LOADHDR) ./pch.cpp

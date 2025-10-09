@@ -16,9 +16,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <io.h>
+#include <json/json.h>
 #include <shared_mutex>
 #include <unordered_map>
-#include <json/json.h>
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
@@ -31,6 +33,10 @@
 #include <XEngine_Include/XEngine_Core/ManagePool_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemConfig_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemConfig_Error.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include "Verification_Define.h"
 #include "Verification_Error.h"
 /********************************************************************
@@ -52,6 +58,8 @@ extern XLONG Verification_dwErrorCode;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseSafe")
 #pragma comment(lib,"XEngine_Core/XEngine_Cryption")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol")
+#pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemConfig")
+#pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #ifdef _DEBUG
 #ifdef _M_X64
 #pragma comment(lib,"x64/Debug/jsoncpp")

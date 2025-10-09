@@ -25,6 +25,12 @@
     <Filter Include="源文件\Verification_OAuth">
       <UniqueIdentifier>{55e30ca7-a09c-4bba-be86-7b23783c0aea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Verification_XAuth">
+      <UniqueIdentifier>{ade4c1a3-fdff-4d54-ade4-4c6377fe83a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Verification_XAuth">
+      <UniqueIdentifier>{feac4f54-280f-4003-b8c6-9d60f8999485}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -45,6 +51,15 @@
     <ClInclude Include="Verification_OAuth\Verification_OAuth.h">
       <Filter>头文件\Verification_OAuth</Filter>
     </ClInclude>
+    <ClInclude Include="Verification_XAuth\Verification_XAuth.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Verification_XAuth\Verification_XAuthKey.h">
+      <Filter>头文件\Verification_XAuth</Filter>
+    </ClInclude>
+    <ClInclude Include="Verification_XAuth\Verification_XAuthNet.h">
+      <Filter>头文件\Verification_XAuth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -58,6 +73,15 @@
     </ClCompile>
     <ClCompile Include="Verification_OAuth\Verification_OAuth.cpp">
       <Filter>源文件\Verification_OAuth</Filter>
+    </ClCompile>
+    <ClCompile Include="Verification_XAuth\Verification_XAuth.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Verification_XAuth\Verification_XAuthKey.cpp">
+      <Filter>源文件\Verification_XAuth</Filter>
+    </ClCompile>
+    <ClCompile Include="Verification_XAuth\Verification_XAuthNet.cpp">
+      <Filter>源文件\Verification_XAuth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

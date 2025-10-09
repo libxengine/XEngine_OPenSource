@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM64">
@@ -236,6 +236,8 @@
     <ClInclude Include="Verification_Error.h" />
     <ClInclude Include="Verification_HTTP\Verification_HTTP.h" />
     <ClInclude Include="Verification_OAuth\Verification_OAuth.h" />
+    <ClInclude Include="Verification_XAuth\Verification_XAuthKey.h" />
+    <ClInclude Include="Verification_XAuth\Verification_XAuthNet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -249,6 +251,8 @@
     </ClCompile>
     <ClCompile Include="Verification_HTTP\Verification_HTTP.cpp" />
     <ClCompile Include="Verification_OAuth\Verification_OAuth.cpp" />
+    <ClCompile Include="Verification_XAuth\Verification_XAuthKey.cpp" />
+    <ClCompile Include="Verification_XAuth\Verification_XAuthNet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="XEngine_Verification.def" />

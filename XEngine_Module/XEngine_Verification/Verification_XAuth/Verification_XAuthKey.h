@@ -21,13 +21,14 @@ public:
 	bool Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszKeyFile, LPCXSTR lpszKeyPass = NULL);
 	bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo);
 public:
-	bool Verification_XAuthKey_BuildKeyTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, __int64x nDayTimer = 0, XENGINE_LIBTIME* pSt_DayTimer = NULL);
 	bool Verification_XAuthKey_UserRegister(VERIFICATION_XAUTHKEY* pSt_AuthLocal, LPCXSTR lpszSerialStr);
-	bool Verification_XAuthKey_WriteTime(LPCXSTR lpszFileKey, int nCount = 0);
-	bool Verification_XAuthKey_ReadTime(LPCXSTR lpszFileKey, XCHAR*** ppptszTimeList, int* pInt_ListCount);
+	bool Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount = 0);
+	bool Verification_XAuthKey_ReadTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, XCHAR*** ppptszTimeList, int* pInt_ListCount);
 public:
 	bool Verification_XAuthKey_WriteKey(LPCXSTR lpszFileKey, VERIFICATION_XAUTHKEY* pSt_AuthLocal);
 	bool Verification_XAuthKey_ReadKey(LPCXSTR lpszFileKey, VERIFICATION_XAUTHKEY* pSt_AuthLocal);
 	bool Verification_XAuthKey_WriteMemory(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, VERIFICATION_XAUTHKEY* pSt_AuthLocal);
 	bool Verification_XAuthKey_ReadMemory(LPCXSTR lpszMsgBuffer, int nMsgLen, VERIFICATION_XAUTHKEY* pSt_AuthLocal);
+protected:
+	bool Verification_XAuthKey_BuildKeyTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, __int64x nDayTimer = 0, XENGINE_LIBTIME* pSt_DayTimer = NULL);
 };

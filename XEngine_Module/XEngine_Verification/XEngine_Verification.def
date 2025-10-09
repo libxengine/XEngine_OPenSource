@@ -14,3 +14,14 @@ EXPORTS
 	Verification_OAuth_Parse
 	Verification_OAuth_PacketToken
 	Verification_OAuth_PacketError
+
+	Verification_XAuthKey_FileRead
+	Verification_XAuthKey_FileWrite
+	Verification_XAuthKey_KeyParse
+	Verification_XAuthKey_UserRegister
+	Verification_XAuthKey_WriteTime
+	Verification_XAuthKey_ReadTime
+	Verification_XAuthKey_WriteKey
+	Verification_XAuthKey_ReadKey
+	Verification_XAuthKey_WriteMemory
+	Verification_XAuthKey_ReadMemory

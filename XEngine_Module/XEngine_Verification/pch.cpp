@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Verification_HTTP/Verification_HTTP.h"
 #include "Verification_OAuth/Verification_OAuth.h"
+#include "Verification_XAuth/Verification_XAuthKey.h"
+#include "Verification_XAuth/Verification_XAuthNet.h"
 /********************************************************************
 //    Created:     2025/08/19  10:52:23
 //    File Name:   D:\XEngine_OPenSource\XEngine_Module\XEngine_Verification\pch.cpp
@@ -17,6 +19,8 @@ XLONG Verification_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CVerification_HTTP m_HTTPVerification;
 CVerification_OAuth m_OAuthVerification;
+CVerification_XAuthKey m_XAuthKeyVerification;
+CVerification_XAuthNet m_XAuthNetVerification;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -73,4 +77,47 @@ extern "C" bool Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, int* pInt_M
 extern "C" bool Verification_OAuth_PacketError(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszOAuthError, LPCXSTR lpszErrorDescription, LPCXSTR lpszErrorUri)
 {
 	return m_OAuthVerification.Verification_OAuth_PacketError(ptszMSGBuffer, pInt_MSGLen, lpszOAuthError, lpszErrorDescription, lpszErrorUri);
+}
+/************************************************************************/
+/*                         XAUTH验证导出函数                            */
+/************************************************************************/
+extern "C" bool Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszKeyFile, LPCXSTR lpszKeyPass)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_FileRead(pSt_XAuthInfo, lpszKeyFile, lpszKeyPass);
+}
+extern "C" bool Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszKeyFile, LPCXSTR lpszKeyPass)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_FileWrite(pSt_XAuthInfo, lpszKeyFile, lpszKeyPass);
+}
+extern "C" bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_KeyParse(pSt_XAuthInfo);
+}
+extern "C" bool Verification_XAuthKey_UserRegister(VERIFICATION_XAUTHKEY* pSt_AuthLocal, LPCXSTR lpszSerialStr)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_UserRegister(pSt_AuthLocal, lpszSerialStr);
+}
+extern "C" bool Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_WriteTime(pSt_AuthLocal, nCount);
+}
+extern "C" bool Verification_XAuthKey_ReadTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, XCHAR*** ppptszTimeList, int* pInt_ListCount)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_ReadTime(pSt_AuthLocal, ppptszTimeList, pInt_ListCount);
+}
+extern "C" bool Verification_XAuthKey_WriteKey(LPCXSTR lpszFileKey, VERIFICATION_XAUTHKEY* pSt_AuthLocal)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_WriteKey(lpszFileKey, pSt_AuthLocal);
+}
+extern "C" bool Verification_XAuthKey_ReadKey(LPCXSTR lpszFileKey, VERIFICATION_XAUTHKEY* pSt_AuthLocal)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_ReadKey(lpszFileKey, pSt_AuthLocal);
+}
+extern "C" bool Verification_XAuthKey_WriteMemory(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, VERIFICATION_XAUTHKEY* pSt_AuthLocal)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_WriteMemory(ptszMsgBuffer, pInt_MsgLen, pSt_AuthLocal);
+}
+extern "C" bool Verification_XAuthKey_ReadMemory(LPCXSTR lpszMsgBuffer, int nMsgLen, VERIFICATION_XAUTHKEY* pSt_AuthLocal)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_ReadMemory(lpszMsgBuffer, nMsgLen, pSt_AuthLocal);
 }

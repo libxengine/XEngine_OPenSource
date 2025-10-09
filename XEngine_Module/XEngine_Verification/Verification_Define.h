@@ -141,6 +141,8 @@ typedef struct
 		XCHAR tszUserContact[64];                                         //联系方式，电子邮件或者手机等
 		XCHAR tszCustom[1024];                                            //自定义数据
 	}st_AuthUserInfo;
+
+	XCHAR tszTimeList[2048];
 }VERIFICATION_XAUTHKEY;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
@@ -467,3 +469,217 @@ extern "C" bool Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, int* pInt_M
 备注：
 *********************************************************************/
 extern "C" bool Verification_OAuth_PacketError(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszOAuthError, LPCXSTR lpszErrorDescription = NULL, LPCXSTR lpszErrorUri = NULL);
+/************************************************************************/
+/*                         XAUTH验证导出函数                            */
+/************************************************************************/
+/********************************************************************
+函数名称：Verification_XAuthKey_FileRead
+函数功能：CDKEY帮助读取函数
+ 参数.一：pSt_XAuthInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的KEY信息
+ 参数.二：lpszKeyFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要读取的CDKEY文件地址
+ 参数.三：lpszKeyPass
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：CDKEY的秘钥,如果有
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszKeyFile, LPCXSTR lpszKeyPass = NULL);
+/********************************************************************
+函数名称：Verification_XAuthKey_FileWrite
+函数功能：CDKEY帮助写入函数
+ 参数.一：pSt_XAuthInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要写入的KEY信息
+ 参数.二：lpszKeyFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要写入的CDKEY文件地址
+ 参数.三：lpszKeyPass
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：CDKEY的秘钥,如果有
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：无论解析操作是否成功,此函数在结束的时候都需要调用,用来更新CDKEY使用信息.特别是秒数和天数版本
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszKeyFile, LPCXSTR lpszKeyPass = NULL);
+/********************************************************************
+函数名称：Verification_XAuthKey_KeyParse
+函数功能：解析CDKEY内容,判断是否超时
+ 参数.一：pSt_OAuthInfo
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出解析到的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：无限制版本不做验证
+	  其他验证nHasTime将被设置还拥有时间
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo);
+/********************************************************************
+函数名称：Verification_XAuthKey_UserRegister
+函数功能：用户注册CDKEY函数
+ 参数.一：pSt_AuthLocal
+  In/Out：In
+  类型：结构体指针
+  可空：N
+  意思：要构造的结构体
+ 参数.二：lpszSerialStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入注册验证的序列号
+返回值
+  类型：逻辑型
+  意思：是否构造成功
+备注：此函数会修改st_AuthRegInfo的时间信息成员,必须重写CDKEY
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_UserRegister(VERIFICATION_XAUTHKEY* pSt_AuthLocal, LPCXSTR lpszSerialStr);
+/********************************************************************
+函数名称：Verification_XAuthKey_WriteTime
+函数功能：记录一次执行时间
+ 参数.一：pSt_AuthLocal
+  In/Out：In/Out
+  类型：数据结构指针
+  可空：N
+  意思：输入要操作的结构,输出操作完的结构
+ 参数.二：nCount
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入最大允许记录个数,0不限制
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：记录次数越多,文件越大.读取需要的内存就越多
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount = 0);
+/********************************************************************
+函数名称：Verification_XAuthKey_ReadTime
+函数功能：读取记录的时间列表信息
+ 参数.一：pSt_AuthLocal
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要操作的结构,输出操作完的结构
+ 参数.二：ppptszTimeList
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出时间信息列表
+ 参数.三：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_ReadTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, XCHAR*** ppptszTimeList, int* pInt_ListCount);
+/********************************************************************
+函数名称：Verification_XAuthKey_WriteKey
+函数功能：写一个CDKey文件
+ 参数.一：lpszFileKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要操作的文件路径
+ 参数.二：pSt_AuthLocal
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：要写入的文件信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：写入读取必须是明文,建议你加密处理CDKEY,通过OPENSSL模块,来加解密,在读写
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_WriteKey(LPCXSTR lpszFileKey, VERIFICATION_XAUTHKEY* pSt_AuthLocal);
+/********************************************************************
+函数名称：Verification_XAuthKey_ReadKey
+函数功能：读一个数据文件
+ 参数.一：lpszFileKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要操作的文件路径
+ 参数.二：pSt_AuthLocal
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：导出获取到的文件信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_ReadKey(LPCXSTR lpszFileKey, VERIFICATION_XAUTHKEY* pSt_AuthLocal);
+/********************************************************************
+函数名称：Verification_XAuthKey_WriteMemory
+函数功能：写配置信息到内存
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：写到的内存
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：写到的内存大小
+ 参数.三：pSt_AuthLocal
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要写的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_WriteMemory(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, VERIFICATION_XAUTHKEY* pSt_AuthLocal);
+/********************************************************************
+函数名称：Verification_XAuthKey_ReadMemory
+函数功能：内存配置文件读取
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要读取配置的内存
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入读取内存大小
+ 参数.三：pSt_AuthLocal
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出读取到的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_ReadMemory(LPCXSTR lpszMsgBuffer, int nMsgLen, VERIFICATION_XAUTHKEY* pSt_AuthLocal);

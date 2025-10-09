@@ -290,47 +290,6 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 	return true;
 }
 /********************************************************************
-函数名称：Verification_XAuthKey_BuildKeyTime
-函数功能：构造注册的时间结构体信息
- 参数.一：pSt_AuthLocal
-  In/Out：In
-  类型：结构体指针
-  可空：N
-  意思：要构造的结构体
- 参数.二：nDayTimer
-  In/Out：In
-  类型：整数型
-  可空：Y
-  意思：可用时间或者次数.非自定义时间需要设置此值
- 参数.三：pSt_DayTimer
-  In/Out：In
-  类型：结构体指针
-  可空：Y
-  意思：如果是自定义时间,这个参数需要设置,其他类型请设置参数二
-返回值
-  类型：逻辑型
-  意思：是否构造成功
-备注：此函数会修改st_AuthRegInfo的时间信息成员,必须重写CDKEY
-*********************************************************************/
-bool CVerification_XAuthKey::Verification_XAuthKey_BuildKeyTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, __int64x nDayTimer /* = 0 */, XENGINE_LIBTIME* pSt_DayTimer /* = NULL */)
-{
-	Verification_IsErrorOccur = false;
-
-	pSt_AuthLocal->st_AuthAppInfo.bInit = true;
-	//判断注册时间方式
-	if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_CUSTOM == pSt_AuthLocal->st_AuthRegInfo.enSerialType)
-	{
-		//按照到期时间计算
-		_xstprintf(pSt_AuthLocal->st_AuthRegInfo.tszLeftTime, _X("%04d-%02d-%02d %02d:%02d:%02d"), pSt_DayTimer->wYear, pSt_DayTimer->wMonth, pSt_DayTimer->wDay, pSt_DayTimer->wHour, pSt_DayTimer->wMinute, pSt_DayTimer->wSecond);
-	}
-	else
-	{
-		pSt_AuthLocal->st_AuthRegInfo.nHasTime = nDayTimer;
-		_xstprintf(pSt_AuthLocal->st_AuthRegInfo.tszLeftTime, _X("%lld"), nDayTimer);
-	}
-	return true;
-}
-/********************************************************************
 函数名称：Verification_XAuthKey_UserRegister
 函数功能：用户注册CDKEY函数
  参数.一：pSt_AuthLocal
@@ -424,11 +383,11 @@ bool CVerification_XAuthKey::Verification_XAuthKey_UserRegister(VERIFICATION_XAU
 /********************************************************************
 函数名称：Verification_XAuthKey_WriteTime
 函数功能：记录一次执行时间
- 参数.一：lpszFileKey
-  In/Out：In
-  类型：常量字符指针
+ 参数.一：pSt_AuthLocal
+  In/Out：In/Out
+  类型：数据结构指针
   可空：N
-  意思：输入要操作的文件
+  意思：输入要操作的结构,输出操作完的结构
  参数.二：nCount
   In/Out：In
   类型：整数型
@@ -439,138 +398,57 @@ bool CVerification_XAuthKey::Verification_XAuthKey_UserRegister(VERIFICATION_XAU
   意思：是否成功
 备注：记录次数越多,文件越大.读取需要的内存就越多
 *********************************************************************/
-bool CVerification_XAuthKey::Verification_XAuthKey_WriteTime(LPCXSTR lpszFileKey, int nCount /* = 0 */)
+bool CVerification_XAuthKey::Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount /* = 0 */)
 {
 	Verification_IsErrorOccur = false;
 
-	if (NULL == lpszFileKey)
+	if (NULL == pSt_AuthLocal)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
-	//添加执行信息
-	bool bFound = false;
-	LPCXSTR lpszTimeStr = _X("[TimeList]");
-	FILE* pSt_File = _xtfopen(lpszFileKey, _X("r+"));
-	if (NULL == pSt_File)
+	//如果设置了最大个数
+	std::list<xstring> stl_ListTime;
+	//分割字符串
+	XCHAR tszMSGBuffer[2048] = {};
+	_tcsxcpy(tszMSGBuffer, pSt_AuthLocal->tszTimeList);
+	//申请内存
+	XCHAR* ptszTokStr = _tcsxtok(tszMSGBuffer, _X("|"));
+	while (NULL != ptszTokStr)
 	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_OPENFILE;
-		return false;
-	}
-	XCHAR tszMsgBuffer[XPATH_MAX];
-	memset(tszMsgBuffer, '\0', XPATH_MAX);
-	//查找是否有时间列表字段
-	while (1)
-	{
-		if (NULL == fgets(tszMsgBuffer, XPATH_MAX, pSt_File))
+		if (_tcsxlen(ptszTokStr) > 4)
 		{
-			break;
+			stl_ListTime.push_back(ptszTokStr);
 		}
-		if (0 == _tcsxncmp(lpszTimeStr, tszMsgBuffer, _tcsxlen(lpszTimeStr)))
+		ptszTokStr = _tcsxtok(NULL, _X("|"));
+	}
+	//移除多余的
+	if (nCount > 0)
+	{
+		while ((int)stl_ListTime.size() >= nCount)
 		{
-			bFound = true;
-			break;
+			stl_ListTime.pop_front();
 		}
 	}
-	//设置文件指针
-	if (bFound)
-	{
-		//如果设置了最大个数
-		if (nCount > 0)
-		{
-			int nListCount = 0;
-			XCHAR** pptszListTime = NULL;
-			//读取现有的
-			Verification_XAuthKey_ReadTime(lpszFileKey, &pptszListTime, &nListCount);
-			//是否大于14 >= 10
-			if (nListCount >= nCount)
-			{
-				long lFSize = ftell(pSt_File);
-				//需要截断文件
-				fclose(pSt_File);
-				int hFile = _xtopen(lpszFileKey, O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
+	XCHAR tszTimeStr[64] = {};
 #ifdef _MSC_BUILD
-				if (0 != _chsize_s(hFile, lFSize))
+	_xstprintf(tszTimeStr, _X("%lld|"), time(NULL));
 #else
-				if (0 != ftruncate(hFile, lFSize))
-#endif
-				{
-					Verification_IsErrorOccur = true;
-					Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_SETFILE;
-					return false;
-				}
-				_close(hFile);
-				//重新打开文件
-				pSt_File = _xtfopen(lpszFileKey, _X("r+"));
-				fseek(pSt_File, 0, SEEK_END);
-				//从我们要保留的地方开始轮训
-				for (int i = (nListCount - nCount + 1); i < nListCount; i++)
-				{
-					fwrite(pptszListTime[i], 1, _tcsxlen(pptszListTime[i]), pSt_File);
-					fwrite(_X("|"), 1, 1, pSt_File);
-				}
-			}
-			else
-			{
-				//在末尾添加
-				fseek(pSt_File, -1, SEEK_END);
-				XCHAR cChar = fgetc(pSt_File);
-				if (cChar == '\n')
-				{
-					fseek(pSt_File, -2, SEEK_END);
-				}
-				else
-				{
-					fseek(pSt_File, 0, SEEK_END);
-				}
-			}
-		}
-		else
-		{
-			//在末尾添加
-			fseek(pSt_File, -1, SEEK_END);
-			XCHAR cChar = fgetc(pSt_File);
-			if (cChar == '\n')
-			{
-				fseek(pSt_File, -2, SEEK_END);
-			}
-			else
-			{
-				fseek(pSt_File, 0, SEEK_END);
-			}
-		}
-	}
-	else
-	{
-		fseek(pSt_File, 0, SEEK_END);
-		if (tszMsgBuffer[_tcsxlen(tszMsgBuffer) - 1] != '\n')
-		{
-			fwrite(_X("\n"), 1, 1, pSt_File);
-		}
-		fwrite(lpszTimeStr, 1, _tcsxlen(lpszTimeStr), pSt_File);
-		fwrite(_X("\n"), 1, 1, pSt_File);
-	}
-	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
-#ifdef _MSC_BUILD
-	_xstprintf(tszMsgBuffer, _X("%lld|"), time(NULL));
-#else
-	_xstprintf(tszMsgBuffer, _X("%ld|"), time(NULL));
+	_xstprintf(tszTimeStr, _X("%ld|"), time(NULL));
 #endif
 	//追加
-	fwrite(tszMsgBuffer, 1, _tcsxlen(tszMsgBuffer), pSt_File);
-	fclose(pSt_File);
+	_tcsxcat(pSt_AuthLocal->tszTimeList, tszTimeStr);
 	return true;
 }
 /********************************************************************
 函数名称：Verification_XAuthKey_ReadTime
 函数功能：读取记录的时间列表信息
- 参数.一：lpszFileKey
+ 参数.一：pSt_AuthLocal
   In/Out：In
-  类型：常量字符指针
+  类型：数据结构指针
   可空：N
-  意思：输入要读取的文件
+  意思：输入要操作的结构,输出操作完的结构
  参数.二：ppptszTimeList
   In/Out：Out
   类型：三级指针
@@ -586,67 +464,20 @@ bool CVerification_XAuthKey::Verification_XAuthKey_WriteTime(LPCXSTR lpszFileKey
   意思：是否成功
 备注：
 *********************************************************************/
-bool CVerification_XAuthKey::Verification_XAuthKey_ReadTime(LPCXSTR lpszFileKey, XCHAR*** ppptszTimeList, int* pInt_ListCount)
+bool CVerification_XAuthKey::Verification_XAuthKey_ReadTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, XCHAR*** ppptszTimeList, int* pInt_ListCount)
 {
 	Verification_IsErrorOccur = false;
 
-	if ((NULL == lpszFileKey) || (NULL == pInt_ListCount))
+	if ((NULL == pSt_AuthLocal) || (NULL == pInt_ListCount))
 	{
-		return false;
-	}
-	bool bFound = false;
-	LPCXSTR lpszTimeStr = _X("[TimeList]");
-	FILE* pSt_File = _xtfopen(lpszFileKey, _X("rb"));
-	if (NULL == pSt_File)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_OPENFILE;
-		return false;
-	}
-	XCHAR tszMsgBuffer[XPATH_MAX];
-	//查找是否有时间列表字段
-	while (1)
-	{
-		memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
-		if (NULL == fgets(tszMsgBuffer, XPATH_MAX, pSt_File))
-		{
-			break;
-		}
-		if (0 == _tcsxncmp(lpszTimeStr, tszMsgBuffer, _tcsxlen(lpszTimeStr)))
-		{
-			bFound = true;
-			break;
-		}
-	}
-	//设置文件指针
-	if (!bFound)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_TIMELIST;
 		return false;
 	}
 	std::list<xstring> stl_ListTime;
-	struct stat st_FileStat;
-	stat(lpszFileKey, &st_FileStat);
-	//申请足够的内存
-	XCHAR* ptszMsgBuffer = (XCHAR*)malloc(st_FileStat.st_size);
-	if (NULL == ptszMsgBuffer)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_MALLOC;
-		return false;
-	}
-	memset(ptszMsgBuffer, '\0', st_FileStat.st_size);
-	if (fread(ptszMsgBuffer, 1, st_FileStat.st_size, pSt_File) <= 0)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_READ;
-		free(ptszMsgBuffer);
-		ptszMsgBuffer = NULL;
-		return false;
-	}
+	//分割字符串
+	XCHAR tszMSGBuffer[2048] = {};
+	_tcsxcpy(tszMSGBuffer, pSt_AuthLocal->tszTimeList);
 	//申请内存
-	XCHAR* ptszTokStr = _tcsxtok(ptszMsgBuffer, _X("|"));
+	XCHAR* ptszTokStr = _tcsxtok(tszMSGBuffer, _X("|"));
 	while (NULL != ptszTokStr)
 	{
 		if (_tcsxlen(ptszTokStr) > 4)
@@ -655,9 +486,6 @@ bool CVerification_XAuthKey::Verification_XAuthKey_ReadTime(LPCXSTR lpszFileKey,
 		}
 		ptszTokStr = _tcsxtok(NULL, _X("|"));
 	}
-	fclose(pSt_File);
-	free(ptszMsgBuffer);
-	ptszMsgBuffer = NULL;
 	//导出
 	*pInt_ListCount = (int)stl_ListTime.size();
 	BaseLib_Memory_Malloc((XPPPMEM)ppptszTimeList, *pInt_ListCount, 64);
@@ -858,6 +686,12 @@ bool CVerification_XAuthKey::Verification_XAuthKey_WriteKey(LPCXSTR lpszFileKey,
 		Verification_dwErrorCode = SystemConfig_GetLastError();
 		return false;
 	}
+	if (!SystemConfig_File_WriteProfileFromFile(lpszFileKey, _X("TimeList"), _X("TimeNumber"), pSt_AuthLocal->tszTimeList))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = SystemConfig_GetLastError();
+		return false;
+	}
 	return true;
 }
 /********************************************************************
@@ -994,6 +828,12 @@ bool CVerification_XAuthKey::Verification_XAuthKey_ReadKey(LPCXSTR lpszFileKey, 
 		return false;
 	}
 	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthUser"), _X("tszCustom"), pSt_AuthLocal->st_AuthUserInfo.tszCustom) < 0)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = SystemConfig_GetLastError();
+		return false;
+	}
+	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("TimeList"), _X("TimeNumber"), pSt_AuthLocal->tszTimeList) < 0)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = SystemConfig_GetLastError();
@@ -1196,6 +1036,12 @@ bool CVerification_XAuthKey::Verification_XAuthKey_WriteMemory(XCHAR* ptszMsgBuf
 		Verification_dwErrorCode = SystemConfig_GetLastError();
 		return false;
 	}
+	if (!SystemConfig_File_WriteProfileFromMemory(ptszMsgBuffer, nMsgLen, _X("TimeList"), _X("TimeNumber"), pSt_AuthLocal->tszTimeList, ptszMsgBuffer, &nMsgLen))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = SystemConfig_GetLastError();
+		return false;
+	}
 	*pInt_MsgLen = nMsgLen;
 	return true;
 }
@@ -1353,6 +1199,56 @@ bool CVerification_XAuthKey::Verification_XAuthKey_ReadMemory(LPCXSTR lpszMsgBuf
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = SystemConfig_GetLastError();
 		return false;
+	}
+	if (!SystemConfig_File_ReadProfileFromMemory(lpszMsgBuffer, nMsgLen, _X("TimeList"), _X("TimeNumber"), pSt_AuthLocal->tszTimeList))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = SystemConfig_GetLastError();
+		return false;
+	}
+
+	return true;
+}
+//////////////////////////////////////////////////////////////////////////
+//                      保护函数
+//////////////////////////////////////////////////////////////////////////
+/********************************************************************
+函数名称：Verification_XAuthKey_BuildKeyTime
+函数功能：构造注册的时间结构体信息
+ 参数.一：pSt_AuthLocal
+  In/Out：In
+  类型：结构体指针
+  可空：N
+  意思：要构造的结构体
+ 参数.二：nDayTimer
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：可用时间或者次数.非自定义时间需要设置此值
+ 参数.三：pSt_DayTimer
+  In/Out：In
+  类型：结构体指针
+  可空：Y
+  意思：如果是自定义时间,这个参数需要设置,其他类型请设置参数二
+返回值
+  类型：逻辑型
+  意思：是否构造成功
+备注：此函数会修改st_AuthRegInfo的时间信息成员,必须重写CDKEY
+*********************************************************************/
+bool CVerification_XAuthKey::Verification_XAuthKey_BuildKeyTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, __int64x nDayTimer /* = 0 */, XENGINE_LIBTIME* pSt_DayTimer /* = NULL */)
+{
+	Verification_IsErrorOccur = false;
+
+	//判断注册时间方式
+	if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_CUSTOM == pSt_AuthLocal->st_AuthRegInfo.enSerialType)
+	{
+		//按照到期时间计算
+		_xstprintf(pSt_AuthLocal->st_AuthRegInfo.tszLeftTime, _X("%04d-%02d-%02d %02d:%02d:%02d"), pSt_DayTimer->wYear, pSt_DayTimer->wMonth, pSt_DayTimer->wDay, pSt_DayTimer->wHour, pSt_DayTimer->wMinute, pSt_DayTimer->wSecond);
+	}
+	else
+	{
+		pSt_AuthLocal->st_AuthRegInfo.nHasTime = nDayTimer;
+		_xstprintf(pSt_AuthLocal->st_AuthRegInfo.tszLeftTime, _X("%lld"), nDayTimer);
 	}
 	return true;
 }

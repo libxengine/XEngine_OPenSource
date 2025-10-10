@@ -5,7 +5,7 @@ FILEEXT =
 LIBFLAG = 
 LOADHDR = -I ./ -I ../jsoncpp
 LOADSO = -L ../jsoncpp
-LIB = -lXEngine_BaseLib -lXEngine_BaseSafe -lXEngine_Cryption -lRfcComponents_HttpProtocol -lXEngine_SystemConfig -lXEngine_SystemApi -ljsoncpp
+LIB = -lXEngine_BaseLib -lXEngine_BaseSafe -lXEngine_Cryption -lXClient_Socket -lXClient_APIHelp -lRfcComponents_HttpProtocol -lXEngine_SystemConfig -lXEngine_SystemApi -ljsoncpp
 LIBEX = 
 OBJECTS = Verification_HTTP.o Verification_OAuth.o Verification_XAuthKey.o Verification_XAuthNet.o pch.o
 
@@ -53,7 +53,7 @@ else ifeq ($(PLATFORM), android)
 	FILEEXT = so
 	LIBFLAG = -shared
 	LOADHDR += -I $(HOME)/XEngine_Android_Arm64
-	LOADSO += -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_BaseLib -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_Core -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_RfcComponents
+	LOADSO += -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_BaseLib -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_Core -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_Client -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_RfcComponents -L $(HOME)/XEngine_Android_Arm64/XEngine_Android/XEngine_SystemSdk
 	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
 	SDKPATH = $(HOME)/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
 	CC = $(SDKPATH) -Wall -fPIC -std=c++20 -target aarch64-linux-android30

@@ -68,6 +68,10 @@ typedef enum
 //////////////////////////////////////////////////////////////////////////
 //                        导出结构体
 //////////////////////////////////////////////////////////////////////////
+//扩展登录协议
+struct XENGINE_PROTOCOL_USERAUTHEX : public XENGINE_PROTOCOL_USERAUTH {
+	XCHAR tszHWCode[64];
+};
 typedef struct  
 {
 	XCHAR tszClientID[128];                 // 客户端ID

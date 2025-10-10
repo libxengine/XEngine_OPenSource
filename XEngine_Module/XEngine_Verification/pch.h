@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <json/json.h>
 #include <shared_mutex>
+#include <thread>
 #include <list>
 #include <unordered_map>
 #include <XEngine_Include/XEngine_CommHdr.h>

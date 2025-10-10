@@ -536,6 +536,44 @@ extern "C" bool Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHKEY* pSt_XAuth
 *********************************************************************/
 extern "C" bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo);
 /********************************************************************
+函数名称：Verification_XAuthKey_KeyInit
+函数功能：KEY结构初始化
+ 参数.一：pSt_XAuthInfo
+  In/Out：In/Out
+  类型：数据结构指针
+  可空：N
+  意思：输出初始化后的结构信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY* pSt_XAuthInfo);
+/********************************************************************
+函数名称：Verification_XAuthKey_KeySerial
+函数功能：序列号生成函数
+ 参数.一：ptszSerialStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出生成的序列号
+ 参数.二：nCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要生成的段数
+ 参数.三：nType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入生成的类型0随机,1数字,2字母
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthKey_KeySerial(XCHAR* ptszSerialStr, int nCount, int nType);
+/********************************************************************
 函数名称：Verification_XAuthKey_UserRegister
 函数功能：用户注册CDKEY函数
  参数.一：pSt_AuthLocal
@@ -572,7 +610,7 @@ extern "C" bool Verification_XAuthKey_UserRegister(VERIFICATION_XAUTHKEY* pSt_Au
   意思：是否成功
 备注：记录次数越多,文件越大.读取需要的内存就越多
 *********************************************************************/
-extern "C" bool Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount = 0);
+extern "C" bool Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount = 10);
 /********************************************************************
 函数名称：Verification_XAuthKey_ReadTime
 函数功能：读取记录的时间列表信息

@@ -20,9 +20,11 @@ public:
 	bool Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszKeyFile, LPCXSTR lpszKeyPass = NULL);
 	bool Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszKeyFile, LPCXSTR lpszKeyPass = NULL);
 	bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo);
+	bool Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY* pSt_XAuthInfo);
+	bool Verification_XAuthKey_KeySerial(XCHAR* ptszSerialStr, int nCount, int nType);
 public:
 	bool Verification_XAuthKey_UserRegister(VERIFICATION_XAUTHKEY* pSt_AuthLocal, LPCXSTR lpszSerialStr);
-	bool Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount = 0);
+	bool Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount = 10);
 	bool Verification_XAuthKey_ReadTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, XCHAR*** ppptszTimeList, int* pInt_ListCount);
 public:
 	bool Verification_XAuthKey_WriteKey(LPCXSTR lpszFileKey, VERIFICATION_XAUTHKEY* pSt_AuthLocal);

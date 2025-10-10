@@ -18,6 +18,8 @@ EXPORTS
 	Verification_XAuthKey_FileRead
 	Verification_XAuthKey_FileWrite
 	Verification_XAuthKey_KeyParse
+	Verification_XAuthKey_KeyInit
+	Verification_XAuthKey_KeySerial
 	Verification_XAuthKey_UserRegister
 	Verification_XAuthKey_WriteTime
 	Verification_XAuthKey_ReadTime

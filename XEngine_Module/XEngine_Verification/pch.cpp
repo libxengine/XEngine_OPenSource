@@ -93,6 +93,14 @@ extern "C" bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthI
 {
 	return m_XAuthKeyVerification.Verification_XAuthKey_KeyParse(pSt_XAuthInfo);
 }
+extern "C" bool Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY* pSt_XAuthInfo)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_KeyInit(pSt_XAuthInfo);
+}
+extern "C" bool Verification_XAuthKey_KeySerial(XCHAR* ptszSerialStr, int nCount, int nType)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_KeySerial(ptszSerialStr, nCount, nType);
+}
 extern "C" bool Verification_XAuthKey_UserRegister(VERIFICATION_XAUTHKEY* pSt_AuthLocal, LPCXSTR lpszSerialStr)
 {
 	return m_XAuthKeyVerification.Verification_XAuthKey_UserRegister(pSt_AuthLocal, lpszSerialStr);

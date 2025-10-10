@@ -47,8 +47,8 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKE
 {
 	Verification_IsErrorOccur = false;
 
-	XCHAR tszDECodecBuffer[XPATH_MAX] = {};
-	XCHAR tszENCodecBuffer[XPATH_MAX] = {};
+	XCHAR tszDECodecBuffer[4096] = {};
+	XCHAR tszENCodecBuffer[4096] = {};
 
 	FILE* pSt_File = _xtfopen(lpszKeyFile, _X("rb"));
 	if (NULL == pSt_File)
@@ -83,6 +83,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKE
 			return false;
 		}
 	}
+	BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime);
 	return true;
 }
 /********************************************************************
@@ -113,8 +114,8 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 	Verification_IsErrorOccur = false;
 
 	int nSize = 0;
-	XCHAR tszDECodecBuffer[XPATH_MAX] = {};
-	XCHAR tszENCodecBuffer[XPATH_MAX] = {};
+	XCHAR tszDECodecBuffer[4096] = {};
+	XCHAR tszENCodecBuffer[4096] = {};
 
 	//更新使用时间
 	if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_SECOND == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
@@ -187,11 +188,8 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 	}
 	//////////////////////////////////////////////////////////////////////////验证
 	//验证CDKEY本身情况
-	XENGINE_LIBTIME st_StartTimer = {};
 	XENGINE_LIBTIME st_EndTimer = {};
 	XENGINE_LIBTIME st_SysTimer = {};
-
-	BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime);
 	//处理注册类型
 	if (ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_UNLIMIT == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
 	{
@@ -221,24 +219,24 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 		//计算超时时间
 		if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_DAY == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 		{
-			XENGINE_LIBTIME st_EndTimer;
-			XENGINE_LIBTIME st_StartTime;
-
-			memset(&st_EndTimer, '\0', sizeof(XENGINE_LIBTIME));
-			memset(&st_StartTime, '\0', sizeof(XENGINE_LIBTIME));
-
-			BaseLib_Time_GetSysTime(&st_EndTimer);
-			BaseLib_Time_StrToTime(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime, &st_StartTime);
-			if ((st_EndTimer.wYear != st_StartTime.wYear) || (st_EndTimer.wMonth != st_StartTime.wMonth) || (st_EndTimer.wDay != st_StartTime.wDay))
+			BaseLib_Time_GetSysTime(&st_SysTimer);
+			BaseLib_Time_StrToTime(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime, &st_EndTimer);
+			if ((st_EndTimer.wYear != st_SysTimer.wYear) || (st_EndTimer.wMonth != st_SysTimer.wMonth) || (st_EndTimer.wDay != st_SysTimer.wDay))
 			{
 				pSt_XAuthInfo->st_AuthRegInfo.nHasTime--;
 			}
-			BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime);
 		}
 		else if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_SECOND == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 		{
-			memset(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime, '\0', sizeof(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime));
-			BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime);
+			XCHAR tszTimeEnd[64] = {};
+			__int64x nUsedTime = 0;
+
+			BaseLib_Time_TimeToStr(tszTimeEnd);
+			BaseLib_TimeSpan_GetForStr(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime, tszTimeEnd, &nUsedTime, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
+			if (nUsedTime <= 0)
+			{
+				pSt_XAuthInfo->st_AuthRegInfo.nHasTime = nUsedTime;
+			}
 		}
 		else if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_TIME == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 		{
@@ -287,6 +285,152 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 		return false;
 	}
 
+	return true;
+}
+/********************************************************************
+函数名称：Verification_XAuthKey_KeyInit
+函数功能：KEY结构初始化
+ 参数.一：pSt_XAuthInfo
+  In/Out：In/Out
+  类型：数据结构指针
+  可空：N
+  意思：输出初始化后的结构信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY* pSt_XAuthInfo)
+{
+	Verification_IsErrorOccur = false;
+
+	if (NULL == pSt_XAuthInfo)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
+		return false;
+	}
+	if (_tcsxlen(pSt_XAuthInfo->tszAddr) <= 0)
+	{
+		_xstprintf(pSt_XAuthInfo->tszAddr, _X("http://app.libxengine.com"));
+	}
+	if (0 == pSt_XAuthInfo->nPort)
+	{
+		pSt_XAuthInfo->nPort = 5302;
+	}
+	//应用信息
+	pSt_XAuthInfo->st_AuthAppInfo.bInit = true;
+	if (_tcsxlen(pSt_XAuthInfo->st_AuthAppInfo.tszAppName) <= 0)
+	{
+		_xstprintf(pSt_XAuthInfo->st_AuthAppInfo.tszAppName, _X("XEngine_AuthorzeApp"));
+	}
+	if (_tcsxlen(pSt_XAuthInfo->st_AuthAppInfo.tszAppVer) <= 0)
+	{
+		_xstprintf(pSt_XAuthInfo->st_AuthAppInfo.tszAppVer, _X("V1.0.0.1001"));
+	}
+	//注册信息
+	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
+	SystemApi_HardWare_GetSerial(&st_SDKSerial);
+
+	BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthRegInfo.tszCreateTime);
+	if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
+	{
+		pSt_XAuthInfo->st_AuthRegInfo.enSerialType = ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_TIME;
+		_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszLeftTime, _X("5"));
+		pSt_XAuthInfo->st_AuthRegInfo.nHasTime = 5;
+	}
+	if (ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
+	{
+		pSt_XAuthInfo->st_AuthRegInfo.enRegType = ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_TRY;
+	}
+	if (ENUM_AUTHORIZE_MODULE_HW_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+	{
+		pSt_XAuthInfo->st_AuthRegInfo.enHWType = ENUM_AUTHORIZE_MODULE_HW_TYPE_BOARD;
+		if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) <= 0)
+		{
+			_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszBoardSerial);
+		}
+	}
+	if (ENUM_AUTHORIZE_MODULE_VERMODE_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enVModeType)
+	{
+		pSt_XAuthInfo->st_AuthRegInfo.enVModeType = ENUM_AUTHORIZE_MODULE_VERMODE_TYPE_LOCAL;
+	}
+	//临时序列号
+	if (0 == pSt_XAuthInfo->st_AuthSerial.st_TimeLimit.nTimeCount)
+	{
+		pSt_XAuthInfo->st_AuthSerial.st_TimeLimit.nTimeCount = 9999;
+	}
+	if (_tcsxlen(pSt_XAuthInfo->st_AuthSerial.st_TimeLimit.tszTimeSerial) <= 0)
+	{
+		Verification_XAuthKey_KeySerial(pSt_XAuthInfo->st_AuthSerial.st_TimeLimit.tszTimeSerial, 7, 0);
+	}
+	pSt_XAuthInfo->st_AuthSerial.st_DataLimit.bTimeAdd = true;
+	if (_tcsxlen(pSt_XAuthInfo->st_AuthSerial.st_DataLimit.tszDataSerial) <= 0)
+	{
+		XENGINE_LIBTIME st_LibTime = {};
+		BaseLib_Time_GetSysTime(&st_LibTime);
+		st_LibTime.wYear += 1;
+		BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthSerial.st_DataLimit.tszDataTime, NULL, true, &st_LibTime);
+		Verification_XAuthKey_KeySerial(pSt_XAuthInfo->st_AuthSerial.st_DataLimit.tszDataSerial, 7, 0);
+	}
+	if (_tcsxlen(pSt_XAuthInfo->st_AuthSerial.st_UNLimit.tszUNLimitSerial) <= 0)
+	{
+		Verification_XAuthKey_KeySerial(pSt_XAuthInfo->st_AuthSerial.st_UNLimit.tszUNLimitSerial, 7, 0);
+	}
+	return true;
+}
+/********************************************************************
+函数名称：Verification_XAuthKey_KeySerial
+函数功能：序列号生成函数
+ 参数.一：ptszSerialStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出生成的序列号
+ 参数.二：nCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要生成的段数
+ 参数.三：nType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入生成的类型0随机,1数字,2字母
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_XAuthKey::Verification_XAuthKey_KeySerial(XCHAR* ptszSerialStr, int nCount, int nType)
+{
+	Verification_IsErrorOccur = false;
+
+	for (int i = 0; i < nCount; i++)
+	{
+		XCHAR tszRandomStr[6] = {};
+
+		if (0 != i)
+		{
+			_tcsxcat(ptszSerialStr, _X("-"));
+		}
+		
+		if (0 == nType)
+		{
+			BaseLib_Handle_CreateStr(tszRandomStr, 5, nType, 1);
+			_tcsxcat(ptszSerialStr, tszRandomStr);
+		}
+		else if (1 == nType)
+		{
+			BaseLib_Handle_CreateStr(tszRandomStr, 5, nType, 1);
+			_tcsxcat(ptszSerialStr, tszRandomStr);
+		}
+		else
+		{
+			BaseLib_Handle_CreateStr(tszRandomStr, 5, nType, 1);
+			_tcsxcat(ptszSerialStr, tszRandomStr);
+		}
+	}
 	return true;
 }
 /********************************************************************
@@ -398,7 +542,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_UserRegister(VERIFICATION_XAU
   意思：是否成功
 备注：记录次数越多,文件越大.读取需要的内存就越多
 *********************************************************************/
-bool CVerification_XAuthKey::Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount /* = 0 */)
+bool CVerification_XAuthKey::Verification_XAuthKey_WriteTime(VERIFICATION_XAUTHKEY* pSt_AuthLocal, int nCount /* = 10 */)
 {
 	Verification_IsErrorOccur = false;
 

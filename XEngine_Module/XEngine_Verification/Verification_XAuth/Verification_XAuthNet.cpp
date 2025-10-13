@@ -443,7 +443,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 		return false;
 	}
 	//判断是否登录协议
-	if (0x2006 != st_ProtocolHdr.unOperatorCode)
+	if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REPLOGIN != st_ProtocolHdr.unOperatorCode)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
@@ -527,7 +527,7 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 			memcpy(tszMsgBuffer, ptszMsgBuffer, nMsgLen);
 		}
 
-		if (0 != st_ProtocolHdr.wReserve)
+		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_EXPIRED == st_ProtocolHdr.wReserve)
 		{
 			pClass_This->m_bAuth = false;
 		}

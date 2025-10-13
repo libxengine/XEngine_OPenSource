@@ -84,7 +84,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKE
 		}
 	}
 
-	if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_DAY == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
+	if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_DAY == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 	{
 		XENGINE_LIBTIME st_SysTime = {};
 		XENGINE_LIBTIME st_EndTime = {};
@@ -136,7 +136,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 	XCHAR tszENCodecBuffer[4096] = {};
 
 	//更新使用时间
-	if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_SECOND == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
+	if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_SECOND == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 	{
 		XCHAR tszTimeEnd[64] = {};
 		__int64x nUsedTime = 0;
@@ -207,22 +207,22 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 	XENGINE_LIBTIME st_EndTimer = {};
 	XENGINE_LIBTIME st_SysTimer = {};
 	//处理注册类型
-	if (ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_UNLIMIT == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
+	if (ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNLIMIT == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
 	{
 		return true;
 	}
-	else if (ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
+	else if (ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_UNKNOW;
 		return false;
 	}
-	else if (ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_TEMP == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
+	else if (ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TEMP == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
 	{
-		pSt_XAuthInfo->st_AuthRegInfo.enRegType = ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_EXPIRED;
+		pSt_XAuthInfo->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED;
 		_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszExpiryTime, _X("%04d-%02d-%02d %02d:%02d:%02d"), st_SysTimer.wYear, st_SysTimer.wMonth, st_SysTimer.wDay, st_SysTimer.wHour, st_SysTimer.wMinute, st_SysTimer.wSecond);
 	}
-	else if (ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_EXPIRED == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
+	else if (ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_EXPIRED;
@@ -232,7 +232,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 	{
 		//其他类型的注册机制
 		BaseLib_Time_GetSysTime(&st_SysTimer);
-		if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_SECOND == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
+		if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_SECOND == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 		{
 			XCHAR tszTimeEnd[64] = {};
 			__int64x nUsedTime = 0;
@@ -244,11 +244,11 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 				pSt_XAuthInfo->st_AuthRegInfo.nHasTime = nUsedTime;
 			}
 		}
-		else if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_TIME == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
+		else if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_TIME == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 		{
 			pSt_XAuthInfo->st_AuthRegInfo.nHasTime--;
 		}
-		else if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_CUSTOM == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
+		else if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_CUSTOM == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 		{
 			_stxscanf(pSt_XAuthInfo->st_AuthRegInfo.tszLeftTime, _X("%04d-%02d-%02d %02d:%02d:%02d"), &st_EndTimer.wYear, &st_EndTimer.wMonth, &st_EndTimer.wDay, &st_EndTimer.wHour, &st_EndTimer.wMinute, &st_EndTimer.wSecond);
 			BaseLib_TimeSpan_GetForStu(&st_SysTimer, &st_EndTimer, &pSt_XAuthInfo->st_AuthRegInfo.nHasTime, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
@@ -263,7 +263,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_EXPIRED;
-			pSt_XAuthInfo->st_AuthRegInfo.enRegType = ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_EXPIRED;
+			pSt_XAuthInfo->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED;
 			_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszExpiryTime, _X("%04d-%02d-%02d %02d:%02d:%02d"), st_SysTimer.wYear, st_SysTimer.wMonth, st_SysTimer.wDay, st_SysTimer.wHour, st_SysTimer.wMinute, st_SysTimer.wSecond);
 			return false;
 		}
@@ -271,13 +271,13 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 	
 	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
 	SystemApi_HardWare_GetSerial(&st_SDKSerial);
-	if (ENUM_AUTHORIZE_MODULE_VERMODE_TYPE_LOCAL != pSt_XAuthInfo->st_AuthRegInfo.enVModeType)
+	if (ENUM_VERIFICATION_MODULE_VERMODE_TYPE_LOCAL != pSt_XAuthInfo->st_AuthRegInfo.enVModeType)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_MODETYPE;
 		return false;
 	}
-	if (ENUM_AUTHORIZE_MODULE_HW_TYPE_BIOS != pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+	if (ENUM_VERIFICATION_MODULE_HW_TYPE_BIOS != pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
@@ -338,27 +338,27 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY
 	SystemApi_HardWare_GetSerial(&st_SDKSerial);
 
 	BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthRegInfo.tszCreateTime);
-	if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
+	if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 	{
-		pSt_XAuthInfo->st_AuthRegInfo.enSerialType = ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_TIME;
+		pSt_XAuthInfo->st_AuthRegInfo.enSerialType = ENUM_VERIFICATION_MODULE_SERIAL_TYPE_TIME;
 		_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszLeftTime, _X("5"));
 		pSt_XAuthInfo->st_AuthRegInfo.nHasTime = 5;
 	}
-	if (ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
+	if (ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
 	{
-		pSt_XAuthInfo->st_AuthRegInfo.enRegType = ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_TRY;
+		pSt_XAuthInfo->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TRY;
 	}
-	if (ENUM_AUTHORIZE_MODULE_HW_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+	if (ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 	{
-		pSt_XAuthInfo->st_AuthRegInfo.enHWType = ENUM_AUTHORIZE_MODULE_HW_TYPE_BOARD;
+		pSt_XAuthInfo->st_AuthRegInfo.enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD;
 		if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) <= 0)
 		{
 			_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszBoardSerial);
 		}
 	}
-	if (ENUM_AUTHORIZE_MODULE_VERMODE_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enVModeType)
+	if (ENUM_VERIFICATION_MODULE_VERMODE_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enVModeType)
 	{
-		pSt_XAuthInfo->st_AuthRegInfo.enVModeType = ENUM_AUTHORIZE_MODULE_VERMODE_TYPE_LOCAL;
+		pSt_XAuthInfo->st_AuthRegInfo.enVModeType = ENUM_VERIFICATION_MODULE_VERMODE_TYPE_LOCAL;
 	}
 	//临时序列号
 	if (0 == pSt_XAuthInfo->st_AuthSerial.st_TimeLimit.nTimeCount)
@@ -472,16 +472,16 @@ bool CVerification_XAuthKey::Verification_XAuthKey_UserRegister(VERIFICATION_XAU
 	{
 		//次数验证
 		bSerial = true;
-		pSt_AuthLocal->st_AuthRegInfo.enSerialType = ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_TIME;
-		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_OFFICIAL;
+		pSt_AuthLocal->st_AuthRegInfo.enSerialType = ENUM_VERIFICATION_MODULE_SERIAL_TYPE_TIME;
+		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_OFFICIAL;
 		Verification_XAuthKey_BuildKeyTime(pSt_AuthLocal, pSt_AuthLocal->st_AuthSerial.st_TimeLimit.nTimeCount);
 	}
 	else if (0 == _tcsxncmp(pSt_AuthLocal->st_AuthSerial.st_DataLimit.tszDataSerial, lpszSerialStr, _tcsxlen(pSt_AuthLocal->st_AuthSerial.st_DataLimit.tszDataSerial)))
 	{
 		//日期序列
 		bSerial = true;
-		pSt_AuthLocal->st_AuthRegInfo.enSerialType = ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_CUSTOM;
-		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_OFFICIAL;
+		pSt_AuthLocal->st_AuthRegInfo.enSerialType = ENUM_VERIFICATION_MODULE_SERIAL_TYPE_CUSTOM;
+		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_OFFICIAL;
 		XENGINE_LIBTIME st_LibTime = {};
 		BaseLib_Time_GetSysTime(&st_LibTime);
 		if (pSt_AuthLocal->st_AuthSerial.st_DataLimit.bTimeAdd)
@@ -517,7 +517,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_UserRegister(VERIFICATION_XAU
 	{
 		//无限制
 		bSerial = true;
-		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_UNLIMIT;
+		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNLIMIT;
 	}
 
 	if (!bSerial)
@@ -895,10 +895,10 @@ bool CVerification_XAuthKey::Verification_XAuthKey_ReadKey(LPCXSTR lpszFileKey, 
 	pSt_AuthLocal->st_AuthAppInfo.nExecTime = SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AppInfo"), _X("nExecTime"));
 	pSt_AuthLocal->st_AuthAppInfo.bInit = SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AppInfo"), _X("bInit"));
 	//添加注册信息
-	pSt_AuthLocal->st_AuthRegInfo.enHWType = (ENUM_AUTHORIZE_MODULE_HW_TYPE)SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AuthReg"), _X("enHWType"));
-	pSt_AuthLocal->st_AuthRegInfo.enRegType = (ENUM_AUTHORIZE_MODULE_CDKEY_TYPE)SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AuthReg"), _X("enRegType"));
-	pSt_AuthLocal->st_AuthRegInfo.enSerialType = (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE)SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AuthReg"), _X("enSerialType"));
-	pSt_AuthLocal->st_AuthRegInfo.enVModeType = (ENUM_AUTHORIZE_MODULE_VERMODE_TYPE)SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AuthReg"), _X("enVModeType"));
+	pSt_AuthLocal->st_AuthRegInfo.enHWType = (ENUM_VERIFICATION_MODULE_HW_TYPE)SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AuthReg"), _X("enHWType"));
+	pSt_AuthLocal->st_AuthRegInfo.enRegType = (ENUM_VERIFICATION_MODULE_CDKEY_TYPE)SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AuthReg"), _X("enRegType"));
+	pSt_AuthLocal->st_AuthRegInfo.enSerialType = (ENUM_VERIFICATION_MODULE_SERIAL_TYPE)SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AuthReg"), _X("enSerialType"));
+	pSt_AuthLocal->st_AuthRegInfo.enVModeType = (ENUM_VERIFICATION_MODULE_VERMODE_TYPE)SystemConfig_File_ReadIntFromFile(lpszFileKey, _X("AuthReg"), _X("enVModeType"));
 	pSt_AuthLocal->st_AuthRegInfo.nHasTime = SystemConfig_File_ReadInt64FromFile(lpszFileKey, _X("AuthReg"), _X("nHasTime"));
 	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthReg"), _X("tszHardware"), pSt_AuthLocal->st_AuthRegInfo.tszHardware) <= 0)
 	{
@@ -1389,7 +1389,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_BuildKeyTime(VERIFICATION_XAU
 	Verification_IsErrorOccur = false;
 
 	//判断注册时间方式
-	if (ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_CUSTOM == pSt_AuthLocal->st_AuthRegInfo.enSerialType)
+	if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_CUSTOM == pSt_AuthLocal->st_AuthRegInfo.enSerialType)
 	{
 		//按照到期时间计算
 		_xstprintf(pSt_AuthLocal->st_AuthRegInfo.tszLeftTime, _X("%04d-%02d-%02d %02d:%02d:%02d"), pSt_DayTimer->wYear, pSt_DayTimer->wMonth, pSt_DayTimer->wDay, pSt_DayTimer->wHour, pSt_DayTimer->wMinute, pSt_DayTimer->wSecond);

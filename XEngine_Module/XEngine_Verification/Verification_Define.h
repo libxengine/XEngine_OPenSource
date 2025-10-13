@@ -12,36 +12,36 @@
 *********************************************************************/
 typedef enum
 {
-	ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_UNKNOW = 0,                 //无法识别的充值卡
-	ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_SECOND = 1,                 //秒钟,本地使用在read和write的时候更新
-	ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_DAY = 2,                    //天数,本地使用天数卡,不使用不减天数.
-	ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_TIME = 3,                   //次数卡
-	ENUM_AUTHORIZE_MODULE_SERIAL_TYPE_CUSTOM = 4                  //自定义过期日期
-}ENUM_AUTHORIZE_MODULE_SERIAL_TYPE, * LPENUM_AUTHORIZE_MODULE_SERIAL_TYPE;
+	ENUM_VERIFICATION_MODULE_SERIAL_TYPE_UNKNOW = 0,                 //无法识别的充值卡
+	ENUM_VERIFICATION_MODULE_SERIAL_TYPE_SECOND = 1,                 //秒钟,本地使用在read和write的时候更新
+	ENUM_VERIFICATION_MODULE_SERIAL_TYPE_DAY = 2,                    //天数,本地使用天数卡,不使用不减天数.
+	ENUM_VERIFICATION_MODULE_SERIAL_TYPE_TIME = 3,                   //次数卡
+	ENUM_VERIFICATION_MODULE_SERIAL_TYPE_CUSTOM = 4                  //自定义过期日期
+}ENUM_VERIFICATION_MODULE_SERIAL_TYPE, * LPENUM_VERIFICATION_MODULE_SERIAL_TYPE;
 typedef enum
 {
-	ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_UNKNOW = 0,                    //未注册,Authorize_CDKey_GetLeftTimer将返回失败
-	ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_TEMP = 1,                      //临时,Authorize_CDKey_GetLeftTimer一次后过期,需要Write
-	ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_TRY = 2,                       //试用
-	ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_OFFICIAL = 3,                  //正式版
-	ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_UNLIMIT = 4,                   //无限制版,永不过期.CDKEY不做任何验证
-	ENUM_AUTHORIZE_MODULE_CDKEY_TYPE_EXPIRED = 5                    //已过期的版本,Authorize_CDKey_GetLeftTimer将返回失败
-}ENUM_AUTHORIZE_MODULE_CDKEY_TYPE, * LPENUM_AUTHORIZE_MODULE_CDKEY_TYPE;
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNKNOW = 0,                    //未注册,Authorize_CDKey_GetLeftTimer将返回失败
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TEMP = 1,                      //临时,Authorize_CDKey_GetLeftTimer一次后过期,需要Write
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TRY = 2,                       //试用
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_OFFICIAL = 3,                  //正式版
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNLIMIT = 4,                   //无限制版,永不过期.CDKEY不做任何验证
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED = 5                    //已过期的版本,Authorize_CDKey_GetLeftTimer将返回失败
+}ENUM_VERIFICATION_MODULE_CDKEY_TYPE, * LPENUM_VERIFICATION_MODULE_CDKEY_TYPE;
 typedef enum
 {
-	ENUM_AUTHORIZE_MODULE_HW_TYPE_UNKNOW = 0,                     //未指定
-	ENUM_AUTHORIZE_MODULE_HW_TYPE_CPU = 1,                        //CPU序列号
-	ENUM_AUTHORIZE_MODULE_HW_TYPE_DISK = 2,                       //硬盘序列号
-	ENUM_AUTHORIZE_MODULE_HW_TYPE_BOARD = 3,                      //主板序列号
-	ENUM_AUTHORIZE_MODULE_HW_TYPE_MAC = 4,                        //网卡MAC地址
-	ENUM_AUTHORIZE_MODULE_HW_TYPE_BIOS = 5                        //BIOS序列号
-}ENUM_AUTHORIZE_MODULE_HW_TYPE, * LPENUM_AUTHORIZE_MODULE_HW_TYPE;
+	ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW = 0,                     //未指定
+	ENUM_VERIFICATION_MODULE_HW_TYPE_CPU = 1,                        //CPU序列号
+	ENUM_VERIFICATION_MODULE_HW_TYPE_DISK = 2,                       //硬盘序列号
+	ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD = 3,                      //主板序列号
+	ENUM_VERIFICATION_MODULE_HW_TYPE_MAC = 4,                        //网卡MAC地址
+	ENUM_VERIFICATION_MODULE_HW_TYPE_BIOS = 5                        //BIOS序列号
+}ENUM_VERIFICATION_MODULE_HW_TYPE, * LPENUM_VERIFICATION_MODULE_HW_TYPE;
 typedef enum
 {
-	ENUM_AUTHORIZE_MODULE_VERMODE_TYPE_UNKNOW = 0,                 //未知
-	ENUM_AUTHORIZE_MODULE_VERMODE_TYPE_LOCAL = 0x01,               //本地
-	ENUM_AUTHORIZE_MODULE_VERMODE_TYPE_NETWORK = 0x02,             //网络
-}ENUM_AUTHORIZE_MODULE_VERMODE_TYPE, * LPENUM_AUTHORIZE_MODULE_VERMODE_TYPE;
+	ENUM_VERIFICATION_MODULE_VERMODE_TYPE_UNKNOW = 0,                 //未知
+	ENUM_VERIFICATION_MODULE_VERMODE_TYPE_LOCAL = 0x01,               //本地
+	ENUM_VERIFICATION_MODULE_VERMODE_TYPE_NETWORK = 0x02,             //网络
+}ENUM_VERIFICATION_MODULE_VERMODE_TYPE, * LPENUM_VERIFICATION_MODULE_VERMODE_TYPE;
 //////////////////////////////////////////////////////////////////////////
 //                        导出定义
 //////////////////////////////////////////////////////////////////////////
@@ -68,10 +68,6 @@ typedef enum
 //////////////////////////////////////////////////////////////////////////
 //                        导出结构体
 //////////////////////////////////////////////////////////////////////////
-//扩展登录协议
-struct XENGINE_PROTOCOL_USERAUTHEX : public XENGINE_PROTOCOL_USERAUTH {
-	XCHAR tszHWCode[64];
-};
 typedef struct  
 {
 	XCHAR tszClientID[128];                 // 客户端ID
@@ -111,10 +107,10 @@ typedef struct
 		XCHAR tszStartTime[64];                                           //当前启动时间,由系统读取CDKEY的时候自动更新,天数和分钟有效
 		XCHAR tszExpiryTime[64];                                          //过期的时间,需要调用Authorize_CDKey_GetLeftTimer并且Write才生效
 		__int64x nHasTime;                                               //当前还拥有时间，根据nLeftType决定此值的意义,调用Authorize_CDKey_GetLeftTimer会更新
-		ENUM_AUTHORIZE_MODULE_SERIAL_TYPE enSerialType;          //过期类型，参考:ENUM_AUTHORIZE_MODULE_SERIAL_TYPE
-		ENUM_AUTHORIZE_MODULE_CDKEY_TYPE enRegType;                //注册类型，参考:ENUM_AUTHORIZE_MODULE_CDKEY_TYPE
-		ENUM_AUTHORIZE_MODULE_HW_TYPE enHWType;                  //硬件类型，参考:ENUM_AUTHORIZE_MODULE_HW_TYPE
-		ENUM_AUTHORIZE_MODULE_VERMODE_TYPE enVModeType;          //验证方式，参考:ENUM_AUTHORIZE_MODULE_VERMODE_TYPE 
+		ENUM_VERIFICATION_MODULE_SERIAL_TYPE enSerialType;          //过期类型，参考:ENUM_VERIFICATION_MODULE_SERIAL_TYPE
+		ENUM_VERIFICATION_MODULE_CDKEY_TYPE enRegType;                //注册类型，参考:ENUM_VERIFICATION_MODULE_CDKEY_TYPE
+		ENUM_VERIFICATION_MODULE_HW_TYPE enHWType;                  //硬件类型，参考:ENUM_VERIFICATION_MODULE_HW_TYPE
+		ENUM_VERIFICATION_MODULE_VERMODE_TYPE enVModeType;          //验证方式，参考:ENUM_VERIFICATION_MODULE_VERMODE_TYPE 
 	}st_AuthRegInfo;
 	//临时序列号
 	struct

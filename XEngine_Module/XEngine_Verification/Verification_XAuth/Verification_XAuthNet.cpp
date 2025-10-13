@@ -48,7 +48,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
-#if (1 == _XAUTH_BUILD_SWITCH_CLIENT_HTTP)
 	int nHTTPCode = 0;
 	XCHAR tszJsonStr[XPATH_MAX] = {};
 	Json::Value st_JsonRoot;
@@ -121,7 +120,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 		return false;
 	}
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-#endif
 	return true;
 }
 /********************************************************************
@@ -167,7 +165,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr,
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
-#if (1 == _XAUTH_BUILD_SWITCH_CLIENT_HTTP)
 	int nHTTPCode = 0;
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
@@ -224,7 +221,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr,
 		*pInt_Timeout = st_JsonRoot["nTimeout"].asInt();
 	}
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-#endif
 	return true;
 }
 
@@ -261,7 +257,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Connect(LPCXSTR lpszClientAdd
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
-#if (1 == _XAUTH_BUILD_SWITCH_CLIENT_TCP)
 	if (!XClient_TCPSelect_Create(&m_hSocket, lpszClientAddr, nPort, 2))
 	{
 		Verification_IsErrorOccur = true;
@@ -272,7 +267,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Connect(LPCXSTR lpszClientAdd
 	{
 		_tcsxcpy(tszPassStr, lpszPass);
 	}
-#endif
 	return true;
 }
 /********************************************************************
@@ -287,7 +281,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Close()
 {
 	Verification_IsErrorOccur = false;
 
-#if (1 == _XAUTH_BUILD_SWITCH_CLIENT_TCP)
 	if (NULL != pSTDThread)
 	{
 		m_bRun = false;
@@ -297,7 +290,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Close()
 	m_bAuth = false;
 	m_bHeart = false;
 	XClient_TCPSelect_Close(m_hSocket);
-#endif
 	return true;
 }
 /********************************************************************
@@ -317,12 +309,10 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetAuth(bool* pbAuth /* = NUL
 {
 	Verification_IsErrorOccur = false;
 
-#if (1 == _XAUTH_BUILD_SWITCH_CLIENT_TCP)
 	if (NULL != pbAuth)
 	{
 		*pbAuth = m_bAuth;
 	}
-#endif
 	return m_bLogin;
 }
 /********************************************************************
@@ -373,7 +363,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
-#if (1 == _XAUTH_BUILD_SWITCH_CLIENT_TCP)
 	XCHAR tszMsgBuffer[2048] = {};
 	XENGINE_PROTOCOLHDR st_ProtocolHdr = {};
 	XENGINE_PROTOCOL_USERAUTHEX st_AuthUser = {};
@@ -478,7 +467,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_THREAD;
 		return false;
 	}
-#endif
 	return true;
 }
 /********************************************************************
@@ -515,8 +503,6 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 	CVerification_XAuthNet* pClass_This = (CVerification_XAuthNet*)lParam;
 
 	time_t nTimeStart = time(NULL);
-
-#if (1 == _XAUTH_BUILD_SWITCH_CLIENT_TCP)
 	while (pClass_This->m_bRun)
 	{
 		int nMsgLen = 0;
@@ -564,6 +550,5 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 		}
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
-#endif
 	return 0;
 }

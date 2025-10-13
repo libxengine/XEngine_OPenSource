@@ -3,8 +3,6 @@
 // 这还将影响 IntelliSense 性能，包括代码完成和许多代码浏览功能。
 // 但是，如果此处列出的文件中的任何一个在生成之间有更新，它们全部都将被重新编译。
 // 请勿在此处添加要频繁更新的文件，这将使得性能优势无效。
-#define _XAUTH_BUILD_SWITCH_CLIENT_TCP 1
-#define _XAUTH_BUILD_SWITCH_CLIENT_HTTP 1
 
 #ifndef PCH_H
 #define PCH_H
@@ -44,14 +42,10 @@
 #include <XEngine_Include/XEngine_SystemSdk/SystemConfig_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
-#if (1 == _XAUTH_BUILD_SWITCH_CLIENT_TCP)
 #include <XEngine_Include/XEngine_Client/XClient_Define.h>
 #include <XEngine_Include/XEngine_Client/XClient_Error.h>
-#endif
-#if (1 == _XAUTH_BUILD_SWITCH_CLIENT_HTTP)
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
-#endif
 #include "Verification_Define.h"
 #include "Verification_Error.h"
 /********************************************************************

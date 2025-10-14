@@ -129,3 +129,27 @@ extern "C" bool Verification_XAuthKey_ReadMemory(LPCXSTR lpszMsgBuffer, int nMsg
 {
 	return m_XAuthKeyVerification.Verification_XAuthKey_ReadMemory(lpszMsgBuffer, nMsgLen, pSt_AuthLocal);
 }
+extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass)
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_TryRequest(lpszURLAddr, lpszPass);
+}
+extern "C" bool Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr, int* pInt_DYCode, XNETHANDLE* pxhToken, int* pInt_Timeout, LPCXSTR lpszPass)
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_GetDCode(lpszURLAddr, pInt_DYCode, pxhToken, pInt_Timeout, lpszPass);
+}
+extern "C" bool Verification_XAuthNet_Connect(LPCXSTR lpszClientAddr, int nPort, LPCXSTR lpszPass)
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_Connect(lpszClientAddr, nPort, lpszPass);
+}
+extern "C" bool Verification_XAuthNet_Close()
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_Close();
+}
+extern "C" bool Verification_XAuthNet_GetAuth()
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_GetAuth();
+}
+extern "C" bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode, XSHOT nDYCode, XNETHANDLE xhToken, XLONG dwCryption)
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_Login(lpszUser, lpszPass, lpszHWCode, nDYCode, xhToken, dwCryption);
+}

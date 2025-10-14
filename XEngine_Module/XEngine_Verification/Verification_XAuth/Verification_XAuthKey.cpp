@@ -225,7 +225,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 	else if (ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
 	{
 		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_EXPIRED;
+		Verification_dwErrorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_EXPIRED;
 		return false;
 	}
 	else
@@ -262,7 +262,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 		if (pSt_XAuthInfo->st_AuthRegInfo.nHasTime < 0)
 		{
 			Verification_IsErrorOccur = true;
-			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_EXPIRED;
+			Verification_dwErrorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_EXPIRED;
 			pSt_XAuthInfo->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED;
 			_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszExpiryTime, _X("%04d-%02d-%02d %02d:%02d:%02d"), st_SysTimer.wYear, st_SysTimer.wMonth, st_SysTimer.wDay, st_SysTimer.wHour, st_SysTimer.wMinute, st_SysTimer.wSecond);
 			return false;
@@ -506,7 +506,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_UserRegister(VERIFICATION_XAU
 			if (nTimeCount <= 0)
 			{
 				Verification_IsErrorOccur = true;
-				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_EXPIRED;
+				Verification_dwErrorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_EXPIRED;
 				return false;
 			}
 			BaseLib_Time_StrToTime(pSt_AuthLocal->st_AuthSerial.st_DataLimit.tszDataTime, &st_LibTime);

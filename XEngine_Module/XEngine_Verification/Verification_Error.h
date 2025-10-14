@@ -25,7 +25,6 @@
 /************************************************************************/
 /*                         XAUTH验证错误                                */
 /************************************************************************/
-#define ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_EXPIRED 0x01E2000         //已经过期的CDKEY,无法继续使用
 #define ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT 0x01E2001        //参数错误，无法继续
 #define ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_NOTSUPPORT 0x01E2002      //不支持此生成类型
 #define ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_UNKNOW 0x01E2003          //获取类型失败，这个类型未知
@@ -41,3 +40,4 @@
 #define ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE 0x01E2013            //服务器返回的CODE错误
 #define ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_THREAD 0x01E2014          //创建线程失败
 #define ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_NOTAUTH 0x01E2015         //没有验证无法继续
+#define ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_NOLOGIN 0x01E2016         //没有登录无法继续

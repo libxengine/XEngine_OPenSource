@@ -21,7 +21,7 @@ CVerification_XAuthNet::~CVerification_XAuthNet()
 //                      公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-函数名称：AuthClient_HTTPVer_TryRequest
+函数名称：Verification_XAuthNet_TryRequest
 函数功能：试用版请求
  参数.一：lpszURLAddr
   In/Out：In
@@ -123,7 +123,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 	return true;
 }
 /********************************************************************
-函数名称：AuthClient_HTTPVer_GetDCode
+函数名称：Verification_XAuthNet_GetDCode
 函数功能：获取动态码
  参数.一：lpszURLAddr
   In/Out：In
@@ -223,7 +223,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr,
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	return true;
 }
-
 /********************************************************************
 函数名称：Verification_XAuthNet_Connect
 函数功能：链接到服务器
@@ -288,32 +287,34 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Close()
 	}
 	m_bLogin = false;
 	m_bAuth = false;
-	m_bHeart = false;
 	XClient_TCPSelect_Close(m_hSocket);
 	return true;
 }
 /********************************************************************
 函数名称：Verification_XAuthNet_GetAuth
 函数功能：验证用户是否登录或者超时
- 参数.一：pbAuth
-  In/Out：Out
-  类型：逻辑型指针
-  可空：Y
-  意思：输出是否验证,如果登录成功但是参数为假.说明没有剩余时间了
 返回值
   类型：逻辑型
-  意思：是否登录,如果没有登录将返回假,登录成功才需要判断是否通过验证
+  意思：是否通过验证,可能是没有登录或者过期
 备注：
 *********************************************************************/
-bool CVerification_XAuthNet::Verification_XAuthNet_GetAuth(bool* pbAuth /* = NULL */)
+bool CVerification_XAuthNet::Verification_XAuthNet_GetAuth()
 {
 	Verification_IsErrorOccur = false;
 
-	if (NULL != pbAuth)
+	if (!m_bLogin)
 	{
-		*pbAuth = m_bAuth;
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_NOLOGIN;
+		return false;
 	}
-	return m_bLogin;
+	if (m_bAuth)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_EXPIRED;
+		return false;
+	}
+	return true;
 }
 /********************************************************************
 函数名称：Verification_XAuthNet_Login
@@ -469,32 +470,6 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 	}
 	return true;
 }
-/********************************************************************
-函数名称：Verification_XAuthNet_Heart
-函数功能：启用禁用客户端心跳
- 参数.一：bEnable
-  In/Out：In
-  类型：逻辑型
-  可空：Y
-  意思：是启用还是禁用
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-bool CVerification_XAuthNet::Verification_XAuthNet_Heart(bool bEnable /* = true */)
-{
-	Verification_IsErrorOccur = false;
-
-	if (!m_bAuth)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_NOTAUTH;
-		return false;
-	}
-	m_bHeart = bEnable;
-	return true;
-}
 //////////////////////////////////////////////////////////////////////////
 //                      保护函数
 //////////////////////////////////////////////////////////////////////////
@@ -514,6 +489,7 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 			pClass_This->m_bRun = false;
 			pClass_This->m_bLogin = false;
 			pClass_This->m_bAuth = false;
+			XClient_TCPSelect_Close(pClass_This->m_hSocket);
 			break;
 		}
 		XCHAR tszMsgBuffer[4096] = {};
@@ -529,24 +505,11 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 
 		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_EXPIRED == st_ProtocolHdr.wReserve)
 		{
+			pClass_This->m_bRun = false;
+			pClass_This->m_bLogin = false;
 			pClass_This->m_bAuth = false;
-		}
-		//心跳支持
-		if (pClass_This->m_bHeart)
-		{
-			time_t nTimeEnd = time(NULL);
-			if ((nTimeEnd - nTimeStart) > 2)
-			{
-				XENGINE_PROTOCOLHDR st_ProtocolHdr = {};
-				st_ProtocolHdr.wHeader = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_HEADER;
-				st_ProtocolHdr.unOperatorType = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_HEARTBEAT;
-				st_ProtocolHdr.unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_HB_SYN;
-				st_ProtocolHdr.byVersion = 1;
-				st_ProtocolHdr.wTail = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_TAIL;
-
-				nTimeStart = nTimeEnd;
-				XClient_TCPSelect_SendMsg(pClass_This->m_hSocket, (LPCXSTR)&st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
-			}
+			XClient_TCPSelect_Close(pClass_This->m_hSocket);
+			break;
 		}
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}

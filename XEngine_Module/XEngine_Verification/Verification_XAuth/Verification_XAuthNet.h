@@ -28,16 +28,14 @@ public:
 public:
 	bool Verification_XAuthNet_Connect(LPCXSTR lpszClientAddr, int nPort, LPCXSTR lpszPass = NULL);
 	bool Verification_XAuthNet_Close();
-	bool Verification_XAuthNet_GetAuth(bool* pbAuth = NULL);
+	bool Verification_XAuthNet_GetAuth();
 	bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode = NULL, XSHOT nDYCode = 0, XNETHANDLE xhToken = 0, XLONG dwCryption = 0);
-	bool Verification_XAuthNet_Heart(bool bEnable = true);
 protected:
 	static XHTHREAD XCALLBACK Verification_XAuthNet_Thread(XPVOID lParam);
 private:
 	bool m_bRun = false;
 	bool m_bLogin = false;
 	bool m_bAuth = false;
-	bool m_bHeart = false;
 	XSOCKET m_hSocket = 0;
 	XCHAR tszPassStr[128] = {};
 private:

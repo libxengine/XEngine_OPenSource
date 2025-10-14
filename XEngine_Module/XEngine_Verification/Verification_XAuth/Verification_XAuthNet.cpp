@@ -477,11 +477,10 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 {
 	CVerification_XAuthNet* pClass_This = (CVerification_XAuthNet*)lParam;
 
-	time_t nTimeStart = time(NULL);
 	while (pClass_This->m_bRun)
 	{
 		int nMsgLen = 0;
-		XCHAR* ptszMsgBuffer;
+		XCHAR* ptszMsgBuffer = NULL;
 		XENGINE_PROTOCOLHDR st_ProtocolHdr = {};
 
 		if (!XClient_TCPSelect_RecvPkt(pClass_This->m_hSocket, &ptszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
@@ -490,6 +489,7 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 			pClass_This->m_bLogin = false;
 			pClass_This->m_bAuth = false;
 			XClient_TCPSelect_Close(pClass_This->m_hSocket);
+			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 			break;
 		}
 		XCHAR tszMsgBuffer[4096] = {};
@@ -502,6 +502,7 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 		{
 			memcpy(tszMsgBuffer, ptszMsgBuffer, nMsgLen);
 		}
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 
 		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_EXPIRED == st_ProtocolHdr.wReserve)
 		{

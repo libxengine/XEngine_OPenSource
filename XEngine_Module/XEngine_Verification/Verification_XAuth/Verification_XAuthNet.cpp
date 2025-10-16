@@ -434,7 +434,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 	}
 
 	nMsgLen = 0;
-	XCHAR* ptszMsgBuffer;
+	XCHAR* ptszMsgBuffer = NULL;
 	st_ProtocolHdr = {};
 	//接受数据
 	if (!XClient_TCPSelect_RecvPkt(m_hSocket, &ptszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
@@ -443,6 +443,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 		Verification_dwErrorCode = XClient_GetLastError();
 		return false;
 	}
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	//判断是否登录协议
 	if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REPLOGIN != st_ProtocolHdr.unOperatorCode)
 	{
@@ -563,7 +564,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCX
 	}
 
 	nMsgLen = 0;
-	XCHAR* ptszMsgBuffer;
+	XCHAR* ptszMsgBuffer = NULL;
 	st_ProtocolHdr = {};
 	//接受数据
 	if (!XClient_TCPSelect_RecvPkt(m_hSocket, &ptszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
@@ -572,6 +573,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCX
 		Verification_dwErrorCode = XClient_GetLastError();
 		return false;
 	}
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	//判断是否登录协议
 	if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REQLOGOUT != st_ProtocolHdr.unOperatorCode)
 	{

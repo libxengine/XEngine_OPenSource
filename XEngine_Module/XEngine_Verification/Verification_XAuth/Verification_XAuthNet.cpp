@@ -370,7 +370,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 	//协议头
 	st_ProtocolHdr.wHeader = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_HEADER;
 	st_ProtocolHdr.unOperatorType = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_AUTH;
-	st_ProtocolHdr.unOperatorCode = 0x2005;
+	st_ProtocolHdr.unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REQLOGIN;
 	st_ProtocolHdr.unPacketSize = sizeof(XENGINE_PROTOCOL_USERAUTHEX);
 	st_ProtocolHdr.wTail = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_TAIL;
 
@@ -468,6 +468,125 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_THREAD;
 		return false;
 	}
+	return true;
+}
+/********************************************************************
+函数名称：Verification_XAuthNet_Logout
+函数功能：用户登出协议
+ 参数.一：lpszUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入用户名
+ 参数.二：lpszPass
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入密码
+ 参数.三：dwCryption
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：密码加密方法
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_XAuthNet::Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption /* = 0 */)
+{
+	Verification_IsErrorOccur = false;
+
+	if ((NULL == lpszUser) || (NULL == lpszPass))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
+		return false;
+	}
+	XCHAR tszMsgBuffer[2048] = {};
+	XENGINE_PROTOCOLHDR st_ProtocolHdr = {};
+	XENGINE_PROTOCOL_USERAUTHEX st_AuthUser = {};
+	//协议头
+	st_ProtocolHdr.wHeader = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_HEADER;
+	st_ProtocolHdr.unOperatorType = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_AUTH;
+	st_ProtocolHdr.unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REQLOGOUT;
+	st_ProtocolHdr.unPacketSize = sizeof(XENGINE_PROTOCOL_USERAUTHEX);
+	st_ProtocolHdr.wTail = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_TAIL;
+
+#ifdef _MSC_BUILD
+	st_AuthUser.enDeviceType = ENUM_PROTOCOL_FOR_DEVICE_TYPE_PC_WINDOWS;
+#elif __linux__
+	st_AuthUser.enDeviceType = ENUM_PROTOCOL_FOR_DEVICE_TYPE_PC_LINUX;
+#else
+	st_AuthUser.enDeviceType = ENUM_PROTOCOL_FOR_DEVICE_TYPE_PC_MACOS;
+#endif
+	_tcsxcpy(st_AuthUser.tszUserName, lpszUser);
+
+	if (dwCryption > 0)
+	{
+		int nPLen = _tcsxlen(lpszPass);
+		XBYTE byMD5Buffer[XPATH_MAX] = {};
+		Cryption_Api_Digest(lpszPass, byMD5Buffer, &nPLen, false, dwCryption);
+		BaseLib_String_StrToHex((LPCXSTR)byMD5Buffer, nPLen, st_AuthUser.tszUserPass);
+	}
+	else
+	{
+		_tcsxcpy(st_AuthUser.tszUserPass, lpszPass);
+	}
+	//是否加密
+	int nMsgLen = 0;
+	if (_tcsxlen(tszPassStr) > 0)
+	{
+		XCHAR tszCodecBuffer[2048] = {};
+
+		st_ProtocolHdr.wCrypto = ENUM_XENGINE_PROTOCOLHDR_CRYPTO_TYPE_XCRYPT;
+		Cryption_XCrypto_Encoder((LPCXSTR)&st_AuthUser, (int*)&st_ProtocolHdr.unPacketSize, (XBYTE*)tszCodecBuffer, tszPassStr);
+
+		memcpy(tszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
+		memcpy(tszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), tszCodecBuffer, st_ProtocolHdr.unPacketSize);
+
+		nMsgLen = sizeof(XENGINE_PROTOCOLHDR) + st_ProtocolHdr.unPacketSize;
+	}
+	else
+	{
+		memcpy(tszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
+		memcpy(tszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), &st_AuthUser, st_ProtocolHdr.unPacketSize);
+
+		nMsgLen = sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOL_USERAUTHEX);
+	}
+	//发送数据
+	if (!XClient_TCPSelect_SendMsg(m_hSocket, tszMsgBuffer, nMsgLen))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = XClient_GetLastError();
+		return false;
+	}
+
+	nMsgLen = 0;
+	XCHAR* ptszMsgBuffer;
+	st_ProtocolHdr = {};
+	//接受数据
+	if (!XClient_TCPSelect_RecvPkt(m_hSocket, &ptszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = XClient_GetLastError();
+		return false;
+	}
+	//判断是否登录协议
+	if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REQLOGOUT != st_ProtocolHdr.unOperatorCode)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
+		return false;
+	}
+	//登录失败，错误码
+	if (0 != st_ProtocolHdr.wReserve)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = st_ProtocolHdr.wReserve;
+		return false;
+	}
+	Verification_XAuthNet_Close();
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////

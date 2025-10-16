@@ -30,6 +30,7 @@ public:
 	bool Verification_XAuthNet_Close();
 	bool Verification_XAuthNet_GetAuth();
 	bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode = NULL, XSHOT nDYCode = 0, XNETHANDLE xhToken = 0, XLONG dwCryption = 0);
+	bool Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption = 0);
 protected:
 	static XHTHREAD XCALLBACK Verification_XAuthNet_Thread(XPVOID lParam);
 private:

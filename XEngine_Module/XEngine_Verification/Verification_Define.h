@@ -520,6 +520,8 @@ extern "C" bool Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKEY* pSt_XAuthI
 备注：无论解析操作是否成功,此函数在结束的时候都需要调用,用来更新CDKEY使用信息.特别是秒数和天数版本
 *********************************************************************/
 extern "C" bool Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszKeyFile, LPCXSTR lpszKeyPass = NULL);
+extern "C" bool Verification_XAuthKey_MemoryRead(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszMSGBuffer, int nMSGLen, LPCXSTR lpszKeyPass = NULL);
+extern "C" bool Verification_XAuthKey_MemoryWrite(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszKeyPass = NULL);
 /********************************************************************
 函数名称：Verification_XAuthKey_KeyParse
 函数功能：解析CDKEY内容,判断是否超时

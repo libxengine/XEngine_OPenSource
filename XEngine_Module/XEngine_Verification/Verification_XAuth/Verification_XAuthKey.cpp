@@ -178,6 +178,99 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 
 	return true;
 }
+bool CVerification_XAuthKey::Verification_XAuthKey_MemoryRead(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszMSGBuffer, int nMSGLen, LPCXSTR lpszKeyPass /* = NULL */)
+{
+	Verification_IsErrorOccur = false;
+
+	int nRet = nMSGLen;
+	XCHAR tszDECodecBuffer[4096] = {};
+	XCHAR tszENCodecBuffer[4096] = {};
+
+	memcpy(tszENCodecBuffer, lpszMSGBuffer, nMSGLen);
+
+	if (NULL == lpszKeyPass)
+	{
+		//读取
+		if (!Verification_XAuthKey_ReadMemory(tszENCodecBuffer, nRet, pSt_XAuthInfo))
+		{
+			return false;
+		}
+	}
+	else
+	{
+		//解密
+		if (!Cryption_XCrypto_Decoder(tszENCodecBuffer, &nRet, tszDECodecBuffer, lpszKeyPass))
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = Cryption_GetLastError();
+			return false;
+		}
+		//读取
+		if (!Verification_XAuthKey_ReadMemory(tszDECodecBuffer, nRet, pSt_XAuthInfo))
+		{
+			return false;
+		}
+	}
+
+	if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_DAY == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
+	{
+		XENGINE_LIBTIME st_SysTime = {};
+		XENGINE_LIBTIME st_EndTime = {};
+		BaseLib_Time_GetSysTime(&st_SysTime);
+		BaseLib_Time_StrToTime(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime, &st_EndTime);
+		if ((st_EndTime.wYear != st_SysTime.wYear) || (st_EndTime.wMonth != st_SysTime.wMonth) || (st_EndTime.wDay != st_SysTime.wDay))
+		{
+			pSt_XAuthInfo->st_AuthRegInfo.nHasTime--;
+			_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszLeftTime, _X("%lld"), pSt_XAuthInfo->st_AuthRegInfo.nHasTime);
+			BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime);
+		}
+	}
+	else
+	{
+		BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime);
+	}
+	pSt_XAuthInfo->st_AuthAppInfo.nExecTime++;
+	return true;
+}
+bool CVerification_XAuthKey::Verification_XAuthKey_MemoryWrite(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszKeyPass /* = NULL */)
+{
+	Verification_IsErrorOccur = false;
+
+	int nSize = 0;
+	XCHAR tszDECodecBuffer[4096] = {};
+	//更新使用时间
+	if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_SECOND == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
+	{
+		XCHAR tszTimeEnd[64] = {};
+		__int64x nUsedTime = 0;
+
+		BaseLib_Time_TimeToStr(tszTimeEnd);
+		BaseLib_TimeSpan_GetForStr(pSt_XAuthInfo->st_AuthRegInfo.tszStartTime, tszTimeEnd, &nUsedTime, ENUM_XENGINE_BASELIB_TIME_TYPE_SECOND);
+		pSt_XAuthInfo->st_AuthRegInfo.nHasTime -= nUsedTime;
+		_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszLeftTime, _X("%lld"), pSt_XAuthInfo->st_AuthRegInfo.nHasTime);
+	}
+	//准备数据
+	if (!Verification_XAuthKey_WriteMemory(tszDECodecBuffer, &nSize, pSt_XAuthInfo))
+	{
+		return false;
+	}
+	//写数据
+	if (NULL == lpszKeyPass)
+	{
+		memcpy(ptszMSGBuffer, tszDECodecBuffer, nSize);
+	}
+	else
+	{
+		if (!Cryption_XCrypto_Encoder(tszDECodecBuffer, &nSize, (XBYTE*)ptszMSGBuffer, lpszKeyPass))
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = Cryption_GetLastError();
+			return false;
+		}
+	}
+	*pInt_MSGLen = nSize;
+	return true;
+}
 /********************************************************************
 函数名称：Verification_XAuthKey_KeyParse
 函数功能：解析CDKEY内容,判断是否超时

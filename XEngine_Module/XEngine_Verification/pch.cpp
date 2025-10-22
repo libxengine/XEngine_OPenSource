@@ -89,6 +89,14 @@ extern "C" bool Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHKEY* pSt_XAuth
 {
 	return m_XAuthKeyVerification.Verification_XAuthKey_FileWrite(pSt_XAuthInfo, lpszKeyFile, lpszKeyPass);
 }
+extern "C" bool Verification_XAuthKey_MemoryRead(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszMSGBuffer, int nMSGLen, LPCXSTR lpszKeyPass)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_MemoryRead(pSt_XAuthInfo, lpszMSGBuffer, nMSGLen, lpszKeyPass);
+}
+extern "C" bool Verification_XAuthKey_MemoryWrite(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszKeyPass)
+{
+	return m_XAuthKeyVerification.Verification_XAuthKey_MemoryWrite(pSt_XAuthInfo, ptszMSGBuffer, pInt_MSGLen, lpszKeyPass);
+}
 extern "C" bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo)
 {
 	return m_XAuthKeyVerification.Verification_XAuthKey_KeyParse(pSt_XAuthInfo);

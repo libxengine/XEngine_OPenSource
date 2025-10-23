@@ -50,3 +50,6 @@ jobs:
             cd ..
             cd XEngine_AIApi
             make PLATFORM=ios
+            cd ..
+            cd XEngine_Verification
+            make PLATFORM=ios

@@ -371,13 +371,6 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 			return false;
 		}
 	}
-	//类型不匹配
-	if (ENUM_VERIFICATION_MODULE_VERMODE_TYPE_LOCAL != pSt_XAuthInfo->st_AuthRegInfo.enVModeType)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_MODETYPE;
-		return false;
-	}
 	//是否有自定义硬件码,如果有,那么可以不用关心硬件类型
 	if (NULL == lpszHWCode)
 	{

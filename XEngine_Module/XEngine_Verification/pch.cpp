@@ -97,9 +97,9 @@ extern "C" bool Verification_XAuthKey_MemoryWrite(VERIFICATION_XAUTHKEY* pSt_XAu
 {
 	return m_XAuthKeyVerification.Verification_XAuthKey_MemoryWrite(pSt_XAuthInfo, ptszMSGBuffer, pInt_MSGLen, lpszKeyPass);
 }
-extern "C" bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo)
+extern "C" bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType, LPCXSTR lpszHWCode)
 {
-	return m_XAuthKeyVerification.Verification_XAuthKey_KeyParse(pSt_XAuthInfo);
+	return m_XAuthKeyVerification.Verification_XAuthKey_KeyParse(pSt_XAuthInfo, enHWType, lpszHWCode);
 }
 extern "C" bool Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY* pSt_XAuthInfo)
 {

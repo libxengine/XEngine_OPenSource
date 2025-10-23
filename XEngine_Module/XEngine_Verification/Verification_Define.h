@@ -530,13 +530,23 @@ extern "C" bool Verification_XAuthKey_MemoryWrite(VERIFICATION_XAUTHKEY* pSt_XAu
   类型：字符指针
   可空：N
   意思：输出解析到的信息
+ 参数.二：enHWType
+  In/Out：In
+  类型：枚举型
+  可空：Y
+  意思：输入要验证的硬件类型,默认使用主板序列类型
+ 参数.三：lpszHWCode
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入原始注册的硬件码,此参数传值,参数二将无效
 返回值
   类型：逻辑型
   意思：是否成功
 备注：无限制版本不做验证
 	  其他验证nHasTime将被设置还拥有时间
 *********************************************************************/
-extern "C" bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo);
+extern "C" bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW, LPCXSTR lpszHWCode = NULL);
 /********************************************************************
 函数名称：Verification_XAuthKey_KeyInit
 函数功能：KEY结构初始化

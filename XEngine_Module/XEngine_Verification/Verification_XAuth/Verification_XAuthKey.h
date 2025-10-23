@@ -22,7 +22,7 @@ public:
 	bool Verification_XAuthKey_MemoryRead(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, LPCXSTR lpszMSGBuffer, int nMSGLen, LPCXSTR lpszKeyPass = NULL);
 	bool Verification_XAuthKey_MemoryWrite(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszKeyPass = NULL);
 public:
-	bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo);
+	bool Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW, LPCXSTR lpszHWCode = NULL);
 	bool Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY* pSt_XAuthInfo);
 	bool Verification_XAuthKey_KeySerial(XCHAR* ptszSerialStr, int nCount, int nType);
 public:

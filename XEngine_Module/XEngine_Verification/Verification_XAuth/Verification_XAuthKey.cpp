@@ -279,13 +279,23 @@ bool CVerification_XAuthKey::Verification_XAuthKey_MemoryWrite(VERIFICATION_XAUT
   类型：字符指针
   可空：N
   意思：输出解析到的信息
+ 参数.二：enHWType
+  In/Out：In
+  类型：枚举型
+  可空：Y
+  意思：输入要验证的硬件类型,默认使用主板序列类型
+ 参数.三：lpszHWCode
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入原始注册的硬件码,此参数传值,参数二将无效
 返回值
   类型：逻辑型
   意思：是否成功
 备注：无限制版本不做验证
 	  其他验证nHasTime将被设置还拥有时间
 *********************************************************************/
-bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo)
+bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKEY* pSt_XAuthInfo, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType /* = ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW */, LPCXSTR lpszHWCode /* = NULL */)
 {
 	Verification_IsErrorOccur = false;
 
@@ -361,28 +371,101 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 			return false;
 		}
 	}
-	
-	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
-	SystemApi_HardWare_GetSerial(&st_SDKSerial);
+	//类型不匹配
 	if (ENUM_VERIFICATION_MODULE_VERMODE_TYPE_LOCAL != pSt_XAuthInfo->st_AuthRegInfo.enVModeType)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_MODETYPE;
 		return false;
 	}
-	if (ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD != pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+	//是否有自定义硬件码,如果有,那么可以不用关心硬件类型
+	if (NULL == lpszHWCode)
 	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
-		return false;
-	}
-	if (0 != _tcsxnicmp(st_SDKSerial.tszBoardSerial, pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _tcsxlen(st_SDKSerial.tszBoardSerial)))
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_SERIAL;
-		return false;
-	}
+		SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
+		SystemApi_HardWare_GetSerial(&st_SDKSerial);
 
+		if (ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW == enHWType)
+		{
+			//采用默认主板序列验证
+			if (ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD != pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
+				return false;
+			}
+			if (0 != _tcsxnicmp(st_SDKSerial.tszBoardSerial, pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _tcsxlen(st_SDKSerial.tszBoardSerial)))
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_SERIAL;
+				return false;
+			}
+		}
+		else
+		{
+			//验证硬件类型是否匹配
+			if (enHWType == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+			{
+				if (ENUM_VERIFICATION_MODULE_HW_TYPE_CPU == enHWType)
+				{
+					if (0 != _tcsxnicmp(st_SDKSerial.tszCPUSerial, pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _tcsxlen(st_SDKSerial.tszCPUSerial)))
+					{
+						Verification_IsErrorOccur = true;
+						Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_SERIAL;
+						return false;
+					}
+				}
+				else if (ENUM_VERIFICATION_MODULE_HW_TYPE_DISK == enHWType)
+				{
+					if (0 != _tcsxnicmp(st_SDKSerial.tszDiskSerial, pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _tcsxlen(st_SDKSerial.tszDiskSerial)))
+					{
+						Verification_IsErrorOccur = true;
+						Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_SERIAL;
+						return false;
+					}
+				}
+				else if (ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD == enHWType)
+				{
+					if (0 != _tcsxnicmp(st_SDKSerial.tszBoardSerial, pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _tcsxlen(st_SDKSerial.tszBoardSerial)))
+					{
+						Verification_IsErrorOccur = true;
+						Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_SERIAL;
+						return false;
+					}
+				}
+				else if (ENUM_VERIFICATION_MODULE_HW_TYPE_SYSTEM == enHWType)
+				{
+					if (0 != _tcsxnicmp(st_SDKSerial.tszSystemSerial, pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _tcsxlen(st_SDKSerial.tszSystemSerial)))
+					{
+						Verification_IsErrorOccur = true;
+						Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_SERIAL;
+						return false;
+					}
+				}
+				else
+				{
+					Verification_IsErrorOccur = true;
+					Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_NOTSUPPORT;
+					return false;
+				}
+			}
+			else
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
+				return false;
+			}
+		}
+	}
+	else
+	{
+		if (0 != _tcsxnicmp(lpszHWCode, pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _tcsxlen(lpszHWCode)))
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_SERIAL;
+			return false;
+		}
+	}
+	
 	return true;
 }
 /********************************************************************

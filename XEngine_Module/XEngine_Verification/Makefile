@@ -20,8 +20,8 @@ else
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG
 	else
-		FLAGS = -c -lc_p
-		DEBUG = -g -pg -D _DEBUG
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
 	endif
 endif
 

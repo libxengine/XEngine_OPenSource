@@ -33,8 +33,8 @@ typedef enum
 	ENUM_VERIFICATION_MODULE_HW_TYPE_CPU = 1,                        //CPU序列号
 	ENUM_VERIFICATION_MODULE_HW_TYPE_DISK = 2,                       //硬盘序列号
 	ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD = 3,                      //主板序列号
-	ENUM_VERIFICATION_MODULE_HW_TYPE_MAC = 4,                        //网卡MAC地址
-	ENUM_VERIFICATION_MODULE_HW_TYPE_BIOS = 5                        //BIOS序列号
+	ENUM_VERIFICATION_MODULE_HW_TYPE_SYSTEM = 4,                     //系统序列号,重装系统后改变
+	ENUM_VERIFICATION_MODULE_HW_TYPE_MAC = 5                         //网卡MAC地址
 }ENUM_VERIFICATION_MODULE_HW_TYPE, * LPENUM_VERIFICATION_MODULE_HW_TYPE;
 typedef enum
 {

@@ -370,7 +370,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_MODETYPE;
 		return false;
 	}
-	if (ENUM_VERIFICATION_MODULE_HW_TYPE_BIOS != pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+	if (ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD != pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
@@ -444,9 +444,43 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY
 	if (ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 	{
 		pSt_XAuthInfo->st_AuthRegInfo.enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD;
-		if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) <= 0)
+		_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszBoardSerial);
+	}
+	else
+	{
+		if (ENUM_VERIFICATION_MODULE_HW_TYPE_CPU == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 		{
-			_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszBoardSerial);
+			if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) == 0)
+			{
+				_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszCPUSerial);
+			}
+		}
+		else if (ENUM_VERIFICATION_MODULE_HW_TYPE_DISK == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+		{
+			if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) == 0)
+			{
+				_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszDiskSerial);
+			}
+		}
+		else if (ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+		{
+			if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) == 0)
+			{
+				_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszBoardSerial);
+			}
+		}
+		else if (ENUM_VERIFICATION_MODULE_HW_TYPE_SYSTEM == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
+		{
+			if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) == 0)
+			{
+				_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszSystemSerial);
+			}
+		}
+		else
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_NOTSUPPORT;
+			return false;
 		}
 	}
 	if (ENUM_VERIFICATION_MODULE_VERMODE_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enVModeType)

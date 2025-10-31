@@ -510,9 +510,10 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY
 	if (ENUM_VERIFICATION_MODULE_SERIAL_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enSerialType)
 	{
 		pSt_XAuthInfo->st_AuthRegInfo.enSerialType = ENUM_VERIFICATION_MODULE_SERIAL_TYPE_TIME;
-		_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszLeftTime, _X("5"));
-		pSt_XAuthInfo->st_AuthRegInfo.nHasTime = 5;
+		pSt_XAuthInfo->st_AuthRegInfo.nHasTime = 3;
 	}
+	_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszLeftTime, _X("%lld"), pSt_XAuthInfo->st_AuthRegInfo.nHasTime);
+
 	if (ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enRegType)
 	{
 		pSt_XAuthInfo->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TRY;

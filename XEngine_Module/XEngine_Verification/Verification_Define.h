@@ -10,6 +10,25 @@
 //    Purpose:     验证模块导出定义
 //    History:
 *********************************************************************/
+//////////////////////////////////////////////////////////////////////////
+//                            导出的枚举型
+//////////////////////////////////////////////////////////////////////////
+#ifndef _MSC_BUILD
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
+static LPCXSTR lpszXSerialType[5] = { "UNKNOW","SECOND","DAY","TIME","CUSTOM" };
+static LPCXSTR lpszXRegType[6] = { "UNKNOW","TEMP","TRY","OFFICIAL","UNLIMIT","EXPIRED" };
+static LPCXSTR lpszXHDType[6] = { "UNKNOW","CPU","DISK","BOARD","MAC","BIOS" };
+static LPCXSTR lpszXVerType[6] = { "UNKNOW","LOCAL","NETWORK" };
+
+static const wchar_t* lpszTSerialType[5] = { L"UNKNOW",L"SECOND",L"DAY",L"TIME",L"CUSTOM" };
+static const wchar_t* lpszTRegType[6] = { L"UNKNOW",L"TEMP",L"TRY",L"OFFICIAL",L"UNLIMIT",L"EXPIRED" };
+static const wchar_t* lpszTHDType[6] = { L"UNKNOW",L"CPU",L"DISK",L"BOARD",L"MAC",L"BIOS" };
+static const wchar_t* lpszTVerType[6] = { L"UNKNOW",L"LOCAL",L"NETWORK" };
+#ifndef _MSC_BUILD
+#pragma GCC diagnostic pop
+#endif
 typedef enum
 {
 	ENUM_VERIFICATION_MODULE_SERIAL_TYPE_UNKNOW = 0,                 //无法识别的充值卡
@@ -86,20 +105,20 @@ typedef struct
 }VERIFICATION_TOKENINFO;
 typedef struct
 {
-	XCHAR tszAddr[XPATH_MAX];                                             //服务器或者域名地址
+	XCHAR tszAddr[XPATH_MID];                                            //服务器或者域名地址
 	int nPort;                                                           //端口号码,如果>0表示CDKEY验证失败后改为网络验证
 	//版本信息
 	struct
 	{
-		XCHAR tszAppName[128];                                            //应用程序名称
-		XCHAR tszAppVer[128];                                             //应用程序版本号
+		XCHAR tszAppName[XPATH_MID];                                     //应用程序名称
+		XCHAR tszAppVer[XPATH_MID];                                      //应用程序版本号
 		__int64x nExecTime;                                              //程序已经执行次数,调用Authorize_CDKey_GetLeftTimer会更新
 		bool bInit;                                                      //是否初始化,由用户控制
 	}st_AuthAppInfo;
 	//CDKEY信息
 	struct
 	{
-		XCHAR tszHardware[1024];                                          //硬件码
+		XCHAR tszHardware[XPATH_MID];                                          //硬件码
 		XCHAR tszCreateTime[64];                                          //CDKEY创建日期，年/月/日-小时：分钟：秒
 		XCHAR tszRegisterTime[64];                                        //注册时间，年/月/日-小时：分钟：秒
 		XCHAR tszLeftTime[64];                                            //总的剩余时间,过期日期，根据nLeftType决定此值的意义
@@ -117,20 +136,20 @@ typedef struct
 		//次数限制
 		struct
 		{
-			XCHAR tszTimeSerial[128];
+			XCHAR tszTimeSerial[XPATH_MIN];
 			int nTimeCount;                                              //使用次数
 		}st_TimeLimit;
 		//时间限制
 		struct
 		{
-			XCHAR tszDataTime[128];                                       //过期时间
-			XCHAR tszDataSerial[128];                                     //序列号
+			XCHAR tszDataTime[XPATH_MIN];                                 //过期时间
+			XCHAR tszDataSerial[XPATH_MIN];                               //序列号
 			bool bTimeAdd;                                                //真,过期时间是设置的日期-创建日期.假过期日期就是设定的日期
 		}st_DataLimit;
 		//无限制
 		struct
 		{
-			XCHAR tszUNLimitSerial[128];                                  //无限制序列号
+			XCHAR tszUNLimitSerial[XPATH_MIN];                             //无限制序列号
 		}st_UNLimit;
 	}st_AuthSerial;
 	//注册的用户信息，可以不填
@@ -138,9 +157,8 @@ typedef struct
 	{
 		XCHAR tszUserName[64];                                            //注册的用户
 		XCHAR tszUserContact[64];                                         //联系方式，电子邮件或者手机等
-		XCHAR tszCustom[1024];                                            //自定义数据
+		XCHAR tszCustom[XPATH_MID];                                       //自定义数据
 	}st_AuthUserInfo;
-
 	XCHAR tszTimeList[2048];
 }VERIFICATION_XAUTHKEY;
 //////////////////////////////////////////////////////////////////////////

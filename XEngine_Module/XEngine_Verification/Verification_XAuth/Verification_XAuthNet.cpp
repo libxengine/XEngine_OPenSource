@@ -117,12 +117,18 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 			return false;
 		}
 	}
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 
+	if (st_JsonRoot["code"].isNull())
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
+	}
 	if (0 != st_JsonRoot["code"].asInt())
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
-		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 		return false;
 	}
 	if (NULL != pInt_Type)
@@ -132,7 +138,8 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 			*pInt_Type = st_JsonRoot["type"].asInt();
 		}
 	}
-	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	m_bLogin = true;
+	m_bAuth = true;
 	return true;
 }
 /********************************************************************

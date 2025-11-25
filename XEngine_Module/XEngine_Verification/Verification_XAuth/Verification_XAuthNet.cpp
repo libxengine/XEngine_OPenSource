@@ -55,6 +55,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 	JSONCPP_STRING st_JsonError;
 	Json::CharReaderBuilder st_ReaderBuilder;
 	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
+	LPCSTR lpszCustomHdr = "Content-Type: application/json\r\n";
 
 	SystemApi_HardWare_GetSerial(&st_SDKSerial);
 	_xstprintf(tszJsonStr, _X("%s"), st_SDKSerial.tszBoardSerial);
@@ -72,7 +73,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 
 		nMsgLen = st_JsonRoot.toStyledString().length();
 		Cryption_XCrypto_Encoder(st_JsonRoot.toStyledString().c_str(), &nMsgLen, (XBYTE*)tszENCodec, lpszPass);
-		if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, tszENCodec, &nHTTPCode, &ptszMsgBuffer, &nMsgLen))
+		if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, tszENCodec, &nHTTPCode, &ptszMsgBuffer, &nMsgLen, lpszCustomHdr))
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = APIClient_GetLastError();
@@ -93,7 +94,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 	}
 	else
 	{
-		if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBuffer, &nMsgLen))
+		if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBuffer, &nMsgLen, lpszCustomHdr))
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = APIClient_GetLastError();

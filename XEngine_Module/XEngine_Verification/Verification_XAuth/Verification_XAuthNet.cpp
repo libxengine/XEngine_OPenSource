@@ -60,7 +60,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 	JSONCPP_STRING st_JsonError;
 	Json::CharReaderBuilder st_ReaderBuilder;
 	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
-	LPCSTR lpszCustomHdr = "Content-Type: application/json\r\n";
+	LPCXSTR lpszCustomHdr = _X("Content-Type: application/json\r\n");
 
 	SystemApi_HardWare_GetSerial(&st_SDKSerial);
 	_xstprintf(tszJsonStr, _X("%s"), st_SDKSerial.tszBoardSerial);

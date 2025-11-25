@@ -328,7 +328,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetAuth()
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_NOLOGIN;
 		return false;
 	}
-	if (m_bAuth)
+	if (!m_bAuth)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_EXPIRED;

@@ -23,7 +23,7 @@ public:
 	CVerification_XAuthNet();
 	~CVerification_XAuthNet();
 public:
-	bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL);
+	bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL, int* pInt_Type = NULL);
 	bool Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr, int* pInt_DYCode, XNETHANDLE* pxhToken, int* pInt_Timeout = NULL, LPCXSTR lpszPass = NULL);
 public:
 	bool Verification_XAuthNet_Connect(LPCXSTR lpszClientAddr, int nPort, LPCXSTR lpszPass = NULL);

@@ -763,12 +763,17 @@ extern "C" bool Verification_XAuthKey_ReadMemory(LPCXSTR lpszMsgBuffer, int nMsg
   类型：常量字符指针
   可空：Y
   意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+ 参数.三：pInt_Type
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出验证类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL);
+extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL, int* pInt_Type = NULL);
 /********************************************************************
 函数名称：Verification_XAuthNet_GetDCode
 函数功能：获取动态码

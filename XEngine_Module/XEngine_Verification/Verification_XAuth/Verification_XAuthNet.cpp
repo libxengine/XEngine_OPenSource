@@ -33,12 +33,17 @@ CVerification_XAuthNet::~CVerification_XAuthNet()
   类型：常量字符指针
   可空：Y
   意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+ 参数.三：pInt_Type
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出验证类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass /* = NULL */)
+bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass /* = NULL */, int* pInt_Type /* = NULL */)
 {
 	Verification_IsErrorOccur = true;
 
@@ -119,6 +124,13 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
 		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 		return false;
+	}
+	if (NULL != pInt_Type)
+	{
+		if (!st_JsonRoot["type"].isNull())
+		{
+			*pInt_Type = st_JsonRoot["type"].asInt();
+		}
 	}
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	return true;

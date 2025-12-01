@@ -38,12 +38,17 @@ CVerification_XAuthNet::~CVerification_XAuthNet()
   类型：整数型指针
   可空：Y
   意思：输出验证类型
+ 参数.四：enHWType
+  In/Out：Out
+  类型：枚举型
+  可空：Y
+  意思：输入序列号类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass /* = NULL */, int* pInt_Type /* = NULL */)
+bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass /* = NULL */, int* pInt_Type /* = NULL */, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType /* = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD */)
 {
 	Verification_IsErrorOccur = true;
 
@@ -63,7 +68,34 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 	LPCXSTR lpszCustomHdr = _X("Content-Type: application/json\r\n");
 
 	SystemApi_HardWare_GetSerial(&st_SDKSerial);
-	_xstprintf(tszJsonStr, _X("%s"), st_SDKSerial.tszBoardSerial);
+
+	if (ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD == enHWType)
+	{
+		_xstprintf(tszJsonStr, _X("%s"), st_SDKSerial.tszBoardSerial);
+	}
+	else if (ENUM_VERIFICATION_MODULE_HW_TYPE_CPU == enHWType)
+	{
+		_xstprintf(tszJsonStr, _X("%s"), st_SDKSerial.tszCPUSerial);
+	}
+	else if (ENUM_VERIFICATION_MODULE_HW_TYPE_DISK == enHWType)
+	{
+		_xstprintf(tszJsonStr, _X("%s"), st_SDKSerial.tszDiskSerial);
+	}
+	else if (ENUM_VERIFICATION_MODULE_HW_TYPE_SYSTEM == enHWType)
+	{
+		_xstprintf(tszJsonStr, _X("%s"), st_SDKSerial.tszSystemSerial);
+	}
+	else
+	{
+		_xstprintf(tszJsonStr, _X("%s"), st_SDKSerial.tszBoardSerial);
+	}
+
+	if (_tcsxlen(tszJsonStr) <= 0)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_GETSERIAL;
+		return false;
+	}
 
 	st_JsonObject["tszVSerial"] = tszJsonStr;
 	st_JsonRoot["st_VERTemp"] = st_JsonObject;

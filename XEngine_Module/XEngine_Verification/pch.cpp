@@ -157,9 +157,9 @@ extern "C" bool Verification_XAuthNet_GetAuth()
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_GetAuth();
 }
-extern "C" bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode, XSHOT nDYCode, XNETHANDLE xhToken, XLONG dwCryption)
+extern "C" bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode, XSHOT nDYCode, XNETHANDLE xhToken, XLONG dwCryption, VERIFICATION_USERINFO* pSt_UserInfo)
 {
-	return m_XAuthNetVerification.Verification_XAuthNet_Login(lpszUser, lpszPass, lpszHWCode, nDYCode, xhToken, dwCryption);
+	return m_XAuthNetVerification.Verification_XAuthNet_Login(lpszUser, lpszPass, lpszHWCode, nDYCode, xhToken, dwCryption, pSt_UserInfo);
 }
 extern "C" bool Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption)
 {

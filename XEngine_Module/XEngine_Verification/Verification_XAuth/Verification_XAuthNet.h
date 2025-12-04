@@ -29,7 +29,7 @@ public:
 	bool Verification_XAuthNet_Connect(LPCXSTR lpszClientAddr, int nPort, LPCXSTR lpszPass = NULL);
 	bool Verification_XAuthNet_Close();
 	bool Verification_XAuthNet_GetAuth();
-	bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode = NULL, XSHOT nDYCode = 0, XNETHANDLE xhToken = 0, XLONG dwCryption = 0);
+	bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode = NULL, XSHOT nDYCode = 0, XNETHANDLE xhToken = 0, XLONG dwCryption = 0, VERIFICATION_USERINFO* pSt_UserInfo = NULL);
 	bool Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption = 0);
 protected:
 	static XHTHREAD XCALLBACK Verification_XAuthNet_Thread(XPVOID lParam);
@@ -39,7 +39,7 @@ private:
 	bool m_bAuth = false;
 	XSOCKET m_hSocket = 0;
 	XCHAR tszPassStr[128] = {};
+	VERIFICATION_USERINFO st_UserInfo = {};
 private:
 	std::unique_ptr<std::thread> pSTDThread;
-public:
 };

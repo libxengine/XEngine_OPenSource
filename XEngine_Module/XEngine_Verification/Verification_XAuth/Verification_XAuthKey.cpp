@@ -677,7 +677,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_UserRegister(VERIFICATION_XAU
 		//次数验证
 		bSerial = true;
 		pSt_AuthLocal->st_AuthRegInfo.enSerialType = ENUM_VERIFICATION_MODULE_SERIAL_TYPE_TIME;
-		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_OFFICIAL;
+		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_STANDARD;
 		Verification_XAuthKey_BuildKeyTime(pSt_AuthLocal, pSt_AuthLocal->st_AuthSerial.st_TimeLimit.nTimeCount);
 	}
 	else if (0 == _tcsxncmp(pSt_AuthLocal->st_AuthSerial.st_DataLimit.tszDataSerial, lpszSerialStr, _tcsxlen(pSt_AuthLocal->st_AuthSerial.st_DataLimit.tszDataSerial)))
@@ -685,7 +685,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_UserRegister(VERIFICATION_XAU
 		//日期序列
 		bSerial = true;
 		pSt_AuthLocal->st_AuthRegInfo.enSerialType = ENUM_VERIFICATION_MODULE_SERIAL_TYPE_CUSTOM;
-		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_OFFICIAL;
+		pSt_AuthLocal->st_AuthRegInfo.enRegType = ENUM_VERIFICATION_MODULE_CDKEY_TYPE_STANDARD;
 		XENGINE_LIBTIME st_LibTime = {};
 		BaseLib_Time_GetSysTime(&st_LibTime);
 		if (pSt_AuthLocal->st_AuthSerial.st_DataLimit.bTimeAdd)

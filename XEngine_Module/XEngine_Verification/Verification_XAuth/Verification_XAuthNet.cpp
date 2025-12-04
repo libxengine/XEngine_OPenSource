@@ -401,12 +401,17 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetAuth()
   类型：整数型
   可空：Y
   意思：输入密码加密类型
+ 参数.七：pSt_UserInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输出用户信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode /* = NULL */, XSHOT nDYCode /* = 0 */, XNETHANDLE xhToken /* = 0 */, XLONG dwCryption /* = 0 */)
+bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode /* = NULL */, XSHOT nDYCode /* = 0 */, XNETHANDLE xhToken /* = 0 */, XLONG dwCryption /* = 0 */, VERIFICATION_USERINFO* pSt_UserInfo /* = NULL */)
 {
 	Verification_IsErrorOccur = false;
 
@@ -495,6 +500,20 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 		Verification_dwErrorCode = XClient_GetLastError();
 		return false;
 	}
+	if (st_ProtocolHdr.unPacketSize == sizeof(VERIFICATION_USERINFO))
+	{
+		if (ENUM_XENGINE_PROTOCOLHDR_CRYPTO_TYPE_XCRYPT == st_ProtocolHdr.wCrypto)
+		{
+			XCHAR tszCodecBuffer[2048] = {};
+			st_ProtocolHdr.wCrypto = ENUM_XENGINE_PROTOCOLHDR_CRYPTO_TYPE_XCRYPT;
+			Cryption_XCrypto_Decoder(ptszMsgBuffer, &nMsgLen, tszCodecBuffer, tszPassStr);
+			memcpy(&st_UserInfo, tszCodecBuffer, sizeof(VERIFICATION_USERINFO));
+		}
+		else
+		{
+			memcpy(&st_UserInfo, ptszMsgBuffer, sizeof(VERIFICATION_USERINFO));
+		}
+	}
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	//判断是否登录协议
 	if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REPLOGIN != st_ProtocolHdr.unOperatorCode)
@@ -513,6 +532,10 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 	m_bRun = true;
 	m_bLogin = true;
 	m_bAuth = true;
+	if (NULL != pSt_UserInfo)
+	{
+		*pSt_UserInfo = st_UserInfo;
+	}
 	//登录成功，创建线程
 	pSTDThread = std::make_unique<std::thread>(Verification_XAuthNet_Thread, this);
 	if (NULL == pSTDThread)

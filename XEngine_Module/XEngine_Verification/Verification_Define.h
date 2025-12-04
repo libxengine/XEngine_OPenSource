@@ -39,12 +39,14 @@ typedef enum
 }ENUM_VERIFICATION_MODULE_SERIAL_TYPE, * LPENUM_VERIFICATION_MODULE_SERIAL_TYPE;
 typedef enum
 {
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED = -1,				   //已过期的版本,Authorize_CDKey_GetLeftTimer将返回失败
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNKNOW = 0,                    //未注册,Authorize_CDKey_GetLeftTimer将返回失败
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TEMP = 1,                      //临时,Authorize_CDKey_GetLeftTimer一次后过期,需要Write
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TRY = 2,                       //试用
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_OFFICIAL = 3,                  //正式版
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNLIMIT = 4,                   //无限制版,永不过期.CDKEY不做任何验证
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED = 5                    //已过期的版本,Authorize_CDKey_GetLeftTimer将返回失败
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_STANDARD = 3,                  //标准版,等同于正式版
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_PROFESSIONAL = 4,              //专业版
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_ULTIMATE = 5,                  //旗舰版
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNLIMIT = 10                   //无限制版,永不过期.CDKEY不做任何验证
 }ENUM_VERIFICATION_MODULE_CDKEY_TYPE, * LPENUM_VERIFICATION_MODULE_CDKEY_TYPE;
 typedef enum
 {
@@ -161,6 +163,12 @@ typedef struct
 	}st_AuthUserInfo;
 	XCHAR tszTimeList[2048];
 }VERIFICATION_XAUTHKEY;
+typedef struct  
+{
+	int nSerialType;                 //过期类型，参考:ENUM_VERIFICATION_MODULE_SERIAL_TYPE
+	int nUserLevel;				     //用户等级
+	int nLeftTime;                   //剩余时间,根据过期类型决定
+}VERIFICATION_USERINFO;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -883,12 +891,17 @@ extern "C" bool Verification_XAuthNet_GetAuth();
   类型：整数型
   可空：Y
   意思：输入密码加密类型
+ 参数.七：pSt_UserInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输出用户信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode = NULL, XSHOT nDYCode = 0, XNETHANDLE xhToken = 0, XLONG dwCryption = 0);
+extern "C" bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode = NULL, XSHOT nDYCode = 0, XNETHANDLE xhToken = 0, XLONG dwCryption = 0, VERIFICATION_USERINFO* pSt_UserInfo = NULL);
 /********************************************************************
 函数名称：Verification_XAuthNet_Logout
 函数功能：用户登出协议

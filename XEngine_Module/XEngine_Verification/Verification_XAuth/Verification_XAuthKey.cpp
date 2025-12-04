@@ -520,13 +520,32 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY
 	}
 	if (ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 	{
-		pSt_XAuthInfo->st_AuthRegInfo.enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD;
-		_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszBoardSerial);
+		if (_tcsxlen(st_SDKSerial.tszBoardSerial) > 0)
+		{
+			pSt_XAuthInfo->st_AuthRegInfo.enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD;
+			_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszBoardSerial);
+		}
+		else if (_tcsxlen(st_SDKSerial.tszDiskSerial) > 0)
+		{
+			pSt_XAuthInfo->st_AuthRegInfo.enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_DISK;
+			_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszDiskSerial);
+		}
+		else
+		{
+			pSt_XAuthInfo->st_AuthRegInfo.enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_SYSTEM;
+			_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszSystemSerial);
+		}
 	}
 	else
 	{
 		if (ENUM_VERIFICATION_MODULE_HW_TYPE_CPU == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 		{
+			if (_tcsxlen(st_SDKSerial.tszCPUSerial) == 0)
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
+				return false;
+			}
 			if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) == 0)
 			{
 				_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszCPUSerial);
@@ -534,6 +553,12 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY
 		}
 		else if (ENUM_VERIFICATION_MODULE_HW_TYPE_DISK == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 		{
+			if (_tcsxlen(st_SDKSerial.tszDiskSerial) == 0)
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
+				return false;
+			}
 			if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) == 0)
 			{
 				_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszDiskSerial);
@@ -541,6 +566,12 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY
 		}
 		else if (ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 		{
+			if (_tcsxlen(st_SDKSerial.tszBoardSerial) == 0)
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
+				return false;
+			}
 			if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) == 0)
 			{
 				_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszBoardSerial);
@@ -548,6 +579,12 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY
 		}
 		else if (ENUM_VERIFICATION_MODULE_HW_TYPE_SYSTEM == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 		{
+			if (_tcsxlen(st_SDKSerial.tszSystemSerial) == 0)
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
+				return false;
+			}
 			if (_tcsxlen(pSt_XAuthInfo->st_AuthRegInfo.tszHardware) == 0)
 			{
 				_xstprintf(pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _X("%s"), st_SDKSerial.tszSystemSerial);

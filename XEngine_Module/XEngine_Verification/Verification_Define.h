@@ -18,13 +18,13 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 static LPCXSTR lpszXSerialType[5] = { "UNKNOW","SECOND","DAY","TIME","CUSTOM" };
-static LPCXSTR lpszXRegType[6] = { "UNKNOW","TEMP","TRY","OFFICIAL","UNLIMIT","EXPIRED" };
-static LPCXSTR lpszXHDType[6] = { "UNKNOW","CPU","DISK","BOARD","MAC","BIOS" };
+static LPCXSTR lpszXRegType[8] = { "UNKNOW","TEMP","TRY","STANDARD","PROFESSIONAL","ULTIMATE","UNLIMIT","EXPIRED" };
+static LPCXSTR lpszXHDType[6] = { "UNKNOW","CPU","DISK","BOARD","SYSTEM" };
 static LPCXSTR lpszXVerType[6] = { "UNKNOW","LOCAL","NETWORK" };
 
 static const wchar_t* lpszTSerialType[5] = { L"UNKNOW",L"SECOND",L"DAY",L"TIME",L"CUSTOM" };
-static const wchar_t* lpszTRegType[6] = { L"UNKNOW",L"TEMP",L"TRY",L"OFFICIAL",L"UNLIMIT",L"EXPIRED" };
-static const wchar_t* lpszTHDType[6] = { L"UNKNOW",L"CPU",L"DISK",L"BOARD",L"MAC",L"BIOS" };
+static const wchar_t* lpszTRegType[8] = { L"UNKNOW",L"TEMP",L"TRY",L"STANDARD",L"PROFESSIONAL",L"ULTIMATE",L"UNLIMIT",L"EXPIRED" };
+static const wchar_t* lpszTHDType[5] = { L"UNKNOW",L"CPU",L"DISK",L"BOARD",L"SYSTEM" };
 static const wchar_t* lpszTVerType[6] = { L"UNKNOW",L"LOCAL",L"NETWORK" };
 #ifndef _MSC_BUILD
 #pragma GCC diagnostic pop
@@ -39,14 +39,14 @@ typedef enum
 }ENUM_VERIFICATION_MODULE_SERIAL_TYPE, * LPENUM_VERIFICATION_MODULE_SERIAL_TYPE;
 typedef enum
 {
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED = -1,				   //已过期的版本,Authorize_CDKey_GetLeftTimer将返回失败
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNKNOW = 0,                    //未注册,Authorize_CDKey_GetLeftTimer将返回失败
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TEMP = 1,                      //临时,Authorize_CDKey_GetLeftTimer一次后过期,需要Write
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TRY = 2,                       //试用
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_STANDARD = 3,                  //标准版,等同于正式版
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_PROFESSIONAL = 4,              //专业版
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_ULTIMATE = 5,                  //旗舰版
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNLIMIT = 10                   //无限制版,永不过期.CDKEY不做任何验证
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNLIMIT = 6 ,                  //无限制版,永不过期.CDKEY不做任何验证
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED = 7				       //已过期的版本,Authorize_CDKey_GetLeftTimer将返回失败
 }ENUM_VERIFICATION_MODULE_CDKEY_TYPE, * LPENUM_VERIFICATION_MODULE_CDKEY_TYPE;
 typedef enum
 {

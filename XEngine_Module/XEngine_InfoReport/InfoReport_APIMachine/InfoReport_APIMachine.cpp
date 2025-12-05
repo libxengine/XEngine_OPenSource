@@ -312,7 +312,6 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Hardware(XCHAR* ptszSWInfo, i
 	SYSTEMAPI_DISK_INFOMATION st_DiskInfo = {};
 	SYSTEMAPI_CPU_INFOMATION st_CPUInfo = {};
 	SYSTEMAPI_MEMORY_INFOMATION st_MemoryInfo = {};
-	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
 
 	if (!SystemApi_HardWare_GetDiskNumber(&pptszRootName, &nDiskNumber))
 	{
@@ -349,12 +348,6 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Hardware(XCHAR* ptszSWInfo, i
 		InfoReport_dwErrorCode = SystemApi_GetLastError();
 		return false;
 	}
-	if (!SystemApi_HardWare_GetSerial(&st_SDKSerial))
-	{
-		InfoReport_IsErrorOccur = true;
-		InfoReport_dwErrorCode = SystemApi_GetLastError();
-		return false;
-	}
 
 	Json::Value st_JsonRoot;
 	Json::Value st_JsonDisk;
@@ -375,11 +368,6 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Hardware(XCHAR* ptszSWInfo, i
 	st_JsonMemory["MemoryFree"] = (Json::UInt64)st_MemoryInfo.dwMemory_Free;
 	st_JsonMemory["MemoryTotal"] = (Json::UInt64)st_MemoryInfo.dwMemory_Total;
 
-	st_JsonSerial["DiskSerial"] = st_SDKSerial.tszDiskSerial;
-	st_JsonSerial["CpuSerial"] = st_SDKSerial.tszCPUSerial;
-	st_JsonSerial["BoardSerial"] = st_SDKSerial.tszBoardSerial;
-	st_JsonSerial["SystemSerial"] = st_SDKSerial.tszSystemSerial;
-
 	int nListCount = 0;
 	XSOCKET_CARDINFO** ppSt_ListIFInfo;
 	XSocket_Api_GetCardInfo(&ppSt_ListIFInfo, &nListCount);
@@ -398,7 +386,6 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Hardware(XCHAR* ptszSWInfo, i
 	st_JsonRoot["Disk"] = st_JsonDisk;
 	st_JsonRoot["Cpu"] = st_JsonCpu;
 	st_JsonRoot["Memory"] = st_JsonMemory;
-	st_JsonRoot["Serial"] = st_JsonSerial;
 	st_JsonRoot["NetCard"] = st_JsonNetCard;
 
 	if (NULL != pInt_Len)
@@ -443,8 +430,6 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, i
 	XCHAR tszOSVersion[256] = {};
 	XCHAR tszOSInfo[256] = {};
 	XCHAR tszUPTime[256] = {};
-	XCHAR tszUserName[256] = {};
-	XCHAR tszComputerName[256] = {};
 	XENGINE_LIBTIME st_LibTimer = {};
 
 	if (!SystemApi_System_GetSystemVer(tszOSInfo, tszOSVersion, tszOSBuild, &nOSProcessor))
@@ -465,13 +450,10 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, i
 		InfoReport_dwErrorCode = SystemApi_GetLastError();
 		return false;
 	}
-	SystemApi_System_GetSysName(tszUserName, tszComputerName);
-
 	sprintf(tszUPTime, "%04d-%02d-%02d %02d:%02d:%02d", st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
 
 	Json::Value st_JsonRoot;
 	Json::Value st_JsonOSObject;
-	Json::Value st_JsonSystem;
 
 	st_JsonOSObject["OSUPTime"] = tszUPTime;
 	st_JsonOSObject["OSVersion"] = tszOSInfo;
@@ -480,11 +462,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, i
 	st_JsonOSObject["OSArch"] = (Json::Value::Int)nOSProcessor;
 	st_JsonOSObject["OSProcessCount"] = nProcessCount;
 
-	st_JsonSystem["tszUserName"] = tszUserName;
-	st_JsonSystem["tszComputerName"] = tszComputerName;
-
 	st_JsonRoot["OSInfo"] = st_JsonOSObject;
-	st_JsonRoot["SystemInfo"] = st_JsonSystem;
 
 	if (NULL != pInt_Len)
 	{

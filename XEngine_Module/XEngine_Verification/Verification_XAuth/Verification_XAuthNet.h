@@ -25,12 +25,15 @@ public:
 public:
 	bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL, int* pInt_Type = NULL, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD);
 	bool Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr, int* pInt_DYCode, XNETHANDLE* pxhToken, int* pInt_Timeout = NULL, LPCXSTR lpszPass = NULL);
+	bool Verification_XAuthNet_Register(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, LPCXSTR lpszHWCode = NULL, LPCXSTR lpszPassword = NULL);
 public:
 	bool Verification_XAuthNet_Connect(LPCXSTR lpszClientAddr, int nPort, LPCXSTR lpszPass = NULL);
 	bool Verification_XAuthNet_Close();
 	bool Verification_XAuthNet_GetAuth();
 	bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode = NULL, XSHOT nDYCode = 0, XNETHANDLE xhToken = 0, XLONG dwCryption = 0, VERIFICATION_USERINFO* pSt_UserInfo = NULL);
 	bool Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption = 0);
+protected:
+	bool Verification_XAuthNet_HTTPRequest(LPCXSTR lpszURLAddr, XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszMSGBuffer = NULL, LPCXSTR lpszPassword = NULL);
 protected:
 	static XHTHREAD XCALLBACK Verification_XAuthNet_Thread(XPVOID lParam);
 private:

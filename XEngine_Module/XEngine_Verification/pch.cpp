@@ -145,6 +145,10 @@ extern "C" bool Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr, int* pInt_DY
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_GetDCode(lpszURLAddr, pInt_DYCode, pxhToken, pInt_Timeout, lpszPass);
 }
+extern "C" bool Verification_XAuthNet_Register(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, LPCXSTR lpszHWCode, LPCXSTR lpszPassword)
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_Register(lpszURLAddr, pSt_UserInfo, lpszHWCode, lpszPassword);
+}
 extern "C" bool Verification_XAuthNet_Connect(LPCXSTR lpszClientAddr, int nPort, LPCXSTR lpszPass)
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_Connect(lpszClientAddr, nPort, lpszPass);

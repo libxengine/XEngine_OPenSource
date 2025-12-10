@@ -31,6 +31,7 @@ EXPORTS
 	Verification_XAuthKey_ReadMemory
 	Verification_XAuthNet_TryRequest
 	Verification_XAuthNet_GetDCode
+	Verification_XAuthNet_Register
 	Verification_XAuthNet_Connect
 	Verification_XAuthNet_Close
 	Verification_XAuthNet_GetAuth

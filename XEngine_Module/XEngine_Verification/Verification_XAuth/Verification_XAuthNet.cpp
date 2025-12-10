@@ -58,14 +58,12 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
-	int nHTTPCode = 0;
 	XCHAR tszJsonStr[XPATH_MAX] = {};
 	Json::Value st_JsonRoot;
 	Json::Value st_JsonObject;
 	JSONCPP_STRING st_JsonError;
 	Json::CharReaderBuilder st_ReaderBuilder;
 	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
-	LPCXSTR lpszCustomHdr = _X("Content-Type: application/json\r\n");
 
 	SystemApi_HardWare_GetSerial(&st_SDKSerial);
 
@@ -100,56 +98,22 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 	st_JsonObject["tszVSerial"] = tszJsonStr;
 	st_JsonRoot["st_VERTemp"] = st_JsonObject;
 	//请求
-	int nMsgLen = 0;
-	XCHAR* ptszMsgBuffer = NULL;
-
-	if (NULL != lpszPass)
+	XCHAR tszMSGBuffer[XPATH_MAX] = {};
+	int nMsgLen = st_JsonRoot.toStyledString().length();
+	if (!Verification_XAuthNet_HTTPRequest(lpszURLAddr, tszMSGBuffer, &nMsgLen, st_JsonRoot.toStyledString().c_str()))
 	{
-		XCHAR tszENCodec[2048] = {};
-		XCHAR tszDECodec[2048] = {};
-
-		nMsgLen = st_JsonRoot.toStyledString().length();
-		Cryption_XCrypto_Encoder(st_JsonRoot.toStyledString().c_str(), &nMsgLen, (XBYTE*)tszENCodec, lpszPass);
-		if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, tszENCodec, &nHTTPCode, &ptszMsgBuffer, &nMsgLen, lpszCustomHdr))
-		{
-			Verification_IsErrorOccur = true;
-			Verification_dwErrorCode = APIClient_GetLastError();
-			return false;
-		}
-		Cryption_XCrypto_Decoder(ptszMsgBuffer, &nMsgLen, tszDECodec, lpszPass);
-		st_JsonRoot.clear();
-		st_JsonObject.clear();
-		//解析回复
-		std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
-		if (!pSt_JsonReader->parse(tszDECodec, tszDECodec + nMsgLen, &st_JsonRoot, &st_JsonError))
-		{
-			Verification_IsErrorOccur = true;
-			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
-			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-			return false;
-		}
+		return false;
 	}
-	else
+	//解析回复
+	st_JsonObject.clear();
+	st_JsonRoot.clear();
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(tszMSGBuffer, tszMSGBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
 	{
-		if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBuffer, &nMsgLen, lpszCustomHdr))
-		{
-			Verification_IsErrorOccur = true;
-			Verification_dwErrorCode = APIClient_GetLastError();
-			return false;
-		}
-		st_JsonRoot.clear();
-		st_JsonObject.clear();
-		//解析回复
-		std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
-		if (!pSt_JsonReader->parse(ptszMsgBuffer, ptszMsgBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
-		{
-			Verification_IsErrorOccur = true;
-			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
-			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-			return false;
-		}
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
 	}
-	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 
 	if (st_JsonRoot["code"].isNull())
 	{
@@ -217,52 +181,29 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr,
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
-	int nHTTPCode = 0;
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
 	Json::CharReaderBuilder st_ReaderBuilder;
 	//请求
 	int nMsgLen = 0;
-	XCHAR* ptszMsgBuffer = NULL;
-	if (!APIClient_Http_Request(_X("GET"), lpszURLAddr, NULL, &nHTTPCode, &ptszMsgBuffer, &nMsgLen))
+	XCHAR tszMSGBuffer[XPATH_MAX] = {};
+	if (!Verification_XAuthNet_HTTPRequest(lpszURLAddr, tszMSGBuffer, &nMsgLen))
 	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = APIClient_GetLastError();
 		return false;
 	}
-	
-	if (NULL != lpszPass)
+	//解析回复
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(tszMSGBuffer, tszMSGBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
 	{
-		XCHAR tszDECodec[2048] = {};
-		Cryption_XCrypto_Decoder(ptszMsgBuffer, &nMsgLen, tszDECodec, lpszPass);
-
-		std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
-		if (!pSt_JsonReader->parse(tszDECodec, tszDECodec + nMsgLen, &st_JsonRoot, &st_JsonError))
-		{
-			Verification_IsErrorOccur = true;
-			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
-			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-			return false;
-		}
-	}
-	else
-	{
-		//解析回复
-		std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
-		if (!pSt_JsonReader->parse(ptszMsgBuffer, ptszMsgBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
-		{
-			Verification_IsErrorOccur = true;
-			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
-			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-			return false;
-		}
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
 	}
 
 	if (0 != st_JsonRoot["code"].asInt())
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
-		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 		return false;
 	}
 
@@ -272,7 +213,91 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr,
 	{
 		*pInt_Timeout = st_JsonRoot["nTimeout"].asInt();
 	}
-	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	return true;
+}
+/********************************************************************
+函数名称：Verification_XAuthNet_Register
+函数功能：用户注册请求
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：服务器地址,完成的API地址,比如:http://127.0.0.1:5302/auth/user/register
+ 参数.二：pSt_UserInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入注册信息
+ 参数.三：lpszHWCode
+  In/Out：Out
+  类型：常量字符指针
+  可空：N
+  意思：输入要绑定的硬件序列号
+ 参数.四：lpszPassword
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_XAuthNet::Verification_XAuthNet_Register(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, LPCXSTR lpszHWCode /* = NULL */, LPCXSTR lpszPassword /* = NULL */)
+{
+	Verification_IsErrorOccur = false;
+
+	if (NULL == pSt_UserInfo)
+	{
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonObject;
+	Json::Value st_JsonUserInfo;
+	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_ReaderBuilder;
+
+	st_JsonUserInfo["tszUserName"] = pSt_UserInfo->tszUserName;
+	st_JsonUserInfo["tszUserPass"] = pSt_UserInfo->tszUserPass;
+	st_JsonUserInfo["tszEMailAddr"] = pSt_UserInfo->tszEMailAddr;
+	st_JsonUserInfo["nPhoneNumber"] = pSt_UserInfo->nPhoneNumber;
+	st_JsonUserInfo["nIDNumber"] = pSt_UserInfo->nIDNumber;
+	st_JsonUserInfo["nUserLevel"] = pSt_UserInfo->nUserLevel;
+
+	st_JsonObject["st_UserInfo"] = st_JsonObject;
+	st_JsonObject["tszHardCode"] = lpszHWCode;
+
+	st_JsonRoot["st_UserTable"] = st_JsonObject;
+
+	int nMsgLen = 0;
+	XCHAR tszMSGBuffer[XPATH_MAX] = {};
+	if (!Verification_XAuthNet_HTTPRequest(lpszURLAddr, tszMSGBuffer, &nMsgLen, st_JsonRoot.toStyledString().c_str()))
+	{
+		return false;
+	}
+	st_JsonRoot.clear();
+	st_JsonObject.clear();
+	//解析回复
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(tszMSGBuffer, tszMSGBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
+	}
+
+	if (st_JsonRoot["code"].isNull())
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
+	}
+	if (0 != st_JsonRoot["code"].asInt())
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
+		return false;
+	}
 	return true;
 }
 /********************************************************************
@@ -668,6 +693,88 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCX
 }
 //////////////////////////////////////////////////////////////////////////
 //                      保护函数
+//////////////////////////////////////////////////////////////////////////
+bool CVerification_XAuthNet::Verification_XAuthNet_HTTPRequest(LPCXSTR lpszURLAddr, XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszMSGBuffer /* = NULL */, LPCXSTR lpszPassword /* = NULL */)
+{
+	Verification_IsErrorOccur = true;
+
+	if (NULL == lpszURLAddr)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
+		return false;
+	}
+	int nHTTPCode = 0;
+	Json::Value st_JsonRoot;
+	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_ReaderBuilder;
+	LPCXSTR lpszCustomHdr = _X("Content-Type: application/json\r\n");
+	//请求
+	int nHTTPLen = *pInt_MSGLen;
+	XCHAR* ptszHTTPBuffer = NULL;
+	if (NULL == lpszMSGBuffer)
+	{
+		if (!APIClient_Http_Request(_X("GET"), lpszURLAddr, NULL, &nHTTPCode, &ptszHTTPBuffer, &nHTTPLen))
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = APIClient_GetLastError();
+			return false;
+		}
+	}
+	else
+	{
+		if (NULL == lpszPassword)
+		{
+			if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, lpszMSGBuffer, &nHTTPCode, &ptszHTTPBuffer, &nHTTPLen, lpszCustomHdr))
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = APIClient_GetLastError();
+				return false;
+			}
+		}
+		else
+		{
+			XCHAR tszENCodec[2048] = {};
+			if (!Cryption_XCrypto_Encoder(lpszMSGBuffer, &nHTTPLen, (XBYTE*)tszENCodec, lpszPassword))
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = Cryption_GetLastError();
+				BaseLib_Memory_FreeCStyle((XPPMEM)&ptszHTTPBuffer);
+				return false;
+			}
+			if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, tszENCodec, &nHTTPCode, &ptszHTTPBuffer, &nHTTPLen, lpszCustomHdr))
+			{
+				Verification_IsErrorOccur = true;
+				Verification_dwErrorCode = APIClient_GetLastError();
+				return false;
+			}
+		}
+	}
+	//解析回复
+	if (NULL == lpszPassword)
+	{
+		*pInt_MSGLen = nHTTPLen;
+		_tcsxcpy(ptszMSGBuffer, ptszHTTPBuffer);
+	}
+	else
+	{
+		XCHAR tszDECodec[2048] = {};
+		if (!Cryption_XCrypto_Decoder(ptszHTTPBuffer, &nHTTPLen, tszDECodec, lpszPassword))
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = Cryption_GetLastError();
+			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszHTTPBuffer);
+			return false;
+		}
+
+		*pInt_MSGLen = nHTTPLen;
+		_tcsxcpy(ptszMSGBuffer, tszDECodec);
+	}
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszHTTPBuffer);
+	return true;
+}
+//////////////////////////////////////////////////////////////////////////
+//                      线程函数
 //////////////////////////////////////////////////////////////////////////
 XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID lParam)
 {

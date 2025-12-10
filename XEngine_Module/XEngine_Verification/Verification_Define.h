@@ -18,12 +18,12 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 static LPCXSTR lpszXSerialType[5] = { "UNKNOW","SECOND","DAY","TIME","CUSTOM" };
-static LPCXSTR lpszXRegType[8] = { "UNKNOW","TEMP","TRY","STANDARD","PROFESSIONAL","ULTIMATE","UNLIMIT","EXPIRED" };
+static LPCXSTR lpszXRegType[9] = { "UNKNOW","TEMP","TRY","TEST","STANDARD","PROFESSIONAL","ULTIMATE","UNLIMIT","EXPIRED" };
 static LPCXSTR lpszXHDType[6] = { "UNKNOW","CPU","DISK","BOARD","SYSTEM" };
 static LPCXSTR lpszXVerType[6] = { "UNKNOW","LOCAL","NETWORK" };
 
 static const wchar_t* lpszTSerialType[5] = { L"UNKNOW",L"SECOND",L"DAY",L"TIME",L"CUSTOM" };
-static const wchar_t* lpszTRegType[8] = { L"UNKNOW",L"TEMP",L"TRY",L"STANDARD",L"PROFESSIONAL",L"ULTIMATE",L"UNLIMIT",L"EXPIRED" };
+static const wchar_t* lpszTRegType[9] = { L"UNKNOW",L"TEMP",L"TRY",L"TEST",L"STANDARD",L"PROFESSIONAL",L"ULTIMATE",L"UNLIMIT",L"EXPIRED" };
 static const wchar_t* lpszTHDType[5] = { L"UNKNOW",L"CPU",L"DISK",L"BOARD",L"SYSTEM" };
 static const wchar_t* lpszTVerType[6] = { L"UNKNOW",L"LOCAL",L"NETWORK" };
 #ifndef _MSC_BUILD
@@ -42,11 +42,12 @@ typedef enum
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNKNOW = 0,                    //未注册,Authorize_CDKey_GetLeftTimer将返回失败
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TEMP = 1,                      //临时,Authorize_CDKey_GetLeftTimer一次后过期,需要Write
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TRY = 2,                       //试用
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_STANDARD = 3,                  //标准版,等同于正式版
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_PROFESSIONAL = 4,              //专业版
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_ULTIMATE = 5,                  //旗舰版
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNLIMIT = 6 ,                  //无限制版,永不过期.CDKEY不做任何验证
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED = 7				       //已过期的版本,Authorize_CDKey_GetLeftTimer将返回失败
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TEST = 3,                      //测试版,试验版,特殊版本
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_STANDARD = 4,                  //标准版,等同于正式版
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_PROFESSIONAL = 5,              //专业版
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_ULTIMATE = 6,                  //旗舰版
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNLIMIT = 7,                  //无限制版,永不过期.CDKEY不做任何验证
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_EXPIRED = 8				       //已过期的版本,Authorize_CDKey_GetLeftTimer将返回失败
 }ENUM_VERIFICATION_MODULE_CDKEY_TYPE, * LPENUM_VERIFICATION_MODULE_CDKEY_TYPE;
 typedef enum
 {
@@ -816,6 +817,35 @@ extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lp
 备注：
 *********************************************************************/
 extern "C" bool Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr, int* pInt_DYCode, XNETHANDLE* pxhToken, int* pInt_Timeout = NULL, LPCXSTR lpszPass = NULL);
+/********************************************************************
+函数名称：Verification_XAuthNet_Register
+函数功能：用户注册请求
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：服务器地址,完成的API地址,比如:http://127.0.0.1:5302/auth/user/register
+ 参数.二：pSt_UserInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入注册信息
+ 参数.三：lpszHWCode
+  In/Out：Out
+  类型：常量字符指针
+  可空：N
+  意思：输入要绑定的硬件序列号
+ 参数.四：lpszPassword
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthNet_Register(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, LPCXSTR lpszHWCode = NULL, LPCXSTR lpszPassword = NULL);
 /********************************************************************
 函数名称：Verification_XAuthNet_Connect
 函数功能：链接到服务器

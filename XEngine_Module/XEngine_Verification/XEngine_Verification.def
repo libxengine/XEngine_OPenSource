@@ -32,8 +32,12 @@ EXPORTS
 	Verification_XAuthNet_TryRequest
 	Verification_XAuthNet_GetDCode
 	Verification_XAuthNet_Register
+	Verification_XAuthNet_GetTime
+	Verification_XAuthNet_GetPass
+	Verification_XAuthNet_Pay
 	Verification_XAuthNet_Connect
 	Verification_XAuthNet_Close
 	Verification_XAuthNet_GetAuth
 	Verification_XAuthNet_Login
 	Verification_XAuthNet_Logout
+	Verification_XAuthNet_GetToken

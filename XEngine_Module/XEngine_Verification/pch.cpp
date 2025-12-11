@@ -149,6 +149,18 @@ extern "C" bool Verification_XAuthNet_Register(LPCXSTR lpszURLAddr, XENGINE_PROT
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_Register(lpszURLAddr, pSt_UserInfo, lpszHWCode, lpszPassword);
 }
+extern "C" bool Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_LeftTime, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime, LPCXSTR lpszPassword)
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_GetTime(lpszURLAddr, penSerialType, pInt_LeftTime, pInt_OnlineTime, ptszLeftTime, lpszPassword);
+}
+extern "C" bool Verification_XAuthNet_GetPass(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XENGINE_PROTOCOL_USERAUTH* pSt_UserAuth, LPCXSTR lpszPassword)
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_GetPass(lpszURLAddr, pSt_UserInfo, pSt_UserAuth, lpszPassword);
+}
+extern "C" bool Verification_XAuthNet_Pay(LPCXSTR lpszURLAddr, LPCXSTR lpszUser, LPCXSTR lpszSerial, LPCXSTR lpszPassword)
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_Pay(lpszURLAddr, lpszUser, lpszSerial, lpszPassword);
+}
 extern "C" bool Verification_XAuthNet_Connect(LPCXSTR lpszClientAddr, int nPort, LPCXSTR lpszPass)
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_Connect(lpszClientAddr, nPort, lpszPass);
@@ -168,4 +180,8 @@ extern "C" bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, 
 extern "C" bool Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption)
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_Logout(lpszUser, lpszPass, dwCryption);
+}
+extern "C" bool Verification_XAuthNet_GetToken(XNETHANDLE* pxhToken)
+{
+	return m_XAuthNetVerification.Verification_XAuthNet_GetToken(pxhToken);
 }

@@ -260,11 +260,11 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Register(LPCXSTR lpszURLAddr,
 	st_JsonUserInfo["tszUserName"] = pSt_UserInfo->tszUserName;
 	st_JsonUserInfo["tszUserPass"] = pSt_UserInfo->tszUserPass;
 	st_JsonUserInfo["tszEMailAddr"] = pSt_UserInfo->tszEMailAddr;
-	st_JsonUserInfo["nPhoneNumber"] = pSt_UserInfo->nPhoneNumber;
-	st_JsonUserInfo["nIDNumber"] = pSt_UserInfo->nIDNumber;
+	st_JsonUserInfo["nPhoneNumber"] = (Json::Value::Int64)pSt_UserInfo->nPhoneNumber;
+	st_JsonUserInfo["nIDNumber"] = (Json::Value::Int64)pSt_UserInfo->nIDNumber;
 	st_JsonUserInfo["nUserLevel"] = pSt_UserInfo->nUserLevel;
 
-	st_JsonObject["st_UserInfo"] = st_JsonObject;
+	st_JsonObject["st_UserInfo"] = st_JsonUserInfo;
 	st_JsonObject["tszHardCode"] = lpszHWCode;
 
 	st_JsonRoot["st_UserTable"] = st_JsonObject;
@@ -298,6 +298,287 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Register(LPCXSTR lpszURLAddr,
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
 		return false;
 	}
+	return true;
+}
+/********************************************************************
+函数名称：Verification_XAuthNet_GetTime
+函数功能：获取用户时间信息
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入API地址
+ 参数.二：penSerialType
+  In/Out：Out
+  类型：枚举型指针
+  可空：N
+  意思：输出用户序列号类型
+ 参数.三：pInt_LeftTime
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出剩余时间
+ 参数.四：pInt_OnlineTime
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出在线时间
+ 参数.五：ptszLeftTime
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出剩余时间字符串
+ 参数.;六：lpszPassword
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_XAuthNet::Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_LeftTime, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime /* = NULL */, LPCXSTR lpszPassword /* = NULL */)
+{
+	Verification_IsErrorOccur = false;
+
+	if (NULL == lpszURLAddr)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonObject;
+	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_ReaderBuilder;
+
+	int nMsgLen = 0;
+	XCHAR tszMSGBuffer[XPATH_MAX] = {};
+	if (!Verification_XAuthNet_HTTPRequest(lpszURLAddr, tszMSGBuffer, &nMsgLen))
+	{
+		return false;
+	}
+	//解析回复
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(tszMSGBuffer, tszMSGBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
+	}
+
+	if (st_JsonRoot["code"].isNull() || st_JsonRoot["st_UserTime"].isNull())
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
+	}
+	if (0 != st_JsonRoot["code"].asInt())
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
+		return false;
+	}
+	st_JsonObject = st_JsonRoot["st_UserTime"];
+
+	if (!st_JsonObject["enSerialType"].isNull())
+	{
+		*penSerialType = (ENUM_VERIFICATION_MODULE_SERIAL_TYPE)st_JsonObject["enSerialType"].asInt();
+	}
+	if (!st_JsonObject["nTimeLeft"].isNull())
+	{
+		*pInt_LeftTime = (__int64x)st_JsonObject["nTimeLeft"].asInt64();
+	}
+	if (!st_JsonObject["nTimeONLine"].isNull())
+	{
+		*pInt_OnlineTime = (__int64x)st_JsonObject["nTimeONLine"].asInt64();
+	}
+	if ((NULL != ptszLeftTime) && !st_JsonObject["tszLeftTime"].isNull())
+	{
+		_tcsxcpy(ptszLeftTime, st_JsonObject["tszLeftTime"].asCString());
+	}
+	return true;
+}
+/********************************************************************
+函数名称：Verification_XAuthNet_GetPass
+函数功能：密码找回
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入API地址
+ 参数.二：pSt_UserInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入用户注册信息,身份证,邮箱,手机号
+ 参数.三：pSt_UserAuth
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出用户密码
+ 参数.四：lpszPassword
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_XAuthNet::Verification_XAuthNet_GetPass(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XENGINE_PROTOCOL_USERAUTH* pSt_UserAuth, LPCXSTR lpszPassword /* = NULL */)
+{
+	Verification_IsErrorOccur = false;
+
+	if (NULL == pSt_UserInfo)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonObject;
+	Json::Value st_JsonUserInfo;
+	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_ReaderBuilder;
+
+	st_JsonUserInfo["tszEMailAddr"] = pSt_UserInfo->tszEMailAddr;
+	st_JsonUserInfo["nPhoneNumber"] = (Json::Value::Int64)pSt_UserInfo->nPhoneNumber;
+	st_JsonUserInfo["nIDNumber"] = (Json::Value::Int64)pSt_UserInfo->nIDNumber;
+
+	st_JsonObject["st_UserInfo"] = st_JsonUserInfo;
+
+	st_JsonRoot["st_UserTable"] = st_JsonObject;
+
+	int nMsgLen = 0;
+	XCHAR tszMSGBuffer[XPATH_MAX] = {};
+	if (!Verification_XAuthNet_HTTPRequest(lpszURLAddr, tszMSGBuffer, &nMsgLen, st_JsonRoot.toStyledString().c_str()))
+	{
+		return false;
+	}
+	st_JsonRoot.clear();
+	st_JsonObject.clear();
+	//解析回复
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(tszMSGBuffer, tszMSGBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
+	}
+
+	if (st_JsonRoot["code"].isNull() || st_JsonRoot["st_UserAuth"].isNull())
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
+	}
+	if (0 != st_JsonRoot["code"].asInt())
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
+		return false;
+	}
+	st_JsonObject = st_JsonRoot["st_UserAuth"];
+	if (!st_JsonObject["enClientType"].isNull())
+	{
+		pSt_UserAuth->enClientType = (ENUM_PROTOCOLCLIENT_TYPE)st_JsonObject["enClientType"].asInt();
+	}
+	if (!st_JsonObject["enDeviceType"].isNull())
+	{
+		pSt_UserAuth->enDeviceType = (ENUM_PROTOCOLDEVICE_TYPE)st_JsonObject["enDeviceType"].asInt();
+	}
+	if (!st_JsonObject["tszUserName"].isNull())
+	{
+		_tcsxcpy(pSt_UserAuth->tszUserName, st_JsonObject["tszUserName"].asCString());
+	}
+	if (!st_JsonObject["tszUserPass"].isNull())
+	{
+		_tcsxcpy(pSt_UserAuth->tszUserPass, st_JsonObject["tszUserPass"].asCString());
+	}
+
+	return true;
+}
+/********************************************************************
+函数名称：Verification_XAuthNet_Pay
+函数功能：充值
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入API地址
+ 参数.二：lpszUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：充值的用户
+ 参数.三：lpszSerial
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入充值的序列号
+ 参数.四：lpszPassword
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_XAuthNet::Verification_XAuthNet_Pay(LPCXSTR lpszURLAddr, LPCXSTR lpszUser, LPCXSTR lpszSerial, LPCXSTR lpszPassword /* = NULL */)
+{
+	Verification_IsErrorOccur = false;
+
+	if (NULL == lpszURLAddr)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonObject;
+	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_ReaderBuilder;
+
+	st_JsonObject["tszSerialNumber"] = lpszSerial;
+	st_JsonObject["tszUserName"] = lpszUser;
+
+	st_JsonRoot["st_UserPay"] = st_JsonObject;
+
+	int nMsgLen = 0;
+	XCHAR tszMSGBuffer[XPATH_MAX] = {};
+	if (!Verification_XAuthNet_HTTPRequest(lpszURLAddr, tszMSGBuffer, &nMsgLen, st_JsonRoot.toStyledString().c_str()))
+	{
+		return false;
+	}
+	st_JsonRoot.clear();
+	st_JsonObject.clear();
+	//解析回复
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(tszMSGBuffer, tszMSGBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
+	}
+
+	if (st_JsonRoot["code"].isNull())
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARSE;
+		return false;
+	}
+	if (0 != st_JsonRoot["code"].asInt())
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
+		return false;
+	}
+
 	return true;
 }
 /********************************************************************
@@ -561,6 +842,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 	{
 		*pSt_UserInfo = st_UserInfo;
 	}
+	xhToken = st_ProtocolHdr.xhToken;
 	//登录成功，创建线程
 	pSTDThread = std::make_unique<std::thread>(Verification_XAuthNet_Thread, this);
 	if (NULL == pSTDThread)
@@ -689,6 +971,36 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCX
 		return false;
 	}
 	Verification_XAuthNet_Close();
+	return true;
+}
+/********************************************************************
+函数名称：Verification_XAuthNet_GetToken
+函数功能：获取当前的令牌句柄
+ 参数.一：pxhToken
+  In/Out：Out
+  类型：句柄
+  可空：N
+  意思：输出令牌句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CVerification_XAuthNet::Verification_XAuthNet_GetToken(XNETHANDLE* pxhToken)
+{
+	Verification_IsErrorOccur = false;
+
+	if (NULL == pxhToken)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
+		return false;
+	}
+	if (!Verification_XAuthNet_GetAuth())
+	{
+		return false;
+	}
+	*pxhToken = xhToken;
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////

@@ -42,7 +42,7 @@ typedef enum
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_UNKNOW = 0,                    //未注册,Authorize_CDKey_GetLeftTimer将返回失败
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TEMP = 1,                      //临时,Authorize_CDKey_GetLeftTimer一次后过期,需要Write
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TRY = 2,                       //试用
-	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TEST = 3,                      //测试版,试验版,特殊版本
+	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_TEST = 3,                      //演示版,普通版,试验版,特殊版本
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_STANDARD = 4,                  //标准版,等同于正式版
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_PROFESSIONAL = 5,              //专业版
 	ENUM_VERIFICATION_MODULE_CDKEY_TYPE_ULTIMATE = 6,                  //旗舰版
@@ -847,6 +847,103 @@ extern "C" bool Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr, int* pInt_DY
 *********************************************************************/
 extern "C" bool Verification_XAuthNet_Register(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, LPCXSTR lpszHWCode = NULL, LPCXSTR lpszPassword = NULL);
 /********************************************************************
+函数名称：Verification_XAuthNet_GetTime
+函数功能：获取用户时间信息
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入API地址
+ 参数.二：penSerialType
+  In/Out：Out
+  类型：枚举型指针
+  可空：N
+  意思：输出用户序列号类型
+ 参数.三：pInt_LeftTime
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出剩余时间
+ 参数.四：pInt_OnlineTime
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出在线时间
+ 参数.五：ptszLeftTime
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出剩余时间字符串
+ 参数.;六：lpszPassword
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_LeftTime, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime = NULL, LPCXSTR lpszPassword = NULL);
+/********************************************************************
+函数名称：Verification_XAuthNet_GetPass
+函数功能：密码找回
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入API地址
+ 参数.二：pSt_UserInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入用户注册信息,身份证,邮箱,手机号
+ 参数.三：pSt_UserAuth
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出用户密码
+ 参数.四：lpszPassword
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthNet_GetPass(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XENGINE_PROTOCOL_USERAUTH* pSt_UserAuth, LPCXSTR lpszPassword = NULL);
+/********************************************************************
+函数名称：Verification_XAuthNet_Pay
+函数功能：充值
+ 参数.一：lpszURLAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入API地址
+ 参数.二：lpszUser
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：充值的用户
+ 参数.三：lpszSerial
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入充值的序列号
+ 参数.四：lpszPassword
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入密码,如果服务端设置了密码客户端也必须使用加密通信
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthNet_Pay(LPCXSTR lpszURLAddr, LPCXSTR lpszUser, LPCXSTR lpszSerial, LPCXSTR lpszPassword = NULL);
+/********************************************************************
 函数名称：Verification_XAuthNet_Connect
 函数功能：链接到服务器
  参数.一：lpszClientAddr
@@ -956,3 +1053,17 @@ extern "C" bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, 
 备注：
 *********************************************************************/
 extern "C" bool Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption = 0);
+/********************************************************************
+函数名称：Verification_XAuthNet_GetToken
+函数功能：获取当前的令牌句柄
+ 参数.一：pxhToken
+  In/Out：Out
+  类型：句柄
+  可空：N
+  意思：输出令牌句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Verification_XAuthNet_GetToken(XNETHANDLE* pxhToken);

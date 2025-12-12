@@ -884,7 +884,7 @@ extern "C" bool Verification_XAuthNet_Register(LPCXSTR lpszURLAddr, XENGINE_PROT
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_LeftTime, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime = NULL, LPCXSTR lpszPassword = NULL);
+extern "C" bool Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERAUTH* pSt_UserInfo, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime, LPCXSTR lpszPassword = NULL);
 /********************************************************************
 函数名称：Verification_XAuthNet_GetPass
 函数功能：密码找回

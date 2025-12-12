@@ -249,6 +249,8 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Register(LPCXSTR lpszURLAddr,
 
 	if (NULL == pSt_UserInfo)
 	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
 	Json::Value st_JsonRoot;
@@ -313,11 +315,11 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Register(LPCXSTR lpszURLAddr,
   类型：枚举型指针
   可空：N
   意思：输出用户序列号类型
- 参数.三：pInt_LeftTime
+ 参数.三：pSt_UserInfo
   In/Out：Out
-  类型：整数型指针
+  类型：数据结构指针
   可空：N
-  意思：输出剩余时间
+  意思：输出用户序列号类型
  参数.四：pInt_OnlineTime
   In/Out：Out
   类型：整数型指针
@@ -328,7 +330,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Register(LPCXSTR lpszURLAddr,
   类型：字符指针
   可空：N
   意思：输出剩余时间字符串
- 参数.;六：lpszPassword
+ 参数.六：lpszPassword
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -338,7 +340,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Register(LPCXSTR lpszURLAddr,
   意思：是否成功
 备注：
 *********************************************************************/
-bool CVerification_XAuthNet::Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_LeftTime, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime /* = NULL */, LPCXSTR lpszPassword /* = NULL */)
+bool CVerification_XAuthNet::Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERAUTH* pSt_UserInfo, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime, LPCXSTR lpszPassword /* = NULL */)
 {
 	Verification_IsErrorOccur = false;
 
@@ -353,9 +355,14 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, 
 	JSONCPP_STRING st_JsonError;
 	Json::CharReaderBuilder st_ReaderBuilder;
 
+	st_JsonObject["tszUserName"] = pSt_UserInfo->tszUserName;
+	st_JsonObject["tszUserPass"] = pSt_UserInfo->tszUserPass;
+
+	st_JsonRoot["st_UserAuth"] = st_JsonObject;
+
 	int nMsgLen = 0;
 	XCHAR tszMSGBuffer[XPATH_MAX] = {};
-	if (!Verification_XAuthNet_HTTPRequest(lpszURLAddr, tszMSGBuffer, &nMsgLen))
+	if (!Verification_XAuthNet_HTTPRequest(lpszURLAddr, tszMSGBuffer, &nMsgLen, st_JsonRoot.toStyledString().c_str(), lpszPassword))
 	{
 		return false;
 	}
@@ -386,15 +393,11 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, 
 	{
 		*penSerialType = (ENUM_VERIFICATION_MODULE_SERIAL_TYPE)st_JsonObject["enSerialType"].asInt();
 	}
-	if (!st_JsonObject["nTimeLeft"].isNull())
-	{
-		*pInt_LeftTime = (__int64x)st_JsonObject["nTimeLeft"].asInt64();
-	}
 	if (!st_JsonObject["nTimeONLine"].isNull())
 	{
 		*pInt_OnlineTime = (__int64x)st_JsonObject["nTimeONLine"].asInt64();
 	}
-	if ((NULL != ptszLeftTime) && !st_JsonObject["tszLeftTime"].isNull())
+	if (!st_JsonObject["tszLeftTime"].isNull())
 	{
 		_tcsxcpy(ptszLeftTime, st_JsonObject["tszLeftTime"].asCString());
 	}
@@ -440,17 +443,19 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetPass(LPCXSTR lpszURLAddr, 
 	}
 	Json::Value st_JsonRoot;
 	Json::Value st_JsonObject;
-	Json::Value st_JsonUserInfo;
 	JSONCPP_STRING st_JsonError;
 	Json::CharReaderBuilder st_ReaderBuilder;
 
-	st_JsonUserInfo["tszEMailAddr"] = pSt_UserInfo->tszEMailAddr;
-	st_JsonUserInfo["nPhoneNumber"] = (Json::Value::Int64)pSt_UserInfo->nPhoneNumber;
-	st_JsonUserInfo["nIDNumber"] = (Json::Value::Int64)pSt_UserInfo->nIDNumber;
+	st_JsonObject["tszUserName"] = pSt_UserInfo->tszUserName;
+	if (_tcsxlen(pSt_UserInfo->tszUserPass) > 0)
+	{
+		st_JsonObject["tszUserPass"] = pSt_UserInfo->tszUserPass;
+	}
+	st_JsonObject["tszEMailAddr"] = pSt_UserInfo->tszEMailAddr;
+	st_JsonObject["nPhoneNumber"] = (Json::Value::Int64)pSt_UserInfo->nPhoneNumber;
+	st_JsonObject["nIDNumber"] = (Json::Value::Int64)pSt_UserInfo->nIDNumber;
 
-	st_JsonObject["st_UserInfo"] = st_JsonUserInfo;
-
-	st_JsonRoot["st_UserTable"] = st_JsonObject;
+	st_JsonRoot["st_UserInfo"] = st_JsonObject;
 
 	int nMsgLen = 0;
 	XCHAR tszMSGBuffer[XPATH_MAX] = {};

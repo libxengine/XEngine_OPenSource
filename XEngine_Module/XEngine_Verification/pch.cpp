@@ -149,9 +149,9 @@ extern "C" bool Verification_XAuthNet_Register(LPCXSTR lpszURLAddr, XENGINE_PROT
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_Register(lpszURLAddr, pSt_UserInfo, lpszHWCode, lpszPassword);
 }
-extern "C" bool Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_LeftTime, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime, LPCXSTR lpszPassword)
+extern "C" bool Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERAUTH* pSt_UserInfo, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime, LPCXSTR lpszPassword)
 {
-	return m_XAuthNetVerification.Verification_XAuthNet_GetTime(lpszURLAddr, penSerialType, pInt_LeftTime, pInt_OnlineTime, ptszLeftTime, lpszPassword);
+	return m_XAuthNetVerification.Verification_XAuthNet_GetTime(lpszURLAddr, pSt_UserInfo, penSerialType, pInt_OnlineTime, ptszLeftTime, lpszPassword);
 }
 extern "C" bool Verification_XAuthNet_GetPass(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XENGINE_PROTOCOL_USERAUTH* pSt_UserAuth, LPCXSTR lpszPassword)
 {

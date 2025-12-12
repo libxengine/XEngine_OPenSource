@@ -26,7 +26,7 @@ public:
 	bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL, int* pInt_Type = NULL, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD);
 	bool Verification_XAuthNet_GetDCode(LPCXSTR lpszURLAddr, int* pInt_DYCode, XNETHANDLE* pxhToken, int* pInt_Timeout = NULL, LPCXSTR lpszPass = NULL);
 	bool Verification_XAuthNet_Register(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, LPCXSTR lpszHWCode = NULL, LPCXSTR lpszPassword = NULL);
-	bool Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_LeftTime, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime = NULL, LPCXSTR lpszPassword = NULL);
+	bool Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERAUTH* pSt_UserInfo, ENUM_VERIFICATION_MODULE_SERIAL_TYPE* penSerialType, __int64x* pInt_OnlineTime, XCHAR* ptszLeftTime, LPCXSTR lpszPassword = NULL);
 	bool Verification_XAuthNet_GetPass(LPCXSTR lpszURLAddr, XENGINE_PROTOCOL_USERINFO* pSt_UserInfo, XENGINE_PROTOCOL_USERAUTH* pSt_UserAuth, LPCXSTR lpszPassword = NULL);
 	bool Verification_XAuthNet_Pay(LPCXSTR lpszURLAddr, LPCXSTR lpszUser, LPCXSTR lpszSerial, LPCXSTR lpszPassword = NULL);
 public:

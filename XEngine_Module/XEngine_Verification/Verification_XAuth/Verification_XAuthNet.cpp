@@ -366,6 +366,8 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, 
 	{
 		return false;
 	}
+	st_JsonRoot.clear();
+	st_JsonObject.clear();
 	//解析回复
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_ReaderBuilder.newCharReader());
 	if (!pSt_JsonReader->parse(tszMSGBuffer, tszMSGBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
@@ -387,7 +389,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_GetTime(LPCXSTR lpszURLAddr, 
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
 		return false;
 	}
-	st_JsonObject = st_JsonRoot["st_UserTime"];
+	st_JsonObject = st_JsonRoot["st_UserTime"][0];
 
 	if (!st_JsonObject["enSerialType"].isNull())
 	{

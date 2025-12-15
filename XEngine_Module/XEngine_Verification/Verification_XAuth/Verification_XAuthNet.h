@@ -34,7 +34,6 @@ public:
 	bool Verification_XAuthNet_Close();
 	bool Verification_XAuthNet_GetAuth();
 	bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode = NULL, XSHOT nDYCode = 0, XNETHANDLE xhToken = 0, XLONG dwCryption = 0, VERIFICATION_USERINFO* pSt_UserInfo = NULL);
-	bool Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption = 0);
 	bool Verification_XAuthNet_GetToken(XNETHANDLE* pxhToken);
 protected:
 	bool Verification_XAuthNet_HTTPRequest(LPCXSTR lpszURLAddr, XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszMSGBuffer = NULL, LPCXSTR lpszPassword = NULL);

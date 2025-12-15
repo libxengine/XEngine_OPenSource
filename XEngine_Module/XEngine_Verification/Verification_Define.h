@@ -1030,30 +1030,6 @@ extern "C" bool Verification_XAuthNet_GetAuth();
 *********************************************************************/
 extern "C" bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszHWCode = NULL, XSHOT nDYCode = 0, XNETHANDLE xhToken = 0, XLONG dwCryption = 0, VERIFICATION_USERINFO* pSt_UserInfo = NULL);
 /********************************************************************
-函数名称：Verification_XAuthNet_Logout
-函数功能：用户登出协议
- 参数.一：lpszUser
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入用户名
- 参数.二：lpszPass
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入密码
- 参数.三：dwCryption
-  In/Out：In
-  类型：整数型
-  可空：Y
-  意思：密码加密方法
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" bool Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption = 0);
-/********************************************************************
 函数名称：Verification_XAuthNet_GetToken
 函数功能：获取当前的令牌句柄
  参数.一：pxhToken

@@ -39,5 +39,4 @@ EXPORTS
 	Verification_XAuthNet_Close
 	Verification_XAuthNet_GetAuth
 	Verification_XAuthNet_Login
-	Verification_XAuthNet_Logout
 	Verification_XAuthNet_GetToken

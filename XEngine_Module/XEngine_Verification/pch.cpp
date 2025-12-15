@@ -177,10 +177,6 @@ extern "C" bool Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXSTR lpszPass, 
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_Login(lpszUser, lpszPass, lpszHWCode, nDYCode, xhToken, dwCryption, pSt_UserInfo);
 }
-extern "C" bool Verification_XAuthNet_Logout(LPCXSTR lpszUser, LPCXSTR lpszPass, XLONG dwCryption)
-{
-	return m_XAuthNetVerification.Verification_XAuthNet_Logout(lpszUser, lpszPass, dwCryption);
-}
 extern "C" bool Verification_XAuthNet_GetToken(XNETHANDLE* pxhToken)
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_GetToken(pxhToken);

@@ -1107,6 +1107,11 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 
 		if (!XClient_TCPSelect_RecvPkt(pClass_This->m_hSocket, &ptszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
 		{
+			XLONG dwRet = XClient_GetLastError();
+			if (ERROR_XCLIENT_SOCKET_TCPSOCKET_SELECT_RECVPKT_TIMEOUT == dwRet)
+			{
+				continue;
+			}
 			pClass_This->m_bRun = false;
 			pClass_This->m_bLogin = false;
 			pClass_This->m_bAuth = false;

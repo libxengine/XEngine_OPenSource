@@ -66,4 +66,5 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Build Solution
-        run: msbuild XEngine.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }} /p:PreprocessorDefinitions="_XENGINE_BUILD_SWITCH_LUA;%(PreprocessorDefinitions)"
+        run: |
+          msbuild XEngine.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}

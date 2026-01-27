@@ -74,7 +74,7 @@ else ifeq ($(PLATFORM), ios)
 endif
 
 all:$(OBJECTS)
-	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_ModulePlugin.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
+	$(CC) $(DEBUG) $(OBJECTS) -o libXEngine_PluginExtension.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 PluginExtension_LibCore.o:./PluginExtension_LibCore/PluginExtension_LibCore.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./PluginExtension_LibCore/PluginExtension_LibCore.cpp
@@ -88,8 +88,8 @@ pch.o:./pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libXEngine_ModulePlugin.$(FILEEXT)
-	cp ./libXEngine_ModulePlugin.$(FILEEXT) ../../XEngine_Release/libXEngine_ModulePlugin.$(FILEEXT)
+InstallSo:./libXEngine_PluginExtension.$(FILEEXT)
+	cp ./libXEngine_PluginExtension.$(FILEEXT) ../../XEngine_Release/libXEngine_PluginExtension.$(FILEEXT)
 
 
 CleanAll:CleanObj CleanMk

@@ -60,3 +60,6 @@ jobs:
             cd ..
             cd XEngine_Verification
             make PLATFORM=android
+            cd ..
+            cd XEngine_PluginExtension
+            make PLATFORM=android

@@ -72,3 +72,6 @@ jobs:
             cd ..
             cd XEngine_Verification
             make PLATFORM=mac
+            cd ..
+            cd XEngine_PluginExtension
+            make PLATFORM=mac

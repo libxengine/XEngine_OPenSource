@@ -1,0 +1,451 @@
+﻿#pragma once
+/********************************************************************
+//    Created:     2026/01/27  15:37:48
+//    File Name:   D:\XEngine_OPenSource\XEngine_Module\XEngine_PluginExtension\PluginExtension_Define.h
+//    File Path:   D:\XEngine_OPenSource\XEngine_Module\XEngine_PluginExtension
+//    File Base:   PluginExtension_Define
+//    File Ext:    h
+//    Project:     XEngine
+//    Author:      qyt
+//    Purpose:     插件导出定义
+//    History:
+*********************************************************************/
+//////////////////////////////////////////////////////////////////////////
+//                       导出数据结构
+//////////////////////////////////////////////////////////////////////////
+typedef struct
+{
+	XCHAR tszAPIVersion[64];                                              //API服务版本
+	XCHAR tszXEngineVer[64];                                              //XEngine版本
+}XENGINE_PLUGINPARAM;
+//////////////////////////////////////////////////////////////////////////
+//                       导出函数定义
+//////////////////////////////////////////////////////////////////////////
+extern "C" XLONG PluginExtension_GetLastError(int* pInt_SysError = NULL);
+/*********************************************************************************
+*                        LIB库插件框架导出函数定义                               *
+*********************************************************************************/
+/********************************************************************
+函数名称：PluginExtension_LibCore_Init
+函数功能：初始化插件核心系统
+返回值
+  类型：逻辑型
+  意思：是否成功初始化
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LibCore_Init();
+/********************************************************************
+函数名称：PluginExtension_LibCore_Push
+函数功能：添加一个标准的插件到插件框架中
+ 参数.一：pxhModule
+  In/Out：Out
+  类型：模块句柄
+  可空：N
+  意思：导出一个加载成功的模块句柄
+ 参数.二：lpszPluginFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：插件模块路径
+ 参数.三：pSt_PluginParameter
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输入插件初始化参数
+返回值
+  类型：逻辑型
+  意思：是否成功添加
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LibCore_Push(XNETHANDLE * pxhNet, LPCXSTR lpszPluginFile, XENGINE_PLUGINPARAM* pSt_PluginParameter = NULL);
+/********************************************************************
+函数名称：PluginExtension_LibCore_Exec
+函数功能：执行一次
+ 参数.一：xhModule
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入模块句柄
+ 参数.二：pppHDRList
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：HTTP请求的URL参数列表
+ 参数.三：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.四：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出返回的HTTPCODE值
+ 参数.五：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出负载的内容
+ 参数.六：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出内容大小
+ 参数.七：lpszMsgBufer
+  In/Out：Out
+  类型：常量字符指针
+  可空：Y
+  意思：输入负载内容
+ 参数.八：nMsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输入负载大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR * **pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0);
+/********************************************************************
+函数名称：PluginExtension_LibCore_Get
+函数功能：获取插件基础信息函数
+ 参数.一：xhModule
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：要操作的模块句柄
+ 参数.二：ptszPluginName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：处理名称
+ 参数.三：ptszPluginVersion
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：版本号.使用x.x.x.x 格式
+ 参数.四：ptszPluginAuthor
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：作者
+ 参数.五：ptszPluginDesc
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：插件描述
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LibCore_Get(XNETHANDLE xhModule, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc);
+/********************************************************************
+函数名称：PluginExtension_LibCore_Destroy
+函数功能：销毁插件核心并且清理资源
+返回值
+  类型：逻辑型
+  意思：是否成功销毁
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LibCore_Destroy();
+/*********************************************************************************
+*                        LUA插件框架导出函数定义                                 *
+*********************************************************************************/
+/********************************************************************
+函数名称：PluginExtension_LuaCore_Init
+函数功能：初始化LUA插件核心系统
+返回值
+  类型：逻辑型
+  意思：是否成功初始化
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LuaCore_Init();
+/********************************************************************
+函数名称：PluginExtension_LuaCore_Push
+函数功能：添加一个标准的插件到插件框架中
+ 参数.一：pxhModule
+  In/Out：Out
+  类型：模块句柄
+  可空：N
+  意思：导出一个加载成功的模块句柄
+ 参数.二：lpszPluginFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：插件模块路径
+ 参数.三：pSt_PluginParameter
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输入插件初始化参数
+返回值
+  类型：逻辑型
+  意思：是否成功添加
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LuaCore_Push(XNETHANDLE* pxhModule, LPCXSTR lpszPluginFile, XENGINE_PLUGINPARAM* pSt_PluginParameter = NULL);
+/********************************************************************
+函数名称：PluginExtension_LuaCore_Exec
+函数功能：执行一次
+ 参数.一：xhModule
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入模块句柄
+ 参数.二：pppHDRList
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：HTTP请求的URL参数列表
+ 参数.三：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.四：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出返回的HTTPCODE值
+ 参数.五：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出负载的内容
+ 参数.六：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出内容大小
+ 参数.七：lpszMsgBufer
+  In/Out：Out
+  类型：常量字符指针
+  可空：Y
+  意思：输入负载内容
+ 参数.八：nMsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输入负载大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0);
+/********************************************************************
+函数名称：PluginExtension_LuaCore_Get
+函数功能：获取插件基础信息函数
+ 参数.一：xhModule
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：要操作的模块句柄
+ 参数.二：ptszPluginName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：处理名称
+ 参数.三：ptszPluginVersion
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：版本号.使用x.x.x.x 格式
+ 参数.四：ptszPluginAuthor
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：作者
+ 参数.五：ptszPluginDesc
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：插件描述
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LuaCore_Get(XNETHANDLE xhModule, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc);
+/********************************************************************
+函数名称：PluginExtension_LuaCore_Destroy
+函数功能：销毁插件核心并且清理资源
+返回值
+  类型：逻辑型
+  意思：是否成功销毁
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_LuaCore_Destroy();
+/*********************************************************************************
+*                        加载器导出函数定义                                      *
+*********************************************************************************/
+/********************************************************************
+函数名称：PluginExtension_Loader_Init
+函数功能：初始化插件加载器
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_Loader_Init();
+/********************************************************************
+函数名称：PluginExtension_Loader_Insert
+函数功能：插入一个模块到加载器
+ 参数.一：lpszModuleName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：插件路径
+ 参数.二：nType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：0为lib,1为lua
+ 参数.三：pSt_PluginParameter
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输入插件初始化参数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_Loader_Insert(LPCXSTR lpszModuleName, int nType, XENGINE_PLUGINPARAM* pSt_PluginParameter = NULL);
+/********************************************************************
+函数名称：PluginExtension_Loader_Find
+函数功能：查找方法是否注册
+ 参数.一：lpszMethodName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要执行的方法
+ 参数.二：pInt_Type
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的模块类型
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_Loader_Find(LPCXSTR lpszMethodName, int* pInt_Type);
+/********************************************************************
+函数名称：PluginExtension_LibCore_Get
+函数功能：获取插件基础信息函数
+ 参数.一：lpszMethodName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要操作的模块句柄
+ 参数.二：ptszPluginName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：处理名称
+ 参数.三：ptszPluginVersion
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：版本号.使用x.x.x.x 格式
+ 参数.四：ptszPluginAuthor
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：作者
+ 参数.五：ptszPluginDesc
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：插件描述
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_Loader_Get(LPCXSTR lpszMethodName, XCHAR* ptszPluginName = NULL, XCHAR* ptszPluginVersion = NULL, XCHAR* ptszPluginAuthor = NULL, XCHAR* ptszPluginDesc = NULL);
+/********************************************************************
+函数名称：PluginExtension_Loader_GetForModule
+函数功能：通过模块名称获取模块信息
+ 参数.一：lpszModuleName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要操作的模块名称
+ 参数.二：ptszPluginName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：处理名称
+ 参数.三：ptszPluginVersion
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：版本号.使用x.x.x.x 格式
+ 参数.四：ptszPluginAuthor
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：作者
+ 参数.五：ptszPluginDesc
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：插件描述
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_Loader_GetForModule(LPCXSTR lpszModuleName, XCHAR* ptszPluginName = NULL, XCHAR* ptszPluginVersion = NULL, XCHAR* ptszPluginAuthor = NULL, XCHAR* ptszPluginDesc = NULL);
+/********************************************************************
+函数名称：PluginExtension_Loader_Exec
+函数功能：执行一次插件
+ 参数.一：lpszMethodName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要执行的方法
+ 参数.二：pppHDRList
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：HTTP请求的URL参数列表
+ 参数.三：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.四：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出返回的HTTPCODE值
+ 参数.五：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出负载的内容
+ 参数.六：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出内容大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR * **pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+/********************************************************************
+函数名称：PluginExtension_Loader_Destory
+函数功能：销毁加载器
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool PluginExtension_Loader_Destory();

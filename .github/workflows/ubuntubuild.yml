@@ -92,3 +92,6 @@ jobs:
             cd ..
             cd XEngine_Verification
             make
+            cd ..
+            cd XEngine_PluginExtension
+            make

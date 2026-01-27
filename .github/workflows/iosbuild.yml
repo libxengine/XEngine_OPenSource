@@ -53,3 +53,6 @@ jobs:
             cd ..
             cd XEngine_Verification
             make PLATFORM=ios
+            cd ..
+            cd XEngine_PluginExtension
+            make PLATFORM=ios

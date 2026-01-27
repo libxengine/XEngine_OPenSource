@@ -17,7 +17,7 @@ typedef struct
 	XCHAR tszModuleAuthor[128];
 	XCHAR tszModuleDesc[128];
 	XCHAR tszModuleVer[64];
-#if (1 == _XENGINE_BUILD_SWITCH_LUA)
+#ifdef _XENGINE_BUILD_SWITCH_LUA
 	lua_State* pSt_LuaState;
 #endif
 }PLUGINCORE_LUAFRAMEWORK;

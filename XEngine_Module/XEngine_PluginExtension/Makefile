@@ -1,6 +1,6 @@
 CC = g++ -Wall -std=c++20 -fPIC
 PLATFORM = linux
-MACRO_LUA_SUPPORT=0
+_XENGINE_BUILD_SWITCH_LUA=0
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
@@ -35,12 +35,12 @@ endif
 ifeq ($(PLATFORM),linux)
 	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
 		PLATVER = -D __CENTOS__
-		ifeq ($(MACRO_LUA_SUPPORT),1)
+		ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
 			LIB += -llua
 		endif
 	else
 		PLATVER = -D __UBUNTU__
-		ifeq ($(MACRO_LUA_SUPPORT),1)
+		ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
 			LIB += -llua5.4
 		endif
 	endif
@@ -55,7 +55,7 @@ else ifeq ($(PLATFORM),mac)
 	LIBFLAG = -dynamiclib
 	LOADHDR += -I /opt/homebrew/opt/lua/include/lua
 	LOADSO += -L /opt/homebrew/opt/lua/lib
-	ifeq ($(MACRO_LUA_SUPPORT),1)
+	ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
 		LIB += -llua
 	endif
 	LIBEX = -lpthread -ldl

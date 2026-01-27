@@ -1,4 +1,5 @@
 CC = g++ -Wall -std=c++20 -fPIC
+PLATFORM = linux
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
@@ -33,10 +34,8 @@ endif
 ifeq ($(PLATFORM),linux)
 	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
 		PLATVER = -D __CENTOS__
-		LIB += -llua
 	else
 		PLATVER = -D __UBUNTU__
-		LIB += -llua5.4
 	endif
 	FILEEXT = so
 	LIBFLAG = -shared
@@ -49,9 +48,6 @@ else ifeq ($(PLATFORM),mac)
 	LIBFLAG = -dynamiclib
 	LOADHDR += -I /opt/homebrew/opt/lua/include/lua
 	LOADSO += -L /opt/homebrew/opt/lua/lib
-	ifeq ($(MACRO_LUA_SUPPORT),1)
-		LIB += -llua
-	endif
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
 else ifeq ($(PLATFORM), android)

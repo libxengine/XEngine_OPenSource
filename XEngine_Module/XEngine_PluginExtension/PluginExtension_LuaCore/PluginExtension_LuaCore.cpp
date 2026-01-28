@@ -90,37 +90,37 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Push(XNETHANDLE* pxhModul
   类型：整数型
   可空：N
   意思：输入列表个数
- 参数.四：pInt_HTTPCode
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出返回的HTTPCODE值
- 参数.五：ptszMsgBuffer
+ 参数.四：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出负载的内容
- 参数.六：pInt_MsgLen
+ 参数.五：pInt_MsgLen
   In/Out：Out
   类型：整数型指针
   可空：N
   意思：输出内容大小
- 参数.七：lpszMsgBufer
+ 参数.六：lpszMsgBufer
   In/Out：Out
   类型：常量字符指针
   可空：Y
   意思：输入负载内容
- 参数.八：nMsgLen
+ 参数.七：nMsgLen
   In/Out：Out
   类型：整数型指针
   可空：Y
   意思：输入负载大小
+ 参数.八：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出返回的HTTPCODE值
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer /* = NULL */, int nMsgLen /* = 0 */)
+bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer /* = NULL */, int nMsgLen /* = 0 */, int* pInt_HTTPCode /* = NULL */)
 {
     PluginExtension_IsErrorOccur = false;
 
@@ -165,11 +165,17 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule,
 		return false;
     }
     lua_getglobal(stl_MapIterator->second.pSt_LuaState, "PInt_HTTPCode");
-    *pInt_HTTPCode = (int)lua_tonumber(stl_MapIterator->second.pSt_LuaState, -1);
+	if (!lua_isnil(stl_MapIterator->second.pSt_LuaState, -1))
+	{
+		*pInt_HTTPCode = (int)lua_tointeger(stl_MapIterator->second.pSt_LuaState, -1);
+	}
     lua_pop(stl_MapIterator->second.pSt_LuaState, -1);
 
 	lua_getglobal(stl_MapIterator->second.pSt_LuaState, "PInt_MsgLen");
-	*pInt_MsgLen = (int)lua_tonumber(stl_MapIterator->second.pSt_LuaState, -1);
+	if (!lua_isnil(stl_MapIterator->second.pSt_LuaState, -1))
+	{
+		*pInt_MsgLen = (int)lua_tointeger(stl_MapIterator->second.pSt_LuaState, -1);
+	}
 	lua_pop(stl_MapIterator->second.pSt_LuaState, -1);
 
     if (*pInt_MsgLen > 0)

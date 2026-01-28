@@ -302,27 +302,42 @@ bool CPluginExtension_Loader::PluginExtension_Loader_GetForModule(LPCXSTR lpszMo
   类型：整数型
   可空：N
   意思：输入列表个数
- 参数.四：pInt_HTTPCode
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出返回的HTTPCODE值
- 参数.五：ptszMsgBuffer
+ 参数.四：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出负载的内容
- 参数.六：pInt_MsgLen
+ 参数.五：pInt_MsgLen
   In/Out：Out
   类型：整数型指针
   可空：N
   意思：输出内容大小
+ 参数.六：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出返回的HTTPCODE值
+ 参数.七：lpszMsgBufer
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要传递的内容
+ 参数.八：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入传递内容大小
+ 参数.九：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出返回的HTTPCODE值
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR*** pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer /* = NULL */, int nMsgLen /* = 0 */, int* pInt_HTTPCode /* = NULL */)
 {
 	PluginExtension_IsErrorOccur = false;
 
@@ -344,7 +359,7 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName
 
 	if (0 == stl_MapIterator->second.nType)
 	{
-		if (!PluginExtension_LibCore_Exec(stl_MapIterator->second.xhToken, pppHDRList, nListCount, pInt_HTTPCode, ptszMsgBuffer, pInt_MsgLen))
+		if (!PluginExtension_LibCore_Exec(stl_MapIterator->second.xhToken, pppHDRList, nListCount, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pInt_HTTPCode))
 		{
 			st_Locker.unlock_shared();
 			return false;
@@ -352,7 +367,7 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName
 	}
 	else
 	{
-		if (!PluginExtension_LuaCore_Exec(stl_MapIterator->second.xhToken, pppHDRList, nListCount, pInt_HTTPCode, ptszMsgBuffer, pInt_MsgLen))
+		if (!PluginExtension_LuaCore_Exec(stl_MapIterator->second.xhToken, pppHDRList, nListCount, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pInt_HTTPCode))
 		{
 			st_Locker.unlock_shared();
 			return false;

@@ -41,9 +41,9 @@ extern "C" bool PluginExtension_LibCore_Push(XNETHANDLE* pxhModule, LPCXSTR lpsz
 {
 	return m_PluginLib.PluginExtension_LibCore_Push(pxhModule, lpszPluginFile, pSt_PluginParameter);
 }
-extern "C" bool PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen)
+extern "C" bool PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, int* pInt_HTTPCode)
 {
-	return m_PluginLib.PluginExtension_LibCore_Exec(xhModule, pppHDRList, nListCount, pInt_HTTPCode, ptszMsgBuffer, pInt_MsgLen);
+	return m_PluginLib.PluginExtension_LibCore_Exec(xhModule, pppHDRList, nListCount, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pInt_HTTPCode);
 }
 extern "C" bool PluginExtension_LibCore_Get(XNETHANDLE xhModule, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc)
 {
@@ -68,9 +68,9 @@ extern "C" bool PluginExtension_LuaCore_Push(XNETHANDLE* pxhModule, LPCXSTR lpsz
 {
 	return m_PluginLua.PluginExtension_LuaCore_Push(pxhModule, lpszPluginFile, pSt_PluginParameter);
 }
-extern "C" bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen)
+extern "C" bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, int* pInt_HTTPCode)
 {
-	return m_PluginLua.PluginExtension_LuaCore_Exec(xhModule, pppHDRList, nListCount, pInt_HTTPCode, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen);
+	return m_PluginLua.PluginExtension_LuaCore_Exec(xhModule, pppHDRList, nListCount, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pInt_HTTPCode);
 }
 extern "C" bool PluginExtension_LuaCore_Get(XNETHANDLE xhModule, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc)
 {
@@ -99,9 +99,9 @@ extern "C" bool PluginExtension_Loader_GetForModule(LPCXSTR lpszModuleName, XCHA
 {
 	return m_PluginLoader.PluginExtension_Loader_GetForModule(lpszModuleName, ptszPluginName, ptszPluginVersion, ptszPluginAuthor, ptszPluginDesc);
 }
-extern "C" bool PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR*** pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+extern "C" bool PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, int* pInt_HTTPCode)
 {
-	return m_PluginLoader.PluginExtension_Loader_Exec(lpszMethodName, pppHDRList, nListCount, pInt_HTTPCode, ptszMsgBuffer, pInt_MsgLen);
+	return m_PluginLoader.PluginExtension_Loader_Exec(lpszMethodName, pppHDRList, nListCount, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pInt_HTTPCode);
 }
 extern "C" bool PluginExtension_Loader_Destory()
 {

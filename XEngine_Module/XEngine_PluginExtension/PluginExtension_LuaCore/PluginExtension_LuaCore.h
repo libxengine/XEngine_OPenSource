@@ -30,7 +30,7 @@ public:
 public:
 	bool PluginExtension_LuaCore_Init();
 	bool PluginExtension_LuaCore_Push(XNETHANDLE* pxhModule, LPCXSTR lpszPluginFile, XENGINE_PLUGINPARAM* pSt_PluginParameter = NULL);
-	bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0);
+	bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, int* pInt_HTTPCode = NULL);
 	bool PluginExtension_LuaCore_Get(XNETHANDLE xhModule, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc);
 	bool PluginExtension_LuaCore_Destroy();
 protected:

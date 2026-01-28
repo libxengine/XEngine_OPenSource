@@ -76,37 +76,37 @@ extern "C" bool PluginExtension_LibCore_Push(XNETHANDLE * pxhNet, LPCXSTR lpszPl
   类型：整数型
   可空：N
   意思：输入列表个数
- 参数.四：pInt_HTTPCode
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出返回的HTTPCODE值
- 参数.五：ptszMsgBuffer
+ 参数.四：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出负载的内容
- 参数.六：pInt_MsgLen
+ 参数.五：pInt_MsgLen
   In/Out：Out
   类型：整数型指针
   可空：N
   意思：输出内容大小
- 参数.七：lpszMsgBufer
+ 参数.六：lpszMsgBufer
   In/Out：Out
   类型：常量字符指针
   可空：Y
   意思：输入负载内容
- 参数.八：nMsgLen
+ 参数.七：nMsgLen
   In/Out：Out
   类型：整数型指针
   可空：Y
   意思：输入负载大小
+ 参数.八：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出返回的HTTPCODE值
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR * **pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0);
+extern "C" bool PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR * **pppHDRList, int nListCount, XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, int* pInt_HTTPCode = NULL);
 /********************************************************************
 函数名称：PluginExtension_LibCore_Get
 函数功能：获取插件基础信息函数
@@ -204,37 +204,37 @@ extern "C" bool PluginExtension_LuaCore_Push(XNETHANDLE* pxhModule, LPCXSTR lpsz
   类型：整数型
   可空：N
   意思：输入列表个数
- 参数.四：pInt_HTTPCode
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出返回的HTTPCODE值
- 参数.五：ptszMsgBuffer
+ 参数.四：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出负载的内容
- 参数.六：pInt_MsgLen
+ 参数.五：pInt_MsgLen
   In/Out：Out
   类型：整数型指针
   可空：N
   意思：输出内容大小
- 参数.七：lpszMsgBufer
+ 参数.六：lpszMsgBufer
   In/Out：Out
   类型：常量字符指针
   可空：Y
   意思：输入负载内容
- 参数.八：nMsgLen
+ 参数.七：nMsgLen
   In/Out：Out
   类型：整数型指针
   可空：Y
   意思：输入负载大小
+ 参数.八：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出返回的HTTPCODE值
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0);
+extern "C" bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, int* pInt_HTTPCode = NULL);
 /********************************************************************
 函数名称：PluginExtension_LuaCore_Get
 函数功能：获取插件基础信息函数
@@ -419,27 +419,42 @@ extern "C" bool PluginExtension_Loader_GetForModule(LPCXSTR lpszModuleName, XCHA
   类型：整数型
   可空：N
   意思：输入列表个数
- 参数.四：pInt_HTTPCode
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出返回的HTTPCODE值
- 参数.五：ptszMsgBuffer
+ 参数.四：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出负载的内容
- 参数.六：pInt_MsgLen
+ 参数.五：pInt_MsgLen
   In/Out：Out
   类型：整数型指针
   可空：N
   意思：输出内容大小
+ 参数.六：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出返回的HTTPCODE值
+ 参数.七：lpszMsgBufer
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要传递的内容
+ 参数.八：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入传递内容大小
+ 参数.九：pInt_HTTPCode
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出返回的HTTPCODE值
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR * **pppHDRList, int nListCount, int* pInt_HTTPCode, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" bool PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR * **pppHDRList, int nListCount, XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, int* pInt_HTTPCode = NULL);
 /********************************************************************
 函数名称：PluginExtension_Loader_Destory
 函数功能：销毁加载器

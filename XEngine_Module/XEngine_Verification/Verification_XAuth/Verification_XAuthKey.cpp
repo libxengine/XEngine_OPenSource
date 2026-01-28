@@ -71,11 +71,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKE
 	else
 	{
 		//解密
-#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 32
 		if (!Cryption_XCrypto_Decoder((LPCXBTR)tszENCodecBuffer, &nRet, (XBYTE *)tszDECodecBuffer, lpszKeyPass))
-#else
-		if (!Cryption_XCrypto_Decoder(tszENCodecBuffer, &nRet, tszDECodecBuffer, lpszKeyPass))
-#endif
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = Cryption_GetLastError();
@@ -170,11 +166,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 	}
 	else
 	{
-#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 32
 		if (!Cryption_XCrypto_Encoder((LPCXBTR)tszDECodecBuffer, &nSize, (XBYTE *)tszENCodecBuffer, lpszKeyPass))
-#else
-		if (!Cryption_XCrypto_Encoder(tszDECodecBuffer, &nSize, (XBYTE*)tszENCodecBuffer, lpszKeyPass))
-#endif
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = Cryption_GetLastError();
@@ -208,11 +200,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_MemoryRead(VERIFICATION_XAUTH
 	else
 	{
 		//解密
-#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 32
 		if (!Cryption_XCrypto_Decoder((LPCXBTR)tszENCodecBuffer, &nRet, (XBYTE *)tszDECodecBuffer, lpszKeyPass))
-#else
-		if (!Cryption_XCrypto_Decoder(tszENCodecBuffer, &nRet, tszDECodecBuffer, lpszKeyPass))
-#endif
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = Cryption_GetLastError();
@@ -274,11 +262,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_MemoryWrite(VERIFICATION_XAUT
 	}
 	else
 	{
-#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 32
 		if (!Cryption_XCrypto_Encoder((LPCXBTR)tszDECodecBuffer, &nSize, (XBYTE *)ptszMSGBuffer, lpszKeyPass))
-#else
-		if (!Cryption_XCrypto_Encoder(tszDECodecBuffer, &nSize, (XBYTE *)ptszMSGBuffer, lpszKeyPass))
-#endif
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = Cryption_GetLastError();

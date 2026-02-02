@@ -38,7 +38,12 @@ CVerification_XAuthNet::~CVerification_XAuthNet()
   类型：整数型指针
   可空：Y
   意思：输出验证类型
- 参数.四：enHWType
+ 参数.四：pInt_AvailablePoints
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出可用点数
+ 参数.五：enHWType
   In/Out：Out
   类型：枚举型
   可空：Y
@@ -48,7 +53,7 @@ CVerification_XAuthNet::~CVerification_XAuthNet()
   意思：是否成功
 备注：
 *********************************************************************/
-bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass /* = NULL */, int* pInt_Type /* = NULL */, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType /* = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD */)
+bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass /* = NULL */, int* pInt_Type /* = NULL */, int* pInt_AvailablePoints /* = NULL */, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType /* = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD */)
 {
 	Verification_IsErrorOccur = true;
 
@@ -127,12 +132,13 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_CODE;
 		return false;
 	}
-	if (NULL != pInt_Type)
+	if (!st_JsonRoot["type"].isNull() && (NULL != pInt_Type))
 	{
-		if (!st_JsonRoot["type"].isNull())
-		{
-			*pInt_Type = st_JsonRoot["type"].asInt();
-		}
+		*pInt_Type = st_JsonRoot["type"].asInt();
+	}
+	if (!st_JsonRoot["availablePoints"].isNull() && (NULL != pInt_AvailablePoints))
+	{
+		*pInt_AvailablePoints = st_JsonRoot["availablePoints"].asInt();
 	}
 	m_bLogin = true;
 	m_bAuth = true;

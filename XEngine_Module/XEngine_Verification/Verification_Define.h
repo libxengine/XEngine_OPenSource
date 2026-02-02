@@ -777,12 +777,22 @@ extern "C" bool Verification_XAuthKey_ReadMemory(LPCXSTR lpszMsgBuffer, int nMsg
   类型：整数型指针
   可空：Y
   意思：输出验证类型
+ 参数.四：pInt_AvailablePoints
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出可用点数
+ 参数.五：enHWType
+  In/Out：Out
+  类型：枚举型
+  可空：Y
+  意思：输入序列号类型
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL, int* pInt_Type = NULL, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD);
+extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL, int* pInt_Type = NULL, int* pInt_AvailablePoints = NULL, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD);
 /********************************************************************
 函数名称：Verification_XAuthNet_GetDCode
 函数功能：获取动态码

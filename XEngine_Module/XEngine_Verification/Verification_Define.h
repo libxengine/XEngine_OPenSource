@@ -792,7 +792,7 @@ extern "C" bool Verification_XAuthKey_ReadMemory(LPCXSTR lpszMsgBuffer, int nMsg
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL, int* pInt_Type = NULL, int* pInt_AvailablePoints = NULL, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD);
+extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass = NULL, int* pInt_Type = NULL, __int64x* pInt_AvailablePoints = NULL, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD);
 /********************************************************************
 函数名称：Verification_XAuthNet_GetDCode
 函数功能：获取动态码

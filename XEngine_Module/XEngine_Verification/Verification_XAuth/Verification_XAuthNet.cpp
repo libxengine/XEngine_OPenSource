@@ -53,7 +53,7 @@ CVerification_XAuthNet::~CVerification_XAuthNet()
   意思：是否成功
 备注：
 *********************************************************************/
-bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass /* = NULL */, int* pInt_Type /* = NULL */, int* pInt_AvailablePoints /* = NULL */, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType /* = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD */)
+bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass /* = NULL */, int* pInt_Type /* = NULL */, __int64x* pInt_AvailablePoints /* = NULL */, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType /* = ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD */)
 {
 	Verification_IsErrorOccur = true;
 
@@ -138,7 +138,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 	}
 	if (!st_JsonRoot["availablePoints"].isNull() && (NULL != pInt_AvailablePoints))
 	{
-		*pInt_AvailablePoints = st_JsonRoot["availablePoints"].asInt();
+		*pInt_AvailablePoints = st_JsonRoot["availablePoints"].asInt64();
 	}
 	m_bLogin = true;
 	m_bAuth = true;

@@ -137,7 +137,7 @@ extern "C" bool Verification_XAuthKey_ReadMemory(LPCXSTR lpszMsgBuffer, int nMsg
 {
 	return m_XAuthKeyVerification.Verification_XAuthKey_ReadMemory(lpszMsgBuffer, nMsgLen, pSt_AuthLocal);
 }
-extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass, int* pInt_Type, int* pInt_AvailablePoints, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType)
+extern "C" bool Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAddr, LPCXSTR lpszPass, int* pInt_Type, __int64x* pInt_AvailablePoints, ENUM_VERIFICATION_MODULE_HW_TYPE enHWType)
 {
 	return m_XAuthNetVerification.Verification_XAuthNet_TryRequest(lpszURLAddr, lpszPass, pInt_Type, pInt_AvailablePoints, enHWType);
 }

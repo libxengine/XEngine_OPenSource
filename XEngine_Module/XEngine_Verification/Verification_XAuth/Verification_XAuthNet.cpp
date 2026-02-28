@@ -786,12 +786,9 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 	{
 		XCHAR tszCodecBuffer[2048] = {};
 
-		st_ProtocolHdr.wCrypto = ENUM_XENGINE_PROTOCOLHDR_CRYPTO_TYPE_XCRYPT;
-#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 32
-		Cryption_XCrypto_Encoder((LPCXBTR)&st_AuthUser, (int*)&st_ProtocolHdr.unPacketSize, (XBYTE*)tszCodecBuffer, tszPassStr);
-#else
-		Cryption_XCrypto_Encoder((LPCXSTR)&st_AuthUser, (int*)&st_ProtocolHdr.unPacketSize, (XBYTE*)tszCodecBuffer, tszPassStr);
-#endif
+		st_ProtocolHdr.wCrypto = ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128;
+		Cryption_Api_CryptEncodec((LPCXBTR)&st_AuthUser, (XBYTE*)tszCodecBuffer, (int*)&st_ProtocolHdr.unPacketSize, tszPassStr, ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128);
+
 		memcpy(tszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
 		memcpy(tszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), tszCodecBuffer, st_ProtocolHdr.unPacketSize);
 
@@ -827,12 +824,9 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 		if (ENUM_XENGINE_PROTOCOLHDR_CRYPTO_TYPE_XCRYPT == st_ProtocolHdr.wCrypto)
 		{
 			XCHAR tszCodecBuffer[2048] = {};
-			st_ProtocolHdr.wCrypto = ENUM_XENGINE_PROTOCOLHDR_CRYPTO_TYPE_XCRYPT;
-#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 32
-			Cryption_XCrypto_Decoder((LPCXBTR)ptszMsgBuffer, &nMsgLen, (XBYTE *)tszCodecBuffer, tszPassStr);
-#else
-			Cryption_XCrypto_Decoder(ptszMsgBuffer, &nMsgLen, tszCodecBuffer, tszPassStr);
-#endif
+			st_ProtocolHdr.wCrypto = ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128;
+			Cryption_Api_CryptDecodec((LPCXBTR)ptszMsgBuffer, (XBYTE*)tszCodecBuffer, &nMsgLen, tszPassStr, ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128);
+
 			memcpy(&st_UserInfo, tszCodecBuffer, sizeof(VERIFICATION_USERINFO));
 		}
 		else
@@ -947,11 +941,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_HTTPRequest(LPCXSTR lpszURLAd
 		else
 		{
 			XCHAR tszENCodec[2048] = {};
-#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 32
-			if (!Cryption_XCrypto_Encoder((LPCXBTR)lpszMSGBuffer, &nHTTPLen, (XBYTE*)tszENCodec, lpszPassword))
-#else
-			if (!Cryption_XCrypto_Encoder(lpszMSGBuffer, &nHTTPLen, (XBYTE*)tszENCodec, lpszPassword))
-#endif
+			if (!Cryption_Api_CryptEncodec((LPCXBTR)lpszMSGBuffer, (XBYTE*)tszENCodec, &nHTTPLen, lpszPassword, ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128))
 			{
 				Verification_IsErrorOccur = true;
 				Verification_dwErrorCode = Cryption_GetLastError();
@@ -975,11 +965,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_HTTPRequest(LPCXSTR lpszURLAd
 	else
 	{
 		XCHAR tszDECodec[2048] = {};
-#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 32
-		if (!Cryption_XCrypto_Decoder((LPCXBTR)ptszHTTPBuffer, &nHTTPLen, (XBYTE *)tszDECodec, lpszPassword))
-#else
-		if (!Cryption_XCrypto_Decoder(ptszHTTPBuffer, &nHTTPLen, tszDECodec, lpszPassword))
-#endif
+		if (!Cryption_Api_CryptDecodec((LPCXBTR)ptszHTTPBuffer, (XBYTE*)tszDECodec, &nHTTPLen, lpszPassword, ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128))
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = Cryption_GetLastError();
@@ -1039,11 +1025,7 @@ XHTHREAD XCALLBACK CVerification_XAuthNet::Verification_XAuthNet_Thread(XPVOID l
 		if (nMsgLen > 0 && _tcsxlen(pClass_This->tszPassStr) > 0)
 		{
 			//只有有后续数据的情况才需要解密
-#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 32
-			Cryption_XCrypto_Decoder((LPCXBTR)ptszMsgBuffer, &nMsgLen, (XBYTE *)tszMsgBuffer, pClass_This->tszPassStr);
-#else
-			Cryption_XCrypto_Decoder(ptszMsgBuffer, &nMsgLen, tszMsgBuffer, pClass_This->tszPassStr);
-#endif
+			Cryption_Api_CryptDecodec((LPCXBTR)ptszMsgBuffer, (XBYTE*)tszMsgBuffer, &nMsgLen, pClass_This->tszPassStr, ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128);
 		}
 		else
 		{

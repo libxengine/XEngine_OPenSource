@@ -71,7 +71,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKE
 	else
 	{
 		//解密
-		if (!Cryption_XCrypto_Decoder((LPCXBTR)tszENCodecBuffer, &nRet, (XBYTE *)tszDECodecBuffer, lpszKeyPass))
+		if (!Cryption_Api_CryptDecodec((LPCXBTR)tszENCodecBuffer, (XBYTE*)tszDECodecBuffer, &nRet, lpszKeyPass, ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128))
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = Cryption_GetLastError();
@@ -166,7 +166,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 	}
 	else
 	{
-		if (!Cryption_XCrypto_Encoder((LPCXBTR)tszDECodecBuffer, &nSize, (XBYTE *)tszENCodecBuffer, lpszKeyPass))
+		if (!Cryption_Api_CryptEncodec((LPCXBTR)tszDECodecBuffer, (XBYTE*)tszENCodecBuffer, &nSize, lpszKeyPass, ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128))
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = Cryption_GetLastError();
@@ -200,7 +200,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_MemoryRead(VERIFICATION_XAUTH
 	else
 	{
 		//解密
-		if (!Cryption_XCrypto_Decoder((LPCXBTR)tszENCodecBuffer, &nRet, (XBYTE *)tszDECodecBuffer, lpszKeyPass))
+		if (!Cryption_Api_CryptDecodec((LPCXBTR)tszENCodecBuffer, (XBYTE*)tszDECodecBuffer, &nRet, lpszKeyPass, ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128))
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = Cryption_GetLastError();
@@ -262,7 +262,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_MemoryWrite(VERIFICATION_XAUT
 	}
 	else
 	{
-		if (!Cryption_XCrypto_Encoder((LPCXBTR)tszDECodecBuffer, &nSize, (XBYTE *)ptszMSGBuffer, lpszKeyPass))
+		if (!Cryption_Api_CryptEncodec((LPCXBTR)tszDECodecBuffer, (XBYTE*)ptszMSGBuffer, &nSize, lpszKeyPass, ENUM_XENGINE_CRYPTION_SYMMETRIC_AES128))
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = Cryption_GetLastError();

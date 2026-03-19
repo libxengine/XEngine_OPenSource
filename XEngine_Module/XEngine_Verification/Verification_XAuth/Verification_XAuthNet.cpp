@@ -918,9 +918,11 @@ bool CVerification_XAuthNet::Verification_XAuthNet_HTTPRequest(LPCXSTR lpszURLAd
 	//请求
 	int nHTTPLen = *pInt_MSGLen;
 	XCHAR* ptszHTTPBuffer = NULL;
+	XCLIENT_APIHTTP st_HTTPParam = {};
+	st_HTTPParam.nTimeOperator = 3000;
 	if (NULL == lpszMSGBuffer)
 	{
-		if (!APIClient_Http_Request(_X("GET"), lpszURLAddr, NULL, &nHTTPCode, &ptszHTTPBuffer, &nHTTPLen))
+		if (!APIClient_Http_Request(_X("GET"), lpszURLAddr, NULL, &nHTTPCode, &ptszHTTPBuffer, &nHTTPLen, NULL, NULL, &st_HTTPParam))
 		{
 			Verification_IsErrorOccur = true;
 			Verification_dwErrorCode = APIClient_GetLastError();
@@ -931,7 +933,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_HTTPRequest(LPCXSTR lpszURLAd
 	{
 		if (NULL == lpszPassword)
 		{
-			if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, lpszMSGBuffer, &nHTTPCode, &ptszHTTPBuffer, &nHTTPLen, lpszCustomHdr))
+			if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, lpszMSGBuffer, &nHTTPCode, &ptszHTTPBuffer, &nHTTPLen, lpszCustomHdr, NULL, &st_HTTPParam))
 			{
 				Verification_IsErrorOccur = true;
 				Verification_dwErrorCode = APIClient_GetLastError();
@@ -948,7 +950,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_HTTPRequest(LPCXSTR lpszURLAd
 				BaseLib_Memory_FreeCStyle((XPPMEM)&ptszHTTPBuffer);
 				return false;
 			}
-			if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, tszENCodec, &nHTTPCode, &ptszHTTPBuffer, &nHTTPLen, lpszCustomHdr))
+			if (!APIClient_Http_Request(_X("POST"), lpszURLAddr, tszENCodec, &nHTTPCode, &ptszHTTPBuffer, &nHTTPLen, lpszCustomHdr, NULL, &st_HTTPParam))
 			{
 				Verification_IsErrorOccur = true;
 				Verification_dwErrorCode = APIClient_GetLastError();

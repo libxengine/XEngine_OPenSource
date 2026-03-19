@@ -53,7 +53,6 @@ extern XLONG PluginExtension_dwErrorCode;
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
-
 #define XFreeModule FreeLibrary
 #else
 #define XFreeModule dlclose

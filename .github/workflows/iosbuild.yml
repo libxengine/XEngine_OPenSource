@@ -18,7 +18,7 @@ jobs:
     
     steps:
       - name: Checkout main repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set TERM variable
         run: echo "TERM=xterm" >> $GITHUB_ENV

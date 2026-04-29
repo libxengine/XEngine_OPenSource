@@ -63,7 +63,7 @@ bool CAIApi_Vision::AIApi_Vision_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl
 		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_VISION_PARAMENT;
 		return false;
 	}
-	AICLIENT_VISION *pSt_AIClient = new AICLIENT_VISION;
+	AICLIENT_VISION *pSt_AIClient = new(std::nothrow) AICLIENT_VISION;
 	if (NULL == pSt_AIClient)
 	{
 		AIApi_IsErrorOccur = true;

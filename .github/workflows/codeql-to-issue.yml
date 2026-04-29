@@ -1,0 +1,39 @@
+name: Auto Issue from CodeQL
+
+on:
+  code_scanning_alert:
+    types: [created]
+
+jobs:
+  create_issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write  
+    steps:
+      - name: Create GitHub Issue
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const alert = context.payload.alert;
+            
+            // 组装 Issue 的标题和内容
+            const issueTitle = `[安全扫描] ${alert.rule.description}`;
+            const issueBody = `
+            ### 🚨 CodeQL 发现新的安全警告
+            
+            **问题类型:** ${alert.rule.name}
+            **严重程度:** ${alert.rule.security_severity_level || alert.rule.severity}
+            **文件路径:** \`${alert.most_recent_instance.location.path}\`
+            **代码行数:** 第 ${alert.most_recent_instance.location.start_line} 行
+            
+            [👉 点击此处查看详细报告与修复建议](${alert.html_url})
+            `;
+            
+            // 调用 GitHub API 创建 Issue
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: issueTitle,
+              body: issueBody,
+              labels: ['security', 'bug', 'codeql']
+            });

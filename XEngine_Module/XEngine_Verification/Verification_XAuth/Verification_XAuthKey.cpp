@@ -1154,30 +1154,10 @@ bool CVerification_XAuthKey::Verification_XAuthKey_ReadKey(LPCXSTR lpszFileKey, 
 		Verification_dwErrorCode = SystemConfig_GetLastError();
 		return false;
 	}
-	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthReg"), _X("tszRegisterTime"), pSt_AuthLocal->st_AuthRegInfo.tszRegisterTime) < 0)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = SystemConfig_GetLastError();
-		return false;
-	}
-	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthReg"), _X("tszLeftTime"), pSt_AuthLocal->st_AuthRegInfo.tszLeftTime) < 0)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = SystemConfig_GetLastError();
-		return false;
-	}
-	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthReg"), _X("tszStartTime"), pSt_AuthLocal->st_AuthRegInfo.tszStartTime) < 0)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = SystemConfig_GetLastError();
-		return false;
-	}
-	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthReg"), _X("tszExpiryTime"), pSt_AuthLocal->st_AuthRegInfo.tszExpiryTime) < 0)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = SystemConfig_GetLastError();
-		return false;
-	}
+	SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthReg"), _X("tszRegisterTime"), pSt_AuthLocal->st_AuthRegInfo.tszRegisterTime);
+	SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthReg"), _X("tszLeftTime"), pSt_AuthLocal->st_AuthRegInfo.tszLeftTime);
+	SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthReg"), _X("tszStartTime"), pSt_AuthLocal->st_AuthRegInfo.tszStartTime);
+	SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthReg"), _X("tszExpiryTime"), pSt_AuthLocal->st_AuthRegInfo.tszExpiryTime);
 	//临时序列号
 	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthSerial"), _X("tszTimeSerial"), pSt_AuthLocal->st_AuthSerial.st_TimeLimit.tszTimeSerial) <= 0)
 	{
@@ -1218,18 +1198,8 @@ bool CVerification_XAuthKey::Verification_XAuthKey_ReadKey(LPCXSTR lpszFileKey, 
 		Verification_dwErrorCode = SystemConfig_GetLastError();
 		return false;
 	}
-	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthUser"), _X("tszCustom"), pSt_AuthLocal->st_AuthUserInfo.tszCustom) < 0)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = SystemConfig_GetLastError();
-		return false;
-	}
-	if (SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("TimeList"), _X("TimeNumber"), pSt_AuthLocal->tszTimeList) < 0)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = SystemConfig_GetLastError();
-		return false;
-	}
+	SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("AuthUser"), _X("tszCustom"), pSt_AuthLocal->st_AuthUserInfo.tszCustom);
+	SystemConfig_File_ReadProfileFromFile(lpszFileKey, _X("TimeList"), _X("TimeNumber"), pSt_AuthLocal->tszTimeList);
 	return true;
 }
 /********************************************************************

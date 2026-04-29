@@ -1,6 +1,5 @@
 ﻿#include "pch.h"
 #include "AIApi_Chat.h"
-#include <new>
 /********************************************************************
 //    Created:     2025/05/29  13:57:18
 //    File Name:   D:\XEngine_OPenSource\XEngine_Module\XEngine_AIApi\AIApi_Chat\AIApi_Chat.cpp
@@ -118,7 +117,7 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
 	{
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = APIClient_GetLastError();
-		APIClient_Http_Destroy(pSt_AIClient->xhToken);
+		APIClient_Http_Close(pSt_AIClient->xhToken);
 		free(pSt_AIClient->ptszMSGBuffer);
 		delete pSt_AIClient;
 		return false;
@@ -127,7 +126,7 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
 	{
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = APIClient_GetLastError();
-		APIClient_Http_Destroy(pSt_AIClient->xhToken);
+		APIClient_Http_Close(pSt_AIClient->xhToken);
 		free(pSt_AIClient->ptszMSGBuffer);
 		delete pSt_AIClient;
 		return false;

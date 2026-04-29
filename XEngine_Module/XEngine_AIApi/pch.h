@@ -18,6 +18,7 @@
 #include <json/json.h>
 #include <thread>
 #include <memory>
+#include <new>
 #include <list>
 #include <shared_mutex>
 #include <unordered_map>

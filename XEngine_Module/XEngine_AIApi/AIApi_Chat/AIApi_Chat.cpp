@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "AIApi_Chat.h"
+#include <new>
 /********************************************************************
 //    Created:     2025/05/29  13:57:18
 //    File Name:   D:\XEngine_OPenSource\XEngine_Module\XEngine_AIApi\AIApi_Chat\AIApi_Chat.cpp
@@ -68,7 +69,7 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
 		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_PARAMENT;
 		return false;
 	}
-	AICLIENT_CHAT *pSt_AIClient = new AICLIENT_CHAT;
+	AICLIENT_CHAT *pSt_AIClient = new (std::nothrow) AICLIENT_CHAT;
 	if (NULL == pSt_AIClient)
 	{
 		AIApi_IsErrorOccur = true;
@@ -84,11 +85,12 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
 	_xstrcpy(pSt_AIClient->tszAPIUrl, lpszAPIUrl, sizeof(pSt_AIClient->tszAPIUrl));
 	_xsntprintf(pSt_AIClient->tszAPIHdr, sizeof(pSt_AIClient->tszAPIHdr), _X("Content-Type: application/json\r\nAuthorization: Bearer %s"), lpszAPIKey);
 
-	pSt_AIClient->pStl_ListHistory = std::make_unique<std::list<AICLIENT_HISTORY>>();
+	pSt_AIClient->pStl_ListHistory.reset(new (std::nothrow) std::list<AICLIENT_HISTORY>());
 	if (NULL == pSt_AIClient->pStl_ListHistory)
 	{
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_MALLOC;
+		delete pSt_AIClient;
 		return false;
 	}
 	pSt_AIClient->ptszMSGBuffer = (XCHAR*)malloc(XENGINE_MEMORY_SIZE_MAX);
@@ -96,6 +98,7 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
 	{
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_CHAT_MALLOC;
+		delete pSt_AIClient;
 		return false;
 	}
 	memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
@@ -104,6 +107,8 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
 	{
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = APIClient_GetLastError();
+		free(pSt_AIClient->ptszMSGBuffer);
+		delete pSt_AIClient;
 		return false;
 	}
 	XCLIENT_APIHTTP st_HTTPParam = {};
@@ -113,12 +118,18 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
 	{
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = APIClient_GetLastError();
+		APIClient_Http_Destroy(pSt_AIClient->xhToken);
+		free(pSt_AIClient->ptszMSGBuffer);
+		delete pSt_AIClient;
 		return false;
 	}
 	if (!APIClient_Http_SetUrl(pSt_AIClient->xhToken, lpszAPIUrl, _X("POST")))
 	{
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = APIClient_GetLastError();
+		APIClient_Http_Destroy(pSt_AIClient->xhToken);
+		free(pSt_AIClient->ptszMSGBuffer);
+		delete pSt_AIClient;
 		return false;
 	}
 	*pxhToken = pSt_AIClient->xhToken;

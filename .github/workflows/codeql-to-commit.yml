@@ -75,11 +75,12 @@ jobs:
               BRANCH="autofix/${SEC_LEVEL}/alert-${NUMBER}"
 
               # 检查分支是否已存在
-              BRANCH_EXISTS=$(gh api \
+              BRANCH_STATUS=$(gh api \
                 /repos/$OWNER/$REPO/git/refs/heads/$BRANCH \
-                --jq '.ref' 2>/dev/null || echo "")
+                --silent 2>/dev/null && echo "exists" || echo "not_found")
+              echo "DEBUG branch status: $BRANCH_STATUS"
 
-              if [ -n "$BRANCH_EXISTS" ]; then
+              if [ "$BRANCH_STATUS" = "exists" ]; then
                 echo "⏭️ Branch $BRANCH already exists, skipping"
                 continue
               fi

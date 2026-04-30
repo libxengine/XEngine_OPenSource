@@ -11,7 +11,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "framework.h"
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,3 +45,4 @@ extern XLONG Session_dwErrorCode;
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #endif
+#endif // PCH_H

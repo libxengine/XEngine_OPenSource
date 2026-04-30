@@ -152,7 +152,20 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 		return false;
 	}
 	//打开文件
-	FILE* pSt_File = _xtfopen(lpszKeyFile, _X("wb"));
+	FILE* pSt_File = NULL;
+#ifdef _MSC_BUILD
+	pSt_File = _xtfopen(lpszKeyFile, _X("wb"));
+#else
+	int nFD = open(lpszKeyFile, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+	if (-1 != nFD)
+	{
+		pSt_File = fdopen(nFD, "wb");
+		if (NULL == pSt_File)
+		{
+			close(nFD);
+		}
+	}
+#endif
 	if (NULL == pSt_File)
 	{
 		Verification_IsErrorOccur = true;

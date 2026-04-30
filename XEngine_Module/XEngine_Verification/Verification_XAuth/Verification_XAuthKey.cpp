@@ -479,16 +479,24 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY
 {
 	Verification_IsErrorOccur = false;
 
+	// 初始化流程说明：
+	// 1) 入参有效性检查，失败时设置模块错误码并返回 false；
+	// 2) 对关键网络配置设置默认值（仅在调用方未提供时生效）；
+	// 3) 对应用信息及其余字段进行安全默认初始化，保证结构可直接用于后续鉴权流程。
+
+	// 参数必须有效：该结构用于输出初始化结果，不能为空。
 	if (NULL == pSt_XAuthInfo)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
+	// 服务地址为空时使用内置默认地址，保证最小可用配置。
 	if (_tcsxlen(pSt_XAuthInfo->tszAddr) <= 0)
 	{
 		_xstprintf(pSt_XAuthInfo->tszAddr, _X("http://app.libxengine.com"));
 	}
+	// 端口为 0 表示调用方未设置，回退到默认服务端口。
 	if (0 == pSt_XAuthInfo->nPort)
 	{
 		pSt_XAuthInfo->nPort = 5302;

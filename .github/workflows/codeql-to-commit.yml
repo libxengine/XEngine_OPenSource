@@ -19,12 +19,12 @@ jobs:
           GH_TOKEN: ${{ secrets.AUTOFIX_TOKEN }}
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
-        run: |
-          # 获取默认分支名
+    run: |
           DEFAULT_BRANCH=$(gh api /repos/$OWNER/$REPO --jq '.default_branch')
           echo "Default branch: $DEFAULT_BRANCH"
 
-          for SEVERITY in "critical" "error" "warning"; do
+          # ← 去掉 "warning"，只处理 critical 和 error（High）
+          for SEVERITY in "critical" "error"; do
             echo "====== Processing severity: $SEVERITY ======"
 
             ALERTS=$(gh api \
@@ -68,23 +68,50 @@ jobs:
               if [ "$EXISTING" = "success" ]; then
                 BRANCH="autofix/${SEVERITY}/alert-${NUMBER}"
 
-                # 获取默认分支最新的 SHA
                 SHA=$(gh api /repos/$OWNER/$REPO/git/refs/heads/$DEFAULT_BRANCH \
                   --jq '.object.sha')
 
-                # 先创建分支
+                # 创建分支
                 gh api -X POST /repos/$OWNER/$REPO/git/refs \
                   -f ref="refs/heads/$BRANCH" \
                   -f sha="$SHA" 2>/dev/null && \
                   echo "🌿 Created branch: $BRANCH" || \
                   echo "🌿 Branch already exists: $BRANCH"
 
-                # 再提交 fix 到该分支
+                # 提交 fix
                 gh api -X POST \
                   /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix/commits \
-                  -f target_ref="$BRANCH" && \
-                echo "✅ Committed fix to branch: $BRANCH" || \
-                echo "❌ Failed to commit fix for alert #$NUMBER"
+                  -f target_ref="$BRANCH" || {
+                  echo "❌ Failed to commit fix for alert #$NUMBER"
+                  continue
+                }
+                echo "✅ Committed fix to branch: $BRANCH"
+
+                # 获取 alert 标题用于 PR 描述
+                ALERT_TITLE=$(gh api \
+                  /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER \
+                  --jq '.rule.description')
+
+                # 自动创建 PR（Draft 状态，需要你审核后才能 merge）
+                gh pr create \
+                  --repo "$OWNER/$REPO" \
+                  --base "$DEFAULT_BRANCH" \
+                  --head "$BRANCH" \
+                  --draft \
+                  --title "[Autofix][$SEVERITY] Alert #$NUMBER: $ALERT_TITLE" \
+                  --body "## 🤖 Copilot Autofix 自动修复
+
+                **Alert ID:** #$NUMBER
+                **Severity:** $SEVERITY
+                **Rule:** $ALERT_TITLE
+
+                此 PR 由 Copilot Autofix 自动生成，请审核后再 merge。
+
+                - [ ] 确认修复逻辑正确
+                - [ ] 确认没有引入新问题
+                - [ ] CI 测试通过" && \
+                echo "🎉 PR created for alert #$NUMBER" || \
+                echo "⚠️ PR already exists for alert #$NUMBER"
 
               else
                 echo "⚠️ Autofix not available for alert #$NUMBER (status: $EXISTING), skipping"

@@ -1,4 +1,4 @@
-name: Auto Copilot Autofix
+name: codeql to issue
 
 on:
   workflow_run:

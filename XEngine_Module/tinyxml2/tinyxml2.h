@@ -165,8 +165,7 @@ public:
     }
 
     void SetInternedStr( const char* str ) {
-        Reset();
-        _start = const_cast<char*>(str);
+        SetStr( str );
     }
 
     void SetStr( const char* str, int flags=0 );

@@ -8,7 +8,7 @@ jobs:
   create_issue:
     runs-on: ubuntu-latest
     permissions:
-      issues: write  
+      issues: write 
     steps:
       - name: Create GitHub Issue
         uses: actions/github-script@v9
@@ -16,24 +16,40 @@ jobs:
           script: |
             const alert = context.payload.alert;
             
-            // 组装 Issue 的标题和内容
-            const issueTitle = `[安全扫描] ${alert.rule.description}`;
+            // 1. 获取当前警报的严重级别 (转成小写以防大小写不统一)
+            const severity = (alert.rule.security_severity_level || alert.rule.severity || 'unknown').toLowerCase();
+            
+            // 2. 定义我们允许提 Issue 的白名单级别
+            // 注意：加入了 'critical' (极高) 以及 'error' (某些规则可能使用这个词)
+            const allowedSeverities = ['critical', 'high', 'medium', 'error'];
+            
+            // 3. 拦截：如果当前级别不在白名单里，直接退出脚本，不创建 Issue
+            if (!allowedSeverities.includes(severity)) {
+              console.log(`[跳过] 当前漏洞级别为 '${severity}'，未达到提 Issue 的标准。`);
+              return; // 直接 return，后面的代码就不会执行了
+            }
+            
+            console.log(`[通过] 发现级别为 '${severity}' 的漏洞，准备创建 Issue...`);
+
+            // 4. 组装 Issue 的标题和内容
+            const issueTitle = `[安全扫描 - ${severity.toUpperCase()}] ${alert.rule.description}`;
             const issueBody = `
             ### 🚨 CodeQL 发现新的安全警告
             
             **问题类型:** ${alert.rule.name}
-            **严重程度:** ${alert.rule.security_severity_level || alert.rule.severity}
+            **严重程度:** ${severity.toUpperCase()}
             **文件路径:** \`${alert.most_recent_instance.location.path}\`
             **代码行数:** 第 ${alert.most_recent_instance.location.start_line} 行
             
             [👉 点击此处查看详细报告与修复建议](${alert.html_url})
             `;
             
-            // 调用 GitHub API 创建 Issue
+            // 5. 调用 GitHub API 创建 Issue
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: issueTitle,
               body: issueBody,
-              labels: ['security', 'bug', 'codeql']
+              // 根据需要可以打上不同的 tag，比如高危漏洞打个紧急标签
+              labels: ['security', 'bug', 'codeql', `severity:${severity}`]
             });

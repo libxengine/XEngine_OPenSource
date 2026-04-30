@@ -1,0 +1,82 @@
+# .github/workflows/auto-autofix.yml
+name: Auto Copilot Autofix (High & Medium Only)
+
+on:
+  workflow_run:
+    workflows: ["CodeQL"]
+    types: [completed]
+
+jobs:
+  auto-fix:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: read
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Trigger Autofix for High & Medium alerts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          for SEVERITY in "error" "warning"; do
+            echo "====== Processing severity: $SEVERITY ======"
+
+            # 只获取 high（error）和 medium（warning）级别的 open alerts
+            ALERTS=$(gh api \
+              "/repos/$OWNER/$REPO/code-scanning/alerts?severity=$SEVERITY&state=open&per_page=100" \
+              --jq '[.[] | .number]')
+
+            COUNT=$(echo $ALERTS | jq 'length')
+            echo "Found $COUNT alerts with severity: $SEVERITY"
+
+            if [ "$COUNT" -eq 0 ]; then
+              continue
+            fi
+
+            for NUMBER in $(echo $ALERTS | jq -r '.[]'); do
+              echo "--- Alert #$NUMBER ($SEVERITY) ---"
+
+              # 检查是否已经有 autofix
+              EXISTING=$(gh api \
+                /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
+                --jq '.status' 2>/dev/null || echo "none")
+
+              if [ "$EXISTING" = "succeeded" ]; then
+                echo "✅ Fix already exists, committing directly..."
+              else
+                echo "⏳ Generating fix..."
+                gh api -X POST \
+                  /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix || {
+                  echo "⚠️ Failed to trigger autofix for #$NUMBER, skipping"
+                  continue
+                }
+
+                # 轮询等待 fix 生成（最多等 90 秒）
+                for i in 1 2 3; do
+                  sleep 30
+                  EXISTING=$(gh api \
+                    /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
+                    --jq '.status' 2>/dev/null || echo "none")
+                  echo "  Attempt $i: status = $EXISTING"
+                  [ "$EXISTING" = "succeeded" ] && break
+                done
+              fi
+
+              if [ "$EXISTING" = "succeeded" ]; then
+                BRANCH="autofix/${SEVERITY}/alert-${NUMBER}"
+
+                # 提交 fix 到新分支
+                gh api -X POST \
+                  /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix/commits \
+                  -f target_ref="$BRANCH" && \
+                echo "✅ Committed fix to branch: $BRANCH" || \
+                echo "❌ Failed to commit fix for alert #$NUMBER"
+              else
+                echo "⚠️ Autofix not available for alert #$NUMBER (status: $EXISTING), skipping"
+              fi
+
+            done
+          done

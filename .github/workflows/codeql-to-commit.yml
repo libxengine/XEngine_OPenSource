@@ -19,7 +19,7 @@ jobs:
           GH_TOKEN: ${{ secrets.AUTOFIX_TOKEN }}
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
-    run: |
+        run: |
           DEFAULT_BRANCH=$(gh api /repos/$OWNER/$REPO --jq '.default_branch')
           echo "Default branch: $DEFAULT_BRANCH"
 

@@ -846,8 +846,6 @@ class JSON_API ValueConstIterator : public ValueIteratorBase {
 
 public:
   using value_type = const Value;
-  // typedef unsigned int size_t;
-  // typedef int difference_type;
   using reference = const Value&;
   using pointer = const Value*;
   using SelfType = ValueConstIterator;

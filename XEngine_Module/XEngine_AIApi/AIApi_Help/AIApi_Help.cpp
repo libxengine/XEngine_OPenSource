@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
 #include "AIApi_Help.h"
+#include <fcntl.h>
+#include <io.h>
+#include <sys/stat.h>
 /********************************************************************
 //    Created:     2025/07/10  15:46:31
 //    File Name:   D:\XEngine_OPenSource\XEngine_Module\XEngine_AIApi\AIApi_Help\AIApi_Help.cpp
@@ -205,9 +208,17 @@ bool CAIApi_Help::AIApi_Help_Base64DecodecFile(LPCXSTR lpszMSGBuffer, int nMSGLe
 		AIApi_dwErrorCode = Cryption_GetLastError();
 		return false;
 	}
-	FILE* pSt_File = _xtfopen(lpszFileName, _X("wb"));
+	int nFD = _open(lpszFileName, _O_WRONLY | _O_CREAT | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+	if (-1 == nFD)
+	{
+		AIApi_IsErrorOccur = true;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_HELP_OPENFILE;
+		return false;
+	}
+	FILE* pSt_File = _fdopen(nFD, "wb");
 	if (NULL == pSt_File)
 	{
+		_close(nFD);
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_HELP_OPENFILE;
 		return false;

@@ -205,9 +205,17 @@ bool CAIApi_Help::AIApi_Help_Base64DecodecFile(LPCXSTR lpszMSGBuffer, int nMSGLe
 		AIApi_dwErrorCode = Cryption_GetLastError();
 		return false;
 	}
-	FILE* pSt_File = _xtfopen(lpszFileName, _X("wb"));
+	int nFD = open(lpszFileName, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+	if (nFD < 0)
+	{
+		AIApi_IsErrorOccur = true;
+		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_HELP_OPENFILE;
+		return false;
+	}
+	FILE* pSt_File = fdopen(nFD, "wb");
 	if (NULL == pSt_File)
 	{
+		close(nFD);
 		AIApi_IsErrorOccur = true;
 		AIApi_dwErrorCode = ERROR_XENGINE_MODULE_AIAPI_HELP_OPENFILE;
 		return false;

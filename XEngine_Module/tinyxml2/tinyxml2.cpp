@@ -955,6 +955,8 @@ XMLNode* XMLNode::InsertEndChild( XMLNode* addThis )
         addThis->_prev = 0;
         addThis->_next = 0;
     }
+    TIXMLASSERT( this->_document != 0 );
+    TIXMLASSERT( addThis->_document == this->_document );
     addThis->_parent = this;
     return addThis;
 }
@@ -986,6 +988,8 @@ XMLNode* XMLNode::InsertFirstChild( XMLNode* addThis )
         addThis->_prev = 0;
         addThis->_next = 0;
     }
+    TIXMLASSERT( this->_document != 0 );
+    TIXMLASSERT( addThis->_document == this->_document );
     addThis->_parent = this;
     return addThis;
 }

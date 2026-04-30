@@ -3,7 +3,7 @@ name: Auto Copilot Autofix (High & Medium Only)
 
 on:
   workflow_run:
-    workflows: ["CodeQL"]
+    workflows: ["CodeQL Advanced"]
     types: [completed]
 
 jobs:

@@ -176,7 +176,6 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 		fwrite(tszENCodecBuffer, 1, nSize, pSt_File);
 	}
 	fclose(pSt_File);
-	SET_FILE_PERMISSION(lpszKeyFile);
 
 	return true;
 }

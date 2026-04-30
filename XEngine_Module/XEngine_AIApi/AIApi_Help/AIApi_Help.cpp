@@ -215,8 +215,6 @@ bool CAIApi_Help::AIApi_Help_Base64DecodecFile(LPCXSTR lpszMSGBuffer, int nMSGLe
 	fwrite(ptszMSGBuffer, 1, nMSGLen, pSt_File);
 	fclose(pSt_File);
 
-	SET_FILE_PERMISSION(lpszFileName);
-
 	free(ptszMSGBuffer);
 	ptszMSGBuffer = NULL;
 	return true;

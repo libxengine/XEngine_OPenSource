@@ -74,19 +74,6 @@ jobs:
             if [ "$EXISTING" = "success" ]; then
               BRANCH="autofix/${SEC_LEVEL}/alert-${NUMBER}"
 
-              # 检查该分支是否已有 open 状态的 PR
-              EXISTING_PR=$(gh pr list \
-                --repo "$OWNER/$REPO" \
-                --head "$BRANCH" \
-                --state open \
-                --json number \
-                --jq '.[0].number // empty')
-
-              if [ -n "$EXISTING_PR" ]; then
-                echo "⏭️ PR #$EXISTING_PR already exists for alert #$NUMBER, skipping"
-                continue
-              fi
-
               # 检查分支是否已存在
               BRANCH_EXISTS=$(gh api \
                 /repos/$OWNER/$REPO/git/refs/heads/$BRANCH \
@@ -96,7 +83,7 @@ jobs:
                 echo "⏭️ Branch $BRANCH already exists, skipping"
                 continue
               fi
-              
+
               SHA=$(gh api /repos/$OWNER/$REPO/git/refs/heads/$DEFAULT_BRANCH \
                 --jq '.object.sha')
 

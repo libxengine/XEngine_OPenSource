@@ -21,7 +21,6 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <sys/stat.h>
 #include <json/json.h>
 #include <shared_mutex>
 #include <thread>
@@ -62,15 +61,6 @@
 *********************************************************************/
 extern bool Verification_IsErrorOccur;
 extern XLONG Verification_dwErrorCode;
-
-#ifdef _MSC_BUILD
-#include <io.h>
-#define SET_FILE_PERMISSION(path) _chmod(path, _S_IREAD | _S_IWRITE)
-#else
-#include <unistd.h>
-// 0644: owner rw, group r, other r
-#define SET_FILE_PERMISSION(path) chmod(path, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
-#endif
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")

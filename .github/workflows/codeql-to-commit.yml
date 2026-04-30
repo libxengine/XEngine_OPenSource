@@ -1,6 +1,7 @@
 name: Auto Copilot Autofix (High & Medium Only)
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["CodeQL Advanced"]
     types: [completed]
@@ -23,23 +24,24 @@ jobs:
           DEFAULT_BRANCH=$(gh api /repos/$OWNER/$REPO --jq '.default_branch')
           echo "Default branch: $DEFAULT_BRANCH"
 
-          # ← 去掉 "warning"，只处理 critical 和 error（High）
-          for SEVERITY in "critical" "error"; do
-            echo "====== Processing severity: $SEVERITY ======"
+          # 用 security_severity_level 过滤，对应界面上的 Critical/High/Medium
+          for SEC_LEVEL in "critical" "high" "medium"; do
+            echo "====== Processing security_severity_level: $SEC_LEVEL ======"
 
+            # ← 关键改动：换成 security_severity_level 参数
             ALERTS=$(gh api \
-              "/repos/$OWNER/$REPO/code-scanning/alerts?severity=$SEVERITY&state=open&per_page=100" \
+              "/repos/$OWNER/$REPO/code-scanning/alerts?security_severity_level=$SEC_LEVEL&state=open&per_page=100" \
               --jq '[.[] | .number]')
 
             COUNT=$(echo $ALERTS | jq 'length')
-            echo "Found $COUNT alerts with severity: $SEVERITY"
+            echo "Found $COUNT alerts with security_severity_level: $SEC_LEVEL"
 
             if [ "$COUNT" -eq 0 ]; then
               continue
             fi
 
             for NUMBER in $(echo $ALERTS | jq -r '.[]'); do
-              echo "--- Alert #$NUMBER ($SEVERITY) ---"
+              echo "--- Alert #$NUMBER ($SEC_LEVEL) ---"
 
               EXISTING=$(gh api \
                 /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
@@ -66,19 +68,17 @@ jobs:
               fi
 
               if [ "$EXISTING" = "success" ]; then
-                BRANCH="autofix/${SEVERITY}/alert-${NUMBER}"
+                BRANCH="autofix/${SEC_LEVEL}/alert-${NUMBER}"
 
                 SHA=$(gh api /repos/$OWNER/$REPO/git/refs/heads/$DEFAULT_BRANCH \
                   --jq '.object.sha')
 
-                # 创建分支
                 gh api -X POST /repos/$OWNER/$REPO/git/refs \
                   -f ref="refs/heads/$BRANCH" \
                   -f sha="$SHA" 2>/dev/null && \
                   echo "🌿 Created branch: $BRANCH" || \
                   echo "🌿 Branch already exists: $BRANCH"
 
-                # 提交 fix
                 gh api -X POST \
                   /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix/commits \
                   -f target_ref="$BRANCH" || {
@@ -87,22 +87,20 @@ jobs:
                 }
                 echo "✅ Committed fix to branch: $BRANCH"
 
-                # 获取 alert 标题用于 PR 描述
                 ALERT_TITLE=$(gh api \
                   /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER \
                   --jq '.rule.description')
 
-                # 自动创建 PR（Draft 状态，需要你审核后才能 merge）
                 gh pr create \
                   --repo "$OWNER/$REPO" \
                   --base "$DEFAULT_BRANCH" \
                   --head "$BRANCH" \
                   --draft \
-                  --title "[Autofix][$SEVERITY] Alert #$NUMBER: $ALERT_TITLE" \
+                  --title "[Autofix][$SEC_LEVEL] Alert #$NUMBER: $ALERT_TITLE" \
                   --body "## 🤖 Copilot Autofix 自动修复
 
                 **Alert ID:** #$NUMBER
-                **Severity:** $SEVERITY
+                **Security Severity:** $SEC_LEVEL
                 **Rule:** $ALERT_TITLE
 
                 此 PR 由 Copilot Autofix 自动生成，请审核后再 merge。

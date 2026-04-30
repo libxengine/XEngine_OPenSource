@@ -1,4 +1,3 @@
-# .github/workflows/auto-autofix.yml
 name: Auto Copilot Autofix (High & Medium Only)
 
 on:
@@ -21,10 +20,9 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
         run: |
-          for SEVERITY in "error" "warning"; do
+          for SEVERITY in "critical" "error" "warning"; do
             echo "====== Processing severity: $SEVERITY ======"
 
-            # 只获取 high（error）和 medium（warning）级别的 open alerts
             ALERTS=$(gh api \
               "/repos/$OWNER/$REPO/code-scanning/alerts?severity=$SEVERITY&state=open&per_page=100" \
               --jq '[.[] | .number]')
@@ -39,12 +37,11 @@ jobs:
             for NUMBER in $(echo $ALERTS | jq -r '.[]'); do
               echo "--- Alert #$NUMBER ($SEVERITY) ---"
 
-              # 检查是否已经有 autofix
               EXISTING=$(gh api \
                 /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
                 --jq '.status' 2>/dev/null || echo "none")
 
-              if [ "$EXISTING" = "succeeded" ]; then
+              if [ "$EXISTING" = "success" ]; then  
                 echo "✅ Fix already exists, committing directly..."
               else
                 echo "⏳ Generating fix..."
@@ -54,21 +51,18 @@ jobs:
                   continue
                 }
 
-                # 轮询等待 fix 生成（最多等 90 秒）
                 for i in 1 2 3; do
                   sleep 30
                   EXISTING=$(gh api \
                     /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
                     --jq '.status' 2>/dev/null || echo "none")
                   echo "  Attempt $i: status = $EXISTING"
-                  [ "$EXISTING" = "succeeded" ] && break
+                  [ "$EXISTING" = "success" ] && break  
                 done
               fi
 
-              if [ "$EXISTING" = "succeeded" ]; then
+              if [ "$EXISTING" = "success" ]; then 
                 BRANCH="autofix/${SEVERITY}/alert-${NUMBER}"
-
-                # 提交 fix 到新分支
                 gh api -X POST \
                   /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix/commits \
                   -f target_ref="$BRANCH" && \

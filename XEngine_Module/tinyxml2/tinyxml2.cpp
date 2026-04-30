@@ -255,6 +255,9 @@ void StrPair::CollapseWhitespace()
     TIXMLASSERT( ( _flags & NEEDS_DELETE ) == 0 );
     // Trim leading space.
     _start = XMLUtil::SkipWhiteSpace( _start, 0 );
+    if ( !_start ) {
+        return;
+    }
 
     if ( *_start ) {
         const char* p = _start;	// the read pointer

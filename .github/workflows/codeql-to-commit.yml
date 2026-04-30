@@ -24,96 +24,98 @@ jobs:
           DEFAULT_BRANCH=$(gh api /repos/$OWNER/$REPO --jq '.default_branch')
           echo "Default branch: $DEFAULT_BRANCH"
 
-          # 用 security_severity_level 过滤，对应界面上的 Critical/High/Medium
-          for SEC_LEVEL in "critical" "high" "medium"; do
-            echo "====== Processing security_severity_level: $SEC_LEVEL ======"
+          # 获取所有 open alert，用 jq 过滤 security_severity_level 为 high 或 medium 的
+          ALERTS=$(gh api \
+            "/repos/$OWNER/$REPO/code-scanning/alerts?state=open&per_page=100" \
+            --jq '[.[] | select(.rule.security_severity_level == "high" or .rule.security_severity_level == "medium") | {number: .number, level: .rule.security_severity_level}]')
 
-            # ← 关键改动：换成 security_severity_level 参数
-            ALERTS=$(gh api \
-              "/repos/$OWNER/$REPO/code-scanning/alerts?security_severity_level=$SEC_LEVEL&state=open&per_page=100" \
-              --jq '[.[] | .number]')
+          COUNT=$(echo $ALERTS | jq 'length')
+          echo "Found $COUNT alerts with security_severity_level high or medium"
+          echo "$ALERTS" | jq -r '.[] | "  Alert #\(.number) [\(.level)]"'
 
-            COUNT=$(echo $ALERTS | jq 'length')
-            echo "Found $COUNT alerts with security_severity_level: $SEC_LEVEL"
+          if [ "$COUNT" -eq 0 ]; then
+            echo "No alerts to process, exiting."
+            exit 0
+          fi
 
-            if [ "$COUNT" -eq 0 ]; then
-              continue
+          for ROW in $(echo $ALERTS | jq -r '.[] | @base64'); do
+            _jq() { echo "$ROW" | base64 -d | jq -r "$1"; }
+
+            NUMBER=$(_jq '.number')
+            SEC_LEVEL=$(_jq '.level')
+
+            echo "--- Alert #$NUMBER [$SEC_LEVEL] ---"
+
+            EXISTING=$(gh api \
+              /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
+              --jq '.status' 2>/dev/null || echo "none")
+
+            if [ "$EXISTING" = "success" ]; then
+              echo "✅ Fix already exists, committing directly..."
+            else
+              echo "⏳ Generating fix..."
+              gh api -X POST \
+                /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix || {
+                echo "⚠️ Failed to trigger autofix for #$NUMBER, skipping"
+                continue
+              }
+
+              for i in 1 2 3; do
+                sleep 30
+                EXISTING=$(gh api \
+                  /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
+                  --jq '.status' 2>/dev/null || echo "none")
+                echo "  Attempt $i: status = $EXISTING"
+                [ "$EXISTING" = "success" ] && break
+              done
             fi
 
-            for NUMBER in $(echo $ALERTS | jq -r '.[]'); do
-              echo "--- Alert #$NUMBER ($SEC_LEVEL) ---"
+            if [ "$EXISTING" = "success" ]; then
+              BRANCH="autofix/${SEC_LEVEL}/alert-${NUMBER}"
 
-              EXISTING=$(gh api \
-                /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
-                --jq '.status' 2>/dev/null || echo "none")
+              SHA=$(gh api /repos/$OWNER/$REPO/git/refs/heads/$DEFAULT_BRANCH \
+                --jq '.object.sha')
 
-              if [ "$EXISTING" = "success" ]; then
-                echo "✅ Fix already exists, committing directly..."
-              else
-                echo "⏳ Generating fix..."
-                gh api -X POST \
-                  /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix || {
-                  echo "⚠️ Failed to trigger autofix for #$NUMBER, skipping"
-                  continue
-                }
+              gh api -X POST /repos/$OWNER/$REPO/git/refs \
+                -f ref="refs/heads/$BRANCH" \
+                -f sha="$SHA" 2>/dev/null && \
+                echo "🌿 Created branch: $BRANCH" || \
+                echo "🌿 Branch already exists: $BRANCH"
 
-                for i in 1 2 3; do
-                  sleep 30
-                  EXISTING=$(gh api \
-                    /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
-                    --jq '.status' 2>/dev/null || echo "none")
-                  echo "  Attempt $i: status = $EXISTING"
-                  [ "$EXISTING" = "success" ] && break
-                done
-              fi
+              gh api -X POST \
+                /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix/commits \
+                -f target_ref="$BRANCH" || {
+                echo "❌ Failed to commit fix for alert #$NUMBER"
+                continue
+              }
+              echo "✅ Committed fix to branch: $BRANCH"
 
-              if [ "$EXISTING" = "success" ]; then
-                BRANCH="autofix/${SEC_LEVEL}/alert-${NUMBER}"
+              ALERT_TITLE=$(gh api \
+                /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER \
+                --jq '.rule.description')
 
-                SHA=$(gh api /repos/$OWNER/$REPO/git/refs/heads/$DEFAULT_BRANCH \
-                  --jq '.object.sha')
+              gh pr create \
+                --repo "$OWNER/$REPO" \
+                --base "$DEFAULT_BRANCH" \
+                --head "$BRANCH" \
+                --draft \
+                --title "[Autofix][$SEC_LEVEL] Alert #$NUMBER: $ALERT_TITLE" \
+                --body "## 🤖 Copilot Autofix 自动修复
 
-                gh api -X POST /repos/$OWNER/$REPO/git/refs \
-                  -f ref="refs/heads/$BRANCH" \
-                  -f sha="$SHA" 2>/dev/null && \
-                  echo "🌿 Created branch: $BRANCH" || \
-                  echo "🌿 Branch already exists: $BRANCH"
+              **Alert ID:** #$NUMBER
+              **Security Severity:** $SEC_LEVEL
+              **Rule:** $ALERT_TITLE
 
-                gh api -X POST \
-                  /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix/commits \
-                  -f target_ref="$BRANCH" || {
-                  echo "❌ Failed to commit fix for alert #$NUMBER"
-                  continue
-                }
-                echo "✅ Committed fix to branch: $BRANCH"
+              此 PR 由 Copilot Autofix 自动生成，请审核后再 merge。
 
-                ALERT_TITLE=$(gh api \
-                  /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER \
-                  --jq '.rule.description')
+              - [ ] 确认修复逻辑正确
+              - [ ] 确认没有引入新问题
+              - [ ] CI 测试通过" && \
+              echo "🎉 PR created for alert #$NUMBER" || \
+              echo "⚠️ PR already exists for alert #$NUMBER"
 
-                gh pr create \
-                  --repo "$OWNER/$REPO" \
-                  --base "$DEFAULT_BRANCH" \
-                  --head "$BRANCH" \
-                  --draft \
-                  --title "[Autofix][$SEC_LEVEL] Alert #$NUMBER: $ALERT_TITLE" \
-                  --body "## 🤖 Copilot Autofix 自动修复
+            else
+              echo "⚠️ Autofix not available for alert #$NUMBER (status: $EXISTING), skipping"
+            fi
 
-                **Alert ID:** #$NUMBER
-                **Security Severity:** $SEC_LEVEL
-                **Rule:** $ALERT_TITLE
-
-                此 PR 由 Copilot Autofix 自动生成，请审核后再 merge。
-
-                - [ ] 确认修复逻辑正确
-                - [ ] 确认没有引入新问题
-                - [ ] CI 测试通过" && \
-                echo "🎉 PR created for alert #$NUMBER" || \
-                echo "⚠️ PR already exists for alert #$NUMBER"
-
-              else
-                echo "⚠️ Autofix not available for alert #$NUMBER (status: $EXISTING), skipping"
-              fi
-
-            done
           done

@@ -325,7 +325,6 @@ bool Value::CZString::operator==(const CZString& other) const {
 
 ArrayIndex Value::CZString::index() const { return index_; }
 
-// const char* Value::CZString::c_str() const { return cstr_; }
 const char* Value::CZString::data() const { return cstr_; }
 unsigned Value::CZString::length() const { return storage_.length_; }
 bool Value::CZString::isStaticString() const {

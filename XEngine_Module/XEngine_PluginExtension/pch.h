@@ -15,7 +15,6 @@
 #else
 #include <dlfcn.h>
 #endif
-#endif //PCH_H
 #ifdef _XENGINE_BUILD_SWITCH_LUA
 #include <lua.hpp>
 #endif
@@ -57,3 +56,4 @@ extern XLONG PluginExtension_dwErrorCode;
 #else
 #define XFreeModule dlclose
 #endif
+#endif //PCH_H

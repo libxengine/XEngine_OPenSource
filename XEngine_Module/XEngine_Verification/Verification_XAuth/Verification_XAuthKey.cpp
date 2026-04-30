@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
 #include "Verification_XAuthKey.h"
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 /********************************************************************
 //    Created:     2025/09/30  16:47:21
 //    File Name:   D:\XEngine_OPenSource\XEngine_Module\XEngine_Verification\Verification_XAuth\Verification_XAuthKey.cpp
@@ -151,10 +154,18 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 	{
 		return false;
 	}
-	//打开文件
-	FILE* pSt_File = _xtfopen(lpszKeyFile, _X("wb"));
+	//打开文件(限制为仅当前用户可读写)
+	int nFile = open(lpszKeyFile, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+	if (nFile < 0)
+	{
+		Verification_IsErrorOccur = true;
+		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_OPENFILE;
+		return false;
+	}
+	FILE* pSt_File = fdopen(nFile, "wb");
 	if (NULL == pSt_File)
 	{
+		close(nFile);
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_OPENFILE;
 		return false;

@@ -2563,6 +2563,11 @@ void XMLDocument::Parse()
     _parseLineNum = 1;
     char* p = _charBuffer;
     p = XMLUtil::SkipWhiteSpace( p, &_parseCurLineNum );
+    TIXMLASSERT( p );
+    if ( !p ) {
+        SetError( XML_ERROR_EMPTY_DOCUMENT, 0, 0 );
+        return;
+    }
     p = const_cast<char*>( XMLUtil::ReadBOM( p, &_writeBOM ) );
     if ( !*p ) {
         SetError( XML_ERROR_EMPTY_DOCUMENT, 0, 0 );

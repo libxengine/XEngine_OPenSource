@@ -876,7 +876,7 @@ ArrayIndex Value::size() const {
     return ArrayIndex(value_.map_->size());
   }
   JSON_ASSERT_UNREACHABLE;
-  return 0; // unreachable;
+  return 0;
 }
 
 bool Value::empty() const {

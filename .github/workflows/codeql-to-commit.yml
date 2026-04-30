@@ -20,6 +20,10 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
         run: |
+          # 获取默认分支名
+          DEFAULT_BRANCH=$(gh api /repos/$OWNER/$REPO --jq '.default_branch')
+          echo "Default branch: $DEFAULT_BRANCH"
+
           for SEVERITY in "critical" "error" "warning"; do
             echo "====== Processing severity: $SEVERITY ======"
 
@@ -41,7 +45,7 @@ jobs:
                 /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
                 --jq '.status' 2>/dev/null || echo "none")
 
-              if [ "$EXISTING" = "success" ]; then  
+              if [ "$EXISTING" = "success" ]; then
                 echo "✅ Fix already exists, committing directly..."
               else
                 echo "⏳ Generating fix..."
@@ -57,17 +61,31 @@ jobs:
                     /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix \
                     --jq '.status' 2>/dev/null || echo "none")
                   echo "  Attempt $i: status = $EXISTING"
-                  [ "$EXISTING" = "success" ] && break  
+                  [ "$EXISTING" = "success" ] && break
                 done
               fi
 
-              if [ "$EXISTING" = "success" ]; then 
+              if [ "$EXISTING" = "success" ]; then
                 BRANCH="autofix/${SEVERITY}/alert-${NUMBER}"
+
+                # 获取默认分支最新的 SHA
+                SHA=$(gh api /repos/$OWNER/$REPO/git/refs/heads/$DEFAULT_BRANCH \
+                  --jq '.object.sha')
+
+                # 先创建分支
+                gh api -X POST /repos/$OWNER/$REPO/git/refs \
+                  -f ref="refs/heads/$BRANCH" \
+                  -f sha="$SHA" 2>/dev/null && \
+                  echo "🌿 Created branch: $BRANCH" || \
+                  echo "🌿 Branch already exists: $BRANCH"
+
+                # 再提交 fix 到该分支
                 gh api -X POST \
                   /repos/$OWNER/$REPO/code-scanning/alerts/$NUMBER/autofix/commits \
                   -f target_ref="$BRANCH" && \
                 echo "✅ Committed fix to branch: $BRANCH" || \
                 echo "❌ Failed to commit fix for alert #$NUMBER"
+
               else
                 echo "⚠️ Autofix not available for alert #$NUMBER (status: $EXISTING), skipping"
               fi

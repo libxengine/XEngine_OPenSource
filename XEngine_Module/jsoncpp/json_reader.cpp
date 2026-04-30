@@ -1137,11 +1137,24 @@ bool OurReader::readTokenSkippingComments(Token& token) {
   return success;
 }
 
+// Reads the next lexical token from the input stream.
+//
+// Behavior summary:
+// - Ignores leading whitespace.
+// - Records token.start_ before consuming the first significant character.
+// - Dispatches by first character to either structural tokens, literals, numbers,
+//   strings, comments, or special error/EOF token types.
+// - Applies non-standard JSON feature flags (for example, single-quoted strings)
+//   when enabled via parser configuration.
+// - Returns false when tokenization fails for the current position.
 bool OurReader::readToken(Token& token) {
+  // Normalize to the next significant character and mark token start.
   skipSpaces();
   token.start_ = current_;
   Char c = getNextChar();
   bool ok = true;
+
+  // Classify token by its leading character.
   switch (c) {
   case '{':
     token.type_ = tokenObjectBegin;

@@ -176,6 +176,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 		fwrite(tszENCodecBuffer, 1, nSize, pSt_File);
 	}
 	fclose(pSt_File);
+	SET_FILE_PERMISSION(lpszKeyFile);
 
 	return true;
 }
@@ -741,7 +742,6 @@ bool CVerification_XAuthKey::Verification_XAuthKey_UserRegister(VERIFICATION_XAU
 		{
 			__int64x nTimeCount = 0;
 			XCHAR tszTimeStr[128] = {};
-			XENGINE_LIBTIME st_LibTime = {};
 			BaseLib_Time_TimeToStr(tszTimeStr);
 
 			BaseLib_TimeSpan_GetForStr(tszTimeStr, pSt_AuthLocal->st_AuthSerial.st_DataLimit.tszDataTime, &nTimeCount);

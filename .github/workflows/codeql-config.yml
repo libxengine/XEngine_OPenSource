@@ -1,0 +1,10 @@
+name: "CodeQL Security Scan"
+
+paths-ignore:
+  - "XEngine_Module/jsoncpp/**"
+  - "XEngine_Module/tinyxml2/**" 
+
+query-filters:
+  - exclude:
+      id: "" 
+      reason: ""

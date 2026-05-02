@@ -6,5 +6,5 @@ paths-ignore:
 
 query-filters:
   - exclude:
-      id: "" 
+      id: "none" 
       reason: ""

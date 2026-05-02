@@ -43,8 +43,8 @@ jobs:
     - name: debug print  
       run: |
           pwd
-          ls -la .github/codeql/
-          cat .github/codeql/codeql-config.yml
+          ls -la /home/runner/work/XEngine_OPenSource/XEngine_OPenSource/.github/codeql/
+          cat /home/runner/work/XEngine_OPenSource/XEngine_OPenSource/.github/codeql/codeql-config.yml
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4

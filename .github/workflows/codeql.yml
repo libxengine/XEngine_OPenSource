@@ -60,6 +60,7 @@ jobs:
         
     - name: make build
       run: | 
+            cd XEngine_Module
             cd XEngine_InfoReport
             make
             cd ..

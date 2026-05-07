@@ -19,6 +19,7 @@ jobs:
       matrix:
         include:
         - language: c-cpp
+          build-mode: manual
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6

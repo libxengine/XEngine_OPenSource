@@ -151,10 +151,17 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileWrite(VERIFICATION_XAUTHK
 	{
 		return false;
 	}
-	//打开文件
-	FILE* pSt_File = _xtfopen(lpszKeyFile, _X("wb"));
+	//打开文件(限制为仅当前用户可读写)
+#ifdef _MSC_BUILD
+	int nFile = _xtopen(lpszKeyFile, _O_WRONLY | _O_CREAT | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+	FILE* pSt_File = _fdopen(nFile, "wb");
+#else
+	int nFile = _xtopen(lpszKeyFile, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+	FILE* pSt_File = fdopen(nFile, "wb");
+#endif
 	if (NULL == pSt_File)
 	{
+		_close(nFile);
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_OPENFILE;
 		return false;

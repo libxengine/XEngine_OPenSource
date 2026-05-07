@@ -10,13 +10,15 @@
 // 添加要在此处预编译的标头
 #define _CRT_SECURE_NO_WARNINGS
 #include "framework.h"
+#include <io.h>
 #endif
 #endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <io.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <json/json.h>
 #include <thread>
 #include <memory>

@@ -8,12 +8,11 @@
 #define PCH_H
 #ifdef _MSC_BUILD
 #define _CRT_SECURE_NO_WARNINGS
-#include <io.h>
 // 添加要在此处预编译的标头
 #include "framework.h"
+#include <io.h>
 #else
 #include <unistd.h>
-#include <fcntl.h>
 #endif
 #endif //PCH_H
 #include <stdio.h>
@@ -21,6 +20,8 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <json/json.h>
 #include <shared_mutex>
 #include <thread>

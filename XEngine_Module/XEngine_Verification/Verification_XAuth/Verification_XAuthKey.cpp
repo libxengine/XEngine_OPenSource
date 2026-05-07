@@ -624,6 +624,11 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY
 		XENGINE_LIBTIME st_LibTime = {};
 		BaseLib_Time_GetSysTime(&st_LibTime);
 		st_LibTime.wYear += 1;
+		bool bIsLeapYear = (0 == (st_LibTime.wYear % 4)) && ((0 != (st_LibTime.wYear % 100)) || (0 == (st_LibTime.wYear % 400)));
+		if ((2 == st_LibTime.wMonth) && (29 == st_LibTime.wDay) && !bIsLeapYear)
+		{
+			st_LibTime.wDay = 28;
+		}
 		BaseLib_Time_TimeToStr(pSt_XAuthInfo->st_AuthSerial.st_DataLimit.tszDataTime, NULL, true, &st_LibTime);
 		Verification_XAuthKey_KeySerial(pSt_XAuthInfo->st_AuthSerial.st_DataLimit.tszDataSerial, 7, 0);
 	}

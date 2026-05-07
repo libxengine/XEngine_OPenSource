@@ -11,6 +11,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "framework.h"
 #include <io.h>
+#else
+#include <unistd.h>
 #endif
 #endif //PCH_H
 #include <stdio.h>

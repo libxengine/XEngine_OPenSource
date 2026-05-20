@@ -51,9 +51,6 @@
     <ClInclude Include="Verification_OAuth\Verification_OAuth.h">
       <Filter>头文件\Verification_OAuth</Filter>
     </ClInclude>
-    <ClInclude Include="Verification_XAuth\Verification_XAuth.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Verification_XAuth\Verification_XAuthKey.h">
       <Filter>头文件\Verification_XAuth</Filter>
     </ClInclude>
@@ -73,9 +70,6 @@
     </ClCompile>
     <ClCompile Include="Verification_OAuth\Verification_OAuth.cpp">
       <Filter>源文件\Verification_OAuth</Filter>
-    </ClCompile>
-    <ClCompile Include="Verification_XAuth\Verification_XAuth.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Verification_XAuth\Verification_XAuthKey.cpp">
       <Filter>源文件\Verification_XAuth</Filter>

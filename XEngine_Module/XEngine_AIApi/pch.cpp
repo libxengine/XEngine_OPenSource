@@ -33,9 +33,9 @@ extern "C" XLONG AIApi_GetLastError(int* pInt_ErrorCode)
 /************************************************************************/
 /*                        AI对话模型导出函数                            */
 /************************************************************************/
-extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam, bool bHistory)
+extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam, bool bHistory, XENGINE_MODULE_AIAPI_VERSION enAPIVersion)
 {
-	return m_AIChat.AIApi_Chat_Create(pxhToken, lpszAPIUrl, lpszAPIKey, fpCall_Chat, lParam, bHistory);
+	return m_AIChat.AIApi_Chat_Create(pxhToken, lpszAPIUrl, lpszAPIKey, fpCall_Chat, lParam, bHistory, enAPIVersion);
 }
 extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream, int nMaxToken)
 {

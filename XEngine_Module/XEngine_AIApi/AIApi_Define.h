@@ -11,6 +11,14 @@
 //    History:
 *********************************************************************/
 //////////////////////////////////////////////////////////////////////////
+//                        API版本枚举
+//////////////////////////////////////////////////////////////////////////
+typedef enum
+{
+	XENGINE_MODULE_AIAPI_VERSION_V1 = 0,    //chatgpt compatible style
+	XENGINE_MODULE_AIAPI_VERSION_V3 = 1     //response v3 style
+}XENGINE_MODULE_AIAPI_VERSION;
+//////////////////////////////////////////////////////////////////////////
 //                        导出的回调函数
 //////////////////////////////////////////////////////////////////////////
 typedef void(XCALLBACK* CALLBACK_XENGINE_MODULE_AIAPI_CHAT)(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMsgBuffer, int nMsgLen, bool bThink, XPVOID lParam);
@@ -54,12 +62,17 @@ extern "C" XLONG AIApi_GetLastError(int *pInt_ErrorCode = NULL);
   类型：逻辑型
   可空：Y
   意思：是否启用历史会话功能
+ 参数.七：enAPIVersion
+  In/Out：In
+  类型：枚举型
+  可空：Y
+  意思：API版本
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL, bool bHistory = true);
+extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL, bool bHistory = true, XENGINE_MODULE_AIAPI_VERSION enAPIVersion = XENGINE_MODULE_AIAPI_VERSION_V1);
 /********************************************************************
 函数名称：AIApi_Chat_Excute
 函数功能：执行对话

@@ -484,22 +484,30 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 *********************************************************************/
 bool CVerification_XAuthKey::Verification_XAuthKey_KeyInit(VERIFICATION_XAUTHKEY* pSt_XAuthInfo)
 {
+	// 重置模块级错误状态，确保本次初始化过程的错误信息是“干净”的。
 	Verification_IsErrorOccur = false;
 
+	// [1] 输入参数有效性校验
+	// 结构体指针为空时无法执行任何字段初始化，直接返回参数错误。
 	if (NULL == pSt_XAuthInfo)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_PARAMENT;
 		return false;
 	}
+
+	// [2] 服务端连接默认值回填
+	// 若调用方未提供服务器地址，则使用系统默认认证地址。
 	if (_tcsxlen(pSt_XAuthInfo->tszAddr) <= 0)
 	{
 		_xstprintf(pSt_XAuthInfo->tszAddr, _X("http://app.libxengine.com"));
 	}
+	// 若调用方未指定端口，则使用默认端口 5302。
 	if (0 == pSt_XAuthInfo->nPort)
 	{
 		pSt_XAuthInfo->nPort = 5302;
 	}
+	// [3] 应用信息初始化（以下逻辑用于补齐应用标识及相关配置字段）
 	//应用信息
 	pSt_XAuthInfo->st_AuthAppInfo.bInit = true;
 	if (_tcsxlen(pSt_XAuthInfo->st_AuthAppInfo.tszAppName) <= 0)

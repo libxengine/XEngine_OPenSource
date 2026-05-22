@@ -37,9 +37,9 @@ extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCX
 {
 	return m_AIChat.AIApi_Chat_Create(pxhToken, lpszAPIUrl, lpszAPIKey, fpCall_Chat, lParam, bHistory, enAPIVersion);
 }
-extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream, int nMaxToken)
+extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bThink, int nMaxToken)
 {
-	return m_AIChat.AIApi_Chat_Excute(xhToken, lpszModelName, lpszMSGBuffer, nMSGLen, bStream, nMaxToken);
+	return m_AIChat.AIApi_Chat_Excute(xhToken, lpszModelName, lpszMSGBuffer, nMSGLen, bThink, nMaxToken);
 }
 extern "C" bool AIApi_Chat_SetRole(XNETHANDLE xhToken, LPCXSTR lpszRoleName)
 {

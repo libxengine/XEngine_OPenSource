@@ -26,6 +26,7 @@
 #include <memory>
 #include <new>
 #include <list>
+#include <string_view>
 #include <shared_mutex>
 #include <unordered_map>
 #include <XEngine_Include/XEngine_CommHdr.h>

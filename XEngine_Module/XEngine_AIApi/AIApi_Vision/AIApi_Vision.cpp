@@ -480,9 +480,9 @@ bool CAIApi_Vision::AIApi_Vision_JsonParse(AICLIENT_VISION* pSt_AIClient, LPCXST
 			int nGBKLen = st_JsonMessage["content"].asString().length();
 			XCHAR tszGBKBuffer[8192] = {};
 			BaseLib_Charset_UTFToAnsi(st_JsonMessage["content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, false, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, tszGBKBuffer, nGBKLen, false, pSt_AIClient->lParam);
 #else
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), false, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), false, pSt_AIClient->lParam);
 #endif
 		}
 	}
@@ -517,7 +517,7 @@ bool CAIApi_Vision::AIApi_Vision_JsonCreate(AICLIENT_VISION* pSt_AIClient, LPCXS
 		{
 			if (NULL == ptszMSGBuffer)
 			{
-				pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonObject[i]["b64_json"].asCString(), st_JsonObject[i]["b64_json"].asString().length(), false, pSt_AIClient->lParam);
+				pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonObject[i]["b64_json"].asCString(), st_JsonObject[i]["b64_json"].asString().length(), false, pSt_AIClient->lParam);
 			}
 			else
 			{
@@ -529,7 +529,7 @@ bool CAIApi_Vision::AIApi_Vision_JsonCreate(AICLIENT_VISION* pSt_AIClient, LPCXS
 		{
 			if (NULL == ptszMSGBuffer)
 			{
-				pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonObject[i]["url"].asCString(), st_JsonObject[i]["url"].asString().length(), false, pSt_AIClient->lParam);
+				pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonObject[i]["url"].asCString(), st_JsonObject[i]["url"].asString().length(), false, pSt_AIClient->lParam);
 			}
 			else
 			{

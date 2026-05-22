@@ -21,7 +21,7 @@ typedef enum
 //////////////////////////////////////////////////////////////////////////
 //                        导出的回调函数
 //////////////////////////////////////////////////////////////////////////
-typedef void(XCALLBACK* CALLBACK_XENGINE_MODULE_AIAPI_CHAT)(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMsgBuffer, int nMsgLen, bool bThink, XPVOID lParam);
+typedef void(XCALLBACK* CALLBACK_XENGINE_MODULE_AIAPI_CHAT)(XNETHANDLE xhToken, LPCXSTR lpszMsgBuffer, int nMsgLen, bool bThink, XPVOID lParam);
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -96,12 +96,7 @@ extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCX
   类型：整数型
   可空：N
   意思：输入对话数据大小
- 参数.五：bStream
-  In/Out：In
-  类型：逻辑型
-  可空：Y
-  意思：是否使用流式数据回复
- 参数.六：nMaxToken
+ 参数.五：nMaxToken
   In/Out：In
   类型：整数型
   可空：Y
@@ -111,7 +106,7 @@ extern "C" bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCX
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false, int nMaxToken = 0);
+extern "C" bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bThink = false, int nMaxToken = 0);
 /********************************************************************
 函数名称：AIApi_Chat_SetRole
 函数功能：设置系统角色

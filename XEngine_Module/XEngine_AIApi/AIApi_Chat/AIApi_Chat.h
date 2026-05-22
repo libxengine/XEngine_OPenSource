@@ -27,7 +27,6 @@ typedef struct
 	time_t nTimeStart;
 	int nMSGLen;
 	
-	bool bStream;
 	bool bHistory;
 	XENGINE_MODULE_AIAPI_VERSION enAPIVersion; // 新增：保存当前句柄使用的API版本
 	std::unique_ptr<std::list<AICLIENT_HISTORY>> pStl_ListHistory;
@@ -45,7 +44,7 @@ public:
 	~CAIApi_Chat();
 public:
 	bool AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LPCXSTR lpszAPIKey, CALLBACK_XENGINE_MODULE_AIAPI_CHAT fpCall_Chat, XPVOID lParam = NULL, bool bHistory = true, XENGINE_MODULE_AIAPI_VERSION enAPIVersion = XENGINE_MODULE_AIAPI_VERSION_V1);
-	bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream = false, int nMaxToken = 0);
+	bool AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bThink = false, int nMaxToken = 0);
 	bool AIApi_Chat_SetRole(XNETHANDLE xhToken, LPCXSTR lpszRoleName);
 	bool AIApi_Chat_Clear(XNETHANDLE xhToken);
 	bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);
@@ -53,7 +52,7 @@ public:
 protected:
 	bool AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply);
 	// V3 版本解析封装函数
-	bool AIApi_Chat_ParseV3(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply);
+	bool AIApi_Chat_ParseV3(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bThink);
 protected:
 	static void XCALLBACK AIApi_Chat_CBRecv(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, int nMsgLen, XPVOID lParam);
 	void AIApi_Chat_CBRecvV1(AICLIENT_CHAT* pSt_AIClient);

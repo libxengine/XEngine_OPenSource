@@ -168,12 +168,7 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
   类型：整数型
   可空：N
   意思：输入对话数据大小
- 参数.五：bStream
-  In/Out：In
-  类型：逻辑型
-  可空：Y
-  意思：是否使用流式数据回复
- 参数.六：nMaxToken
+ 参数.五：nMaxToken
   In/Out：In
   类型：整数型
   可空：Y
@@ -183,7 +178,7 @@ bool CAIApi_Chat::AIApi_Chat_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAPIUrl, LP
   意思：是否成功
 备注：
 *********************************************************************/
-bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bStream /* = false */, int nMaxToken /* = 0 */)
+bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bThink /* = false */, int nMaxToken /* = 0 */)
 {
 	AIApi_IsErrorOccur = false;
 
@@ -210,7 +205,6 @@ bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, L
 
 		st_JsonArray.append(st_JsonSystemRole);
 	}
-	stl_MapIterator->second->bStream = bStream;
 	//准备数据
 	Json::Value st_JsonObject;
 	AICLIENT_HISTORY st_AIHistory = {};
@@ -239,12 +233,31 @@ bool CAIApi_Chat::AIApi_Chat_Excute(XNETHANDLE xhToken, LPCXSTR lpszModelName, L
 	st_JsonArray.append(st_JsonObject);
 	
 	st_JsonRoot["model"] = lpszModelName;
-	st_JsonRoot["stream"] = bStream;
+	st_JsonRoot["stream"] = true;
 	if (nMaxToken > 0)
 	{
 		st_JsonRoot["max_tokens"] = nMaxToken;
 	}
-	st_JsonRoot["messages"] = st_JsonArray;
+	if (stl_MapIterator->second->enAPIVersion == XENGINE_MODULE_AIAPI_VERSION_V3)
+	{
+		// 明确告诉 V3 引擎思考模式
+		Json::Value st_JsonThinking;
+		if (bThink)
+		{
+			st_JsonThinking["type"] = "enable";
+		}
+		else
+		{
+			st_JsonThinking["type"] = "disabled";
+		}
+		st_JsonRoot["thinking"] = st_JsonThinking;
+
+		st_JsonRoot["input"] = st_JsonArray;
+	}
+	else
+	{
+		st_JsonRoot["messages"] = st_JsonArray;
+	}
 
 	xstring m_StrBody = Json::writeString(st_JsonBuilder, st_JsonRoot);
 	if (!APIClient_Http_Excute(xhToken, m_StrBody.c_str(), m_StrBody.length(), stl_MapIterator->second->tszAPIHdr))
@@ -441,7 +454,7 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 		Json::Value st_JsonError = st_JsonRoot["error"];
 		if (!st_JsonError.isNull())
 		{
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonError["type"].asCString(), st_JsonError["message"].asCString(), st_JsonError["message"].size(), false, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonError["message"].asCString(), st_JsonError["message"].size(), false, pSt_AIClient->lParam);
 		}
 		return false;
 	}
@@ -495,7 +508,7 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 #ifdef _MSC_BUILD
 			XCHAR tszGBKBuffer[8192] = {};
 			BaseLib_Charset_UTFToAnsi(st_JsonMessage["content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, false, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, tszGBKBuffer, nGBKLen, false, pSt_AIClient->lParam);
 			if (bSSEReply)
 			{
 				//流式数据需要单独处理保存
@@ -503,7 +516,7 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 				pSt_AIClient->st_HisStream.nCLen += nGBKLen;
 			}
 #else
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), false, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), false, pSt_AIClient->lParam);
 			if (bSSEReply)
 			{
 				memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length());
@@ -521,16 +534,16 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 #ifdef _MSC_BUILD
 			XCHAR tszGBKBuffer[8192] = {};
 			BaseLib_Charset_UTFToAnsi(st_JsonMessage["reasoning_content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, true, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, tszGBKBuffer, nGBKLen, true, pSt_AIClient->lParam);
 #else
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), true, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), true, pSt_AIClient->lParam);
 #endif
 		}
 	}
 	
 	return true;
 }
-bool CAIApi_Chat::AIApi_Chat_ParseV3(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply)
+bool CAIApi_Chat::AIApi_Chat_ParseV3(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bThink)
 {
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
@@ -541,92 +554,21 @@ bool CAIApi_Chat::AIApi_Chat_ParseV3(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMS
 	{
 		return false;
 	}
-	Json::Value st_JsonChoices = st_JsonRoot["choices"];
-	if (st_JsonChoices.isNull())
+	
+	AICLIENT_HISTORY st_AIHistory = {};
+	if (!st_JsonRoot["delta"].isNull())
 	{
-		Json::Value st_JsonErrorObj = st_JsonRoot["error"];
-		if (!st_JsonErrorObj.isNull())
-		{
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonErrorObj["type"].asCString(), st_JsonErrorObj["message"].asCString(), st_JsonErrorObj["message"].size(), false, pSt_AIClient->lParam);
-		}
-		return false;
-	}
-
-	for (unsigned int i = 0; i < st_JsonChoices.size(); i++)
-	{
-		Json::Value st_JsonMessage;
-		if (bSSEReply)
-		{
-			st_JsonMessage = st_JsonChoices[i]["delta"];
-			if (st_JsonMessage.isNull())
-			{
-				continue;
-			}
-		}
-		else
-		{
-			st_JsonMessage = st_JsonChoices[i]["message"];
-			if (st_JsonMessage.isNull())
-			{
-				continue;
-			}
-		}
-
-		AICLIENT_HISTORY st_AIHistory = {};
-		if (!st_JsonMessage["role"].isNull())
-		{
-			_xstrcpy(st_AIHistory.tszRoleName, st_JsonMessage["role"].asCString(), sizeof(st_AIHistory.tszRoleName));
-		}
-		// V3 版本的特殊字段支持示例：如某些新型号包含特殊的思考字段结构、处理或更复杂的工具链返回
-		// 在这里实现具体的V3解析业务逻辑。如无特殊改动，可复用并扩展深层网络处理：
-		int nGBKLen = 0;
-		if (!st_JsonMessage["reasoning_content"].isNull())
-		{
-			nGBKLen = st_JsonMessage["reasoning_content"].asString().length();
-			_xstrcpy(st_AIHistory.tszThinkContent, st_JsonMessage["reasoning_content"].asString().c_str(), sizeof(st_AIHistory.tszThinkContent));
-		}
-
-		if (!st_JsonMessage["content"].isNull())
-		{
-			nGBKLen = st_JsonMessage["content"].asString().length();
-			_xstrcpy(st_AIHistory.tszRoleContent, st_JsonMessage["content"].asString().c_str(), sizeof(st_AIHistory.tszRoleContent));
-		}
-
-		// 触发回调投递思考输出
-		if (_tcsxlen(st_AIHistory.tszThinkContent) > 0)
-		{
+		int nGBKLen = st_JsonRoot["delta"].size();
 #ifdef _MSC_BUILD
-			XCHAR tszGBKBuffer[8192] = {};
-			BaseLib_Charset_UTFToAnsi(st_JsonMessage["reasoning_content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, true, pSt_AIClient->lParam);
+		BaseLib_Charset_UTFToAnsi(st_JsonRoot["delta"].asCString(), st_AIHistory.tszRoleContent, &nGBKLen);
+		pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_AIHistory.tszRoleContent, nGBKLen, bThink, pSt_AIClient->lParam);
 #else
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonHistory.tszThinkContent, nGBKLen, true, pSt_AIClient->lParam);
+		pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_AIHistory.tszRoleContent, nGBKLen, bThink, pSt_AIClient->lParam);
 #endif
-		}
-		// 触发回调投递正文输出
-		if (_tcsxlen(st_AIHistory.tszRoleContent) > 0)
+		if (!bThink)
 		{
-#ifdef _MSC_BUILD
-			XCHAR tszGBKBuffer[8192] = {};
-			BaseLib_Charset_UTFToAnsi(st_JsonMessage["content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), tszGBKBuffer, nGBKLen, false, pSt_AIClient->lParam);
-			if (bSSEReply)
-			{
-				memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, tszGBKBuffer, nGBKLen);
-				pSt_AIClient->st_HisStream.nCLen += nGBKLen;
-			}
-#else
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonRoot["model"].asCString(), st_JsonHistory.tszRoleContent, nGBKLen, false, pSt_AIClient->lParam);
-			if (bSSEReply)
-			{
-				memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, st_JsonHistory.tszRoleContent, nGBKLen);
-				pSt_AIClient->st_HisStream.nCLen += nGBKLen;
-			}
-#endif
-			if (pSt_AIClient->bHistory && !bSSEReply)
-			{
-				pSt_AIClient->pStl_ListHistory->push_back(st_AIHistory);
-			}
+			memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, st_AIHistory.tszRoleContent, nGBKLen);
+			pSt_AIClient->st_HisStream.nCLen += nGBKLen;
 		}
 	}
 	return true;
@@ -660,98 +602,141 @@ void CAIApi_Chat::AIApi_Chat_CBRecv(XNETHANDLE xhToken, XPVOID lpszMsgBuffer, in
 }
 void CAIApi_Chat::AIApi_Chat_CBRecvV1(AICLIENT_CHAT* pSt_AIClient)
 {
-	if (pSt_AIClient->bStream)
+	//SSE
+	LPCXSTR lpszSSEStr = _X("data: ");
+	LPCXSTR lpszSSEEnd = _X("[DONE]");
+
+	XCHAR* ptszStart = pSt_AIClient->ptszMSGBuffer;
+	XCHAR* ptszEnd = ptszStart + pSt_AIClient->nMSGLen;
+	while (true)
 	{
-		//SSE
-		LPCXSTR lpszSSEStr = _X("data: ");
-		LPCXSTR lpszSSEEnd = _X("[DONE]");
-
-		XCHAR* ptszStart = pSt_AIClient->ptszMSGBuffer;
-		XCHAR* ptszEnd = ptszStart + pSt_AIClient->nMSGLen;
-		while (true)
+		// 查找是否存在完整的一个消息（由 \n\n 分隔）
+		XCHAR* ptszSplit = _tcsxstr(ptszStart, _X("\n\n"));
+		if (NULL == ptszSplit)
 		{
-			// 查找是否存在完整的一个消息（由 \n\n 分隔）
-			XCHAR* ptszSplit = _tcsxstr(ptszStart, _X("\n\n"));
-			if (NULL == ptszSplit)
-			{
-				// 不完整，等待更多数据
-				break;
-			}
-			// 得到一个完整消息的结束位置（包含 \r\n\r\n 的结尾）
-			XCHAR* ptszNextMsg = ptszSplit + 2;  // Skip "\n\n"
-			int nOneMsgLen = (int)(ptszSplit - ptszStart); // 不含 "\n\n"
-			// 检查是否是 data: 开头的 SSE 消息
-			int nPos = 0;
-			if (_tcsxnicmp(ptszStart, lpszSSEStr, _tcsxlen(lpszSSEStr)) == 0)
-			{
-				nPos = _tcsxlen(lpszSSEStr);
-			}
-			if (_tcsxnicmp(lpszSSEEnd, ptszStart + nPos, _tcsxlen(lpszSSEEnd)) == 0)
-			{
-				//结束
-				if (pSt_AIClient->bHistory)
-				{
-					_xstrcpy(pSt_AIClient->st_HisStream.tszRoleName, _X("assistant"), sizeof(pSt_AIClient->st_HisStream.tszRoleName));
-					pSt_AIClient->pStl_ListHistory->push_back(pSt_AIClient->st_HisStream);
-					memset(&pSt_AIClient->st_HisStream, '\0', sizeof(AICLIENT_HISTORY));
-				}
-				pSt_AIClient->nMSGLen = 0;
-				memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
-				break;
-			}
-			// 解析当前消息体
-			if (!AIApi_Chat_Parse(pSt_AIClient, ptszStart + nPos, nOneMsgLen - nPos, true))
-			{
-				break; 
-			}
-			// 计算剩余数据长度
-			int nRemainLen = (int)(ptszEnd - ptszNextMsg);
-			if (nRemainLen > 0)
-			{
-				memmove(pSt_AIClient->ptszMSGBuffer, ptszNextMsg, nRemainLen * sizeof(XCHAR));
-			}
-			// 更新指针和长度
-			pSt_AIClient->nMSGLen = nRemainLen;
-			memset(pSt_AIClient->ptszMSGBuffer + pSt_AIClient->nMSGLen, '\0', XENGINE_MEMORY_SIZE_MAX - pSt_AIClient->nMSGLen);
-
-			ptszStart = pSt_AIClient->ptszMSGBuffer;
-			ptszEnd = ptszStart + nRemainLen;
+			// 不完整，等待更多数据
+			break;
 		}
-	}
-	else
-	{
-		if (AIApi_Chat_Parse(pSt_AIClient, (LPCXSTR)pSt_AIClient->ptszMSGBuffer, pSt_AIClient->nMSGLen, false))
+		// 得到一个完整消息的结束位置（包含 \r\n\r\n 的结尾）
+		XCHAR* ptszNextMsg = ptszSplit + 2;  // Skip "\n\n"
+		int nOneMsgLen = (int)(ptszSplit - ptszStart); // 不含 "\n\n"
+		// 检查是否是 data: 开头的 SSE 消息
+		int nPos = 0;
+		if (_tcsxnicmp(ptszStart, lpszSSEStr, _tcsxlen(lpszSSEStr)) == 0)
 		{
-			memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+			nPos = _tcsxlen(lpszSSEStr);
+		}
+		if (_tcsxnicmp(lpszSSEEnd, ptszStart + nPos, _tcsxlen(lpszSSEEnd)) == 0)
+		{
+			//结束
+			if (pSt_AIClient->bHistory)
+			{
+				_xstrcpy(pSt_AIClient->st_HisStream.tszRoleName, _X("assistant"), sizeof(pSt_AIClient->st_HisStream.tszRoleName));
+				pSt_AIClient->pStl_ListHistory->push_back(pSt_AIClient->st_HisStream);
+				memset(&pSt_AIClient->st_HisStream, '\0', sizeof(AICLIENT_HISTORY));
+			}
 			pSt_AIClient->nMSGLen = 0;
+			memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
+			break;
 		}
+		// 解析当前消息体
+		if (!AIApi_Chat_Parse(pSt_AIClient, ptszStart + nPos, nOneMsgLen - nPos, true))
+		{
+			break;
+		}
+		// 计算剩余数据长度
+		int nRemainLen = (int)(ptszEnd - ptszNextMsg);
+		if (nRemainLen > 0)
+		{
+			memmove(pSt_AIClient->ptszMSGBuffer, ptszNextMsg, nRemainLen * sizeof(XCHAR));
+		}
+		// 更新指针和长度
+		pSt_AIClient->nMSGLen = nRemainLen;
+		memset(pSt_AIClient->ptszMSGBuffer + pSt_AIClient->nMSGLen, '\0', XENGINE_MEMORY_SIZE_MAX - pSt_AIClient->nMSGLen);
+
+		ptszStart = pSt_AIClient->ptszMSGBuffer;
+		ptszEnd = ptszStart + nRemainLen;
 	}
 }
 void CAIApi_Chat::AIApi_Chat_CBRecvV3(AICLIENT_CHAT* pSt_AIClient)
 {
-	if (pSt_AIClient->bStream)
-	{
-		// V3 流式处理（此处可按 V3 独有的协议帧如 event-stream 变体或新定义终结符扩展）
-		LPCXSTR lpszSSEStr = _X("data: ");
-		LPCXSTR lpszSSEEnd = _X("[DONE]");
+	// V3 流式处理（此处可按 V3 独有的协议帧如 event-stream 变体或新定义终结符扩展）
+	LPCXSTR lpszSSEEvent = _X("event: ");
+	LPCXSTR lpszSSEStr = _X("data: ");
+	LPCXSTR lpszSSEEnd = _X("[DONE]");
+	//得到EVENT
+	XCHAR* ptszBuf = pSt_AIClient->ptszMSGBuffer;
+	int& nLen = pSt_AIClient->nMSGLen;
 
-		XCHAR* ptszStart = pSt_AIClient->ptszMSGBuffer;
-		XCHAR* ptszEnd = ptszStart + pSt_AIClient->nMSGLen;
-		while (true)
+	std::vector<xstring> stl_VectorFields;
+	std::string_view m_StrField(ptszBuf, nLen);
+	size_t nStart = 0;
+	size_t nEnd = m_StrField.find("\n\n");
+	while (nEnd != std::string::npos)
+	{
+		// 截取从 start 开始，长度为 (end - start) 的子串
+		stl_VectorFields.push_back(xstring(m_StrField.substr(nStart, nEnd - nStart)));
+		// 将下一次查找的起点移到当前分隔符的后面
+		nStart = nEnd + 2;  // Skip "\n\n"
+		// 寻找下一个 \n\n
+		nEnd = m_StrField.find("\n\n", nStart);
+	}
+	// --- 核心改动：平移残余数据并更新大小 ---
+	if (nStart > 0)
+	{
+		if (nStart < nLen)
 		{
-			XCHAR* ptszSplit = _tcsxstr(ptszStart, _X("\n\n"));
-			if (NULL == ptszSplit)
+			// 情况 A：有残余数据（数据不全的尾巴）
+			size_t nRemainLen = nLen - nStart; // 计算剩下的不完整数据长度
+			// 使用 memmove 将后面的残余数据平移到缓冲区最前端
+			// 注意：因为源内存和目标内存可能重叠，必须用 memmove，不能用 memcpy
+			::memmove(ptszBuf, ptszBuf + nStart, nRemainLen);
+			// 更新缓冲区中剩余的有效数据大小
+			nLen = nRemainLen;
+			// (可选) 如果是字符串缓冲区，习惯性在截断处补一个 \0 保证安全
+			ptszBuf[nLen] = '\0';
+		}
+		else
+		{
+			// 情况 B：数据刚好完美解析完，没有残留
+			nLen = 0;
+			if (ptszBuf != nullptr)
 			{
-				break;
+				ptszBuf[0] = '\0';
 			}
-			XCHAR* ptszNextMsg = ptszSplit + 2;
-			int nOneMsgLen = (int)(ptszSplit - ptszStart);
-			int nPos = 0;
-			if (_tcsxnicmp(ptszStart, lpszSSEStr, _tcsxlen(lpszSSEStr)) == 0)
+		}
+	}
+	// 别忘了把最后一个分隔符后面的尾巴（第三段）带上
+	if (nStart < m_StrField.length())
+	{
+		stl_VectorFields.push_back(xstring(m_StrField.substr(nStart, m_StrField.length() - nStart)));
+	}
+
+	for (const auto& stl_VectorIterator : stl_VectorFields)
+	{
+		xstring m_StrEvent;
+		xstring m_StrData;
+		xstring m_StrMessage;
+		std::stringstream m_StrStream(stl_VectorIterator);
+		while (std::getline(m_StrStream, m_StrMessage))
+		{
+			// 去除可能存在的行尾回车符（兼容 Windows 的 \r\n）
+			if (!m_StrMessage.empty() && m_StrMessage.back() == '\r')
 			{
-				nPos = _tcsxlen(lpszSSEStr);
+				m_StrMessage.pop_back();
 			}
-			if (_tcsxnicmp(lpszSSEEnd, ptszStart + nPos, _tcsxlen(lpszSSEEnd)) == 0)
+			// 1. 解析 event 字段
+			if (m_StrMessage.rfind(lpszSSEEvent, 0) == 0)
+			{
+				m_StrEvent = m_StrMessage.substr(7);
+			}
+			// 2. 解析 data 字段
+			else if (m_StrMessage.rfind(lpszSSEStr, 0) == 0)
+			{
+				m_StrData = m_StrMessage.substr(6);
+			}
+
+			if (m_StrData.rfind(lpszSSEEnd, 0) == 0)
 			{
 				if (pSt_AIClient->bHistory)
 				{
@@ -763,32 +748,23 @@ void CAIApi_Chat::AIApi_Chat_CBRecvV3(AICLIENT_CHAT* pSt_AIClient)
 				memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
 				break;
 			}
-
-			// 调用针对 V3 新封装的解析器
-			if (!AIApi_Chat_ParseV3(pSt_AIClient, ptszStart + nPos, nOneMsgLen - nPos, true))
+		}
+		// 调用针对 V3 新封装的解析器
+		LPCXSTR lpszEventThinkPrefix = _X("response.output_text.delta");
+		LPCXSTR lpszEventDeltaPrefix = _X("response.reasoning_summary_text.delta");
+		if (0 == _tcsxnicmp(m_StrEvent.c_str(), lpszEventThinkPrefix, m_StrEvent.length()))
+		{
+			if (!AIApi_Chat_ParseV3(pSt_AIClient, m_StrData.c_str(), m_StrData.length(), false))
 			{
 				break;
 			}
-
-			int nRemainLen = (int)(ptszEnd - ptszNextMsg);
-			if (nRemainLen > 0)
-			{
-				memmove(pSt_AIClient->ptszMSGBuffer, ptszNextMsg, nRemainLen * sizeof(XCHAR));
-			}
-			pSt_AIClient->nMSGLen = nRemainLen;
-			memset(pSt_AIClient->ptszMSGBuffer + pSt_AIClient->nMSGLen, '\0', XENGINE_MEMORY_SIZE_MAX - pSt_AIClient->nMSGLen);
-
-			ptszStart = pSt_AIClient->ptszMSGBuffer;
-			ptszEnd = ptszStart + nRemainLen;
 		}
-	}
-	else
-	{
-		// V3 非流式处理
-		if (AIApi_Chat_ParseV3(pSt_AIClient, (LPCXSTR)pSt_AIClient->ptszMSGBuffer, pSt_AIClient->nMSGLen, false))
+		else if (0 == _tcsxnicmp(m_StrEvent.c_str(), lpszEventDeltaPrefix, m_StrEvent.length()))
 		{
-			memset(pSt_AIClient->ptszMSGBuffer, '\0', XENGINE_MEMORY_SIZE_MAX);
-			pSt_AIClient->nMSGLen = 0;
+			if (!AIApi_Chat_ParseV3(pSt_AIClient, m_StrData.c_str(), m_StrData.length(), true))
+			{
+				break;
+			}
 		}
 	}
 }

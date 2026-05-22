@@ -50,7 +50,7 @@ public:
 	bool AIApi_Chat_GetStatus(XNETHANDLE xhToken, bool* pbComplete, int* pInt_HTTPCode = NULL, bool bWaitExist = true);
 	bool AIApi_Chat_Destory(XNETHANDLE xhToken);
 protected:
-	bool AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply);
+	bool AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bThink);
 	// V3 版本解析封装函数
 	bool AIApi_Chat_ParseV3(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bThink);
 protected:

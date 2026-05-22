@@ -33,15 +33,15 @@ using namespace std;
 
 //Linux Macos::g++ -std=c++17 -Wall -g AIApi_APPExample.cpp -o AIApi_APPExample.exe -L ../../XEngine_Module/XEngine_AIApi -lXEngine_AIApi
 
-void XCALLBACK XEngine_AIApi_CBRecv(XNETHANDLE xhToken, LPCXSTR lpszModelName, LPCXSTR lpszMsgBuffer, int nMsgLen, bool bThink, XPVOID lParam)
+void XCALLBACK XEngine_AIApi_CBRecv(XNETHANDLE xhToken, LPCXSTR lpszMsgBuffer, int nMsgLen, bool bThink, XPVOID lParam)
 {
 	if (bThink)
 	{
-		printf("think:%lld,Name:%s:%d=%s\n", xhToken, lpszModelName, nMsgLen, lpszMsgBuffer);
+		printf("think:%lld,%d=%s\n", xhToken, nMsgLen, lpszMsgBuffer);
 	}
 	else
 	{
-		printf("chat:%lld,Name:%s:%d=%s\n", xhToken, lpszModelName, nMsgLen, lpszMsgBuffer);
+		printf("chat:%lld,%d=%s\n", xhToken, nMsgLen, lpszMsgBuffer);
 	}
 }
 
@@ -159,7 +159,7 @@ int Test_Chat()
 
 	LPCXSTR lpszAPIUrl = _X("https://ark.cn-beijing.volces.com/api/v3/chat/completions");
 	LPCXSTR lpszAPIKey = _X("d68056c1-1");
-	LPCXSTR lpszAPIModel = _X("doubao-seed-1-6-flash-250828");
+	LPCXSTR lpszAPIModel = _X("doubao-seed-2-0-lite-260428");
 
 	if (!AIApi_Chat_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv))
 	{
@@ -199,11 +199,39 @@ int Test_Chat()
 	AIApi_Chat_Destory(xhToken);
 	return 1;
 }
+int Test_ChatV3()
+{
+	XNETHANDLE xhToken = 0;
+
+	LPCXSTR lpszAPIUrl = _X("https://ark.cn-beijing.volces.com/api/v3/responses");
+	LPCXSTR lpszAPIKey = _X("d68056c1-1");
+	LPCXSTR lpszAPIModel = _X("doubao-seed-2-0-lite-260428");
+
+	if (!AIApi_Chat_Create(&xhToken, lpszAPIUrl, lpszAPIKey, XEngine_AIApi_CBRecv, NULL, true, XENGINE_MODULE_AIAPI_VERSION_V3))
+	{
+		printf("AIApi_Chat_Create:%lX\n", AIApi_GetLastError());
+		return 0;
+	}
+
+	LPCXSTR lpszMSGBuffer = _X("what can you do for me?");
+	int nMSGLen = strlen(lpszMSGBuffer);
+
+	if (!AIApi_Chat_Excute(xhToken, lpszAPIModel, lpszMSGBuffer, nMSGLen))
+	{
+		printf("AIApi_Chat_Excute:%lX\n", AIApi_GetLastError());
+		return 0;
+	}
+	bool bCompleted = false;
+	AIApi_Chat_GetStatus(xhToken, &bCompleted);
+	AIApi_Chat_Destory(xhToken);
+	return 1;
+}
 int main()
 {
 	//Test_CreateImage();
 	//Test_ParseImage();
 	//Test_Think();
-	Test_Chat();
+	//Test_Chat();
+	Test_ChatV3();
 	return 0;
 }

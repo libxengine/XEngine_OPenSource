@@ -437,7 +437,7 @@ bool CAIApi_Chat::AIApi_Chat_Destory(XNETHANDLE xhToken)
 //////////////////////////////////////////////////////////////////////////
 //                      保护函数
 //////////////////////////////////////////////////////////////////////////
-bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bSSEReply)
+bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGBuffer, int nMSGLen, bool bThink)
 {
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
@@ -462,25 +462,10 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 	for (unsigned int i = 0; i < st_JsonChoices.size(); i++)
 	{
 		Json::Value st_JsonMessage;
-		if (bSSEReply)
+		st_JsonMessage = st_JsonChoices[i]["delta"];
+		if (st_JsonMessage.isNull())
 		{
-			st_JsonMessage = st_JsonChoices[i]["delta"];
-			if (st_JsonMessage.isNull())
-			{
-				continue;
-			}
-		}
-		else
-		{
-			st_JsonMessage = st_JsonChoices[i]["message"];
-			if (st_JsonMessage.isNull())
-			{
-				continue;
-			}
-			if (st_JsonMessage["content"].isNull() || st_JsonMessage["role"].isNull())
-			{
-				continue;
-			}
+			continue;
 		}
 		AICLIENT_HISTORY st_AIHistory = {};
 		
@@ -506,37 +491,23 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 		if (_tcsxlen(st_AIHistory.tszRoleContent) > 0)
 		{
 #ifdef _MSC_BUILD
-			XCHAR tszGBKBuffer[8192] = {};
-			BaseLib_Charset_UTFToAnsi(st_JsonMessage["content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, tszGBKBuffer, nGBKLen, false, pSt_AIClient->lParam);
-			if (bSSEReply)
-			{
-				//流式数据需要单独处理保存
-				memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, tszGBKBuffer, nGBKLen);
-				pSt_AIClient->st_HisStream.nCLen += nGBKLen;
-			}
+			BaseLib_Charset_UTFToAnsi(st_JsonMessage["content"].asString().c_str(), st_AIHistory.tszRoleContent, &nGBKLen);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_AIHistory.tszRoleContent, nGBKLen, false, pSt_AIClient->lParam);
 #else
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), false, pSt_AIClient->lParam);
-			if (bSSEReply)
-			{
-				memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length());
-				pSt_AIClient->st_HisStream.nCLen += st_JsonMessage["content"].asString().length();
-			}
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_AIHistory.tszRoleContent, nGBKLen, false, pSt_AIClient->lParam);
 #endif
-			if (pSt_AIClient->bHistory && !bSSEReply)
-			{
-				pSt_AIClient->pStl_ListHistory->push_back(st_AIHistory);
-			}
+			//流式数据需要单独处理保存
+			memcpy(pSt_AIClient->st_HisStream.tszRoleContent + pSt_AIClient->st_HisStream.nCLen, st_AIHistory.tszRoleContent, nGBKLen);
+			pSt_AIClient->st_HisStream.nCLen += nGBKLen;
 		}
 		//思考对话
 		if (_tcsxlen(st_AIHistory.tszThinkContent) > 0)
 		{
 #ifdef _MSC_BUILD
-			XCHAR tszGBKBuffer[8192] = {};
-			BaseLib_Charset_UTFToAnsi(st_JsonMessage["reasoning_content"].asString().c_str(), tszGBKBuffer, &nGBKLen);
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, tszGBKBuffer, nGBKLen, true, pSt_AIClient->lParam);
+			BaseLib_Charset_UTFToAnsi(st_JsonMessage["reasoning_content"].asString().c_str(), st_AIHistory.tszThinkContent, &nGBKLen);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_AIHistory.tszThinkContent, nGBKLen, true, pSt_AIClient->lParam);
 #else
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonMessage["content"].asString().c_str(), st_JsonMessage["content"].asString().length(), true, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_AIHistory.tszThinkContent, nGBKLen, true, pSt_AIClient->lParam);
 #endif
 		}
 	}

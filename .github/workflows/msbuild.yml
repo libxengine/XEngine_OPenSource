@@ -35,8 +35,10 @@ jobs:
         shell: pwsh
       - name: Set up Dependency x86_32 Environment
         if: matrix.platform == 'x86'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          $response = Invoke-RestMethod -Uri "https://api.github.com/repos/libxengine/libxengine/releases/latest" -Headers @{"Accept"="application/vnd.github.v3+json"}
+          latest_tag=$(gh api repos/libxengine/libxengine/releases/latest --jq '.tag_name')
           $latest_tag = $response.tag_name
           Write-Host "Latest Tag: $latest_tag"
     

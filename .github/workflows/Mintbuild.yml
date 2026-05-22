@@ -43,8 +43,10 @@ jobs:
             apt install gcc g++ make git jq unzip curl wget -y
 
       - name: install xengine library
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-            latest_tag=$(curl -s https://api.github.com/repos/libxengine/libxengine/releases/latest | jq -r .tag_name)
+            latest_tag=$(gh api repos/libxengine/libxengine/releases/latest --jq '.tag_name')
             wget https://github.com/libxengine/libxengine/releases/download/$latest_tag/XEngine_UBuntu_24.04_${{ matrix.artifact }}.zip
             unzip ./XEngine_UBuntu_24.04_${{ matrix.artifact }}.zip -d ./XEngine_UBuntu_24.04_${{ matrix.artifact }}
             cd XEngine_UBuntu_24.04_${{ matrix.artifact }}

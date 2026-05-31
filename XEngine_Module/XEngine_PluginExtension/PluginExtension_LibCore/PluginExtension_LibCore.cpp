@@ -84,53 +84,58 @@ bool CPluginExtension_LibCore::PluginExtension_LibCore_Push(XNETHANDLE* pxhModul
 }
 /********************************************************************
 函数名称：PluginExtension_LibCore_Exec
-函数功能：执行一次
+函数功能：调用一次插件
  参数.一：xhModule
   In/Out：In
   类型：句柄
   可空：N
   意思：输入模块句柄
- 参数.二：pppHDRList
-  In/Out：In
-  类型：三级指针
-  可空：N
-  意思：HTTP请求的URL参数列表
- 参数.三：nListCount
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入列表个数
- 参数.四：ptszMsgBuffer
+ 参数.二：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出负载的内容
- 参数.五：pInt_MsgLen
+ 参数.三：pInt_MsgLen
   In/Out：Out
   类型：整数型指针
   可空：N
   意思：输出内容大小
- 参数.六：lpszMsgBufer
+ 参数.四：lpszMsgBufer
   In/Out：Out
   类型：常量字符指针
   可空：Y
   意思：输入负载内容
- 参数.七：nMsgLen
+ 参数.五：nMsgLen
   In/Out：Out
   类型：整数型指针
   可空：Y
   意思：输入负载大小
- 参数.八：pInt_HTTPCode
+ 参数.六：pppInputParameters
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入参数列表
+ 参数.七：nInputPCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.八：pppOutputParameters
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出参数列表
+ 参数.九：pInt_OutputPCount
   In/Out：Out
   类型：整数型指针
-  可空：Y
-  意思：输出返回的HTTPCODE值
+  可空：N
+  意思：输出列表个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer /* = NULL */, int nMsgLen /* = 0 */, int* pInt_HTTPCode /* = NULL */)
+bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, XCHAR*** pppInputParameters, int nInputPCount, XCHAR*** pppOutputParameters, int* pInt_OutputPCount)
 {
     PluginExtension_IsErrorOccur = false;
 
@@ -144,7 +149,7 @@ bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec(XNETHANDLE xhModule,
 		st_csStl.unlock_shared();
 		return false;
 	}
-    if (!stl_MapIterator->second.fpCall_PluginCore_Call(pppHDRList, nListCount, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pInt_HTTPCode))
+    if (!stl_MapIterator->second.fpCall_PluginCore_Call(ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pppInputParameters, nInputPCount, pppOutputParameters, pInt_OutputPCount))
 	{
 		PluginExtension_IsErrorOccur = true;
 		PluginExtension_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();

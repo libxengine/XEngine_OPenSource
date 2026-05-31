@@ -7,6 +7,7 @@
 #ifndef PCH_H
 #define PCH_H
 
+#define _XENGINE_BUILD_SWITCH_LUA
 #ifdef _MSC_BUILD
 // 添加要在此处预编译的标头
 #define _CRT_SECURE_NO_WARNINGS

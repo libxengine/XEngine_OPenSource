@@ -337,7 +337,7 @@ bool CPluginExtension_Loader::PluginExtension_Loader_GetForModule(LPCXSTR lpszMo
   意思：是否成功
 备注：
 *********************************************************************/
-bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer /* = NULL */, int nMsgLen /* = 0 */, int* pInt_HTTPCode /* = NULL */)
+bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer /* = NULL */, int nMsgLen /* = 0 */, XCHAR*** pppInputParameters /* = NULL */, int nInputPCount /* = 0 */, XCHAR*** pppOutputParameters /* = NULL */, int* pInt_OutputPCount /* = NULL */)
 {
 	PluginExtension_IsErrorOccur = false;
 
@@ -359,7 +359,7 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName
 
 	if (0 == stl_MapIterator->second.nType)
 	{
-		if (!PluginExtension_LibCore_Exec(stl_MapIterator->second.xhToken, pppHDRList, nListCount, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pInt_HTTPCode))
+		if (!PluginExtension_LibCore_Exec(stl_MapIterator->second.xhToken, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pppInputParameters, nInputPCount, pppOutputParameters, pInt_OutputPCount))
 		{
 			st_Locker.unlock_shared();
 			return false;
@@ -367,7 +367,7 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName
 	}
 	else
 	{
-		if (!PluginExtension_LuaCore_Exec(stl_MapIterator->second.xhToken, pppHDRList, nListCount, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pInt_HTTPCode))
+		if (!PluginExtension_LuaCore_Exec(stl_MapIterator->second.xhToken, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pppInputParameters, nInputPCount, pppOutputParameters, pInt_OutputPCount))
 		{
 			st_Locker.unlock_shared();
 			return false;

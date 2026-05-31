@@ -74,53 +74,58 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Push(XNETHANDLE* pxhModul
 }
 /********************************************************************
 函数名称：PluginExtension_LuaCore_Exec
-函数功能：执行一次
+函数功能：调用一次插件
  参数.一：xhModule
   In/Out：In
   类型：句柄
   可空：N
   意思：输入模块句柄
- 参数.二：pppHDRList
-  In/Out：In
-  类型：三级指针
-  可空：N
-  意思：HTTP请求的URL参数列表
- 参数.三：nListCount
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入列表个数
- 参数.四：ptszMsgBuffer
+ 参数.二：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出负载的内容
- 参数.五：pInt_MsgLen
+ 参数.三：pInt_MsgLen
   In/Out：Out
   类型：整数型指针
   可空：N
   意思：输出内容大小
- 参数.六：lpszMsgBufer
+ 参数.四：lpszMsgBufer
   In/Out：Out
   类型：常量字符指针
   可空：Y
   意思：输入负载内容
- 参数.七：nMsgLen
+ 参数.五：nMsgLen
   In/Out：Out
   类型：整数型指针
   可空：Y
   意思：输入负载大小
- 参数.八：pInt_HTTPCode
+ 参数.六：pppInputParameters
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入参数列表
+ 参数.七：nInputPCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.八：pppOutputParameters
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出参数列表
+ 参数.九：pInt_OutputPCount
   In/Out：Out
   类型：整数型指针
-  可空：Y
-  意思：输出返回的HTTPCODE值
+  可空：N
+  意思：输出列表个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer /* = NULL */, int nMsgLen /* = 0 */, int* pInt_HTTPCode /* = NULL */)
+bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, XCHAR*** pppInputParameters, int nInputPCount, XCHAR*** pppOutputParameters, int* pInt_OutputPCount)
 {
     PluginExtension_IsErrorOccur = false;
 
@@ -142,48 +147,74 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule,
 		st_csStl.unlock_shared();
 		return false;
 	}
-    XCHAR tszURLParam[XPATH_MAX];
-    memset(tszURLParam, '\0', XPATH_MAX);
-
-    for (int i = 1; i < nListCount; i++)
-    {
-        if (i > 1)
-        {
-            _tcsxcat(tszURLParam, "&");
-        }
-        _tcsxcat(tszURLParam, (*pppHDRList)[i]);
-    }
-    lua_pushstring(stl_MapIterator->second.pSt_LuaState, tszURLParam);
-    lua_pushinteger(stl_MapIterator->second.pSt_LuaState, nListCount - 1);
+	//将输入参数逐个压入 Lua table
+	lua_createtable(stl_MapIterator->second.pSt_LuaState, nInputPCount, 0);
+	for (int i = 0; i < nInputPCount; i++)
+	{
+		lua_pushstring(stl_MapIterator->second.pSt_LuaState, (*pppInputParameters)[i]);
+		lua_rawseti(stl_MapIterator->second.pSt_LuaState, -2, i + 1); // table[i] = param
+	}
+    lua_pushinteger(stl_MapIterator->second.pSt_LuaState, nInputPCount);
     lua_pushstring(stl_MapIterator->second.pSt_LuaState, lpszMsgBufer);
     lua_pushinteger(stl_MapIterator->second.pSt_LuaState, nMsgLen);
-    if (LUA_OK != lua_pcall(stl_MapIterator->second.pSt_LuaState, 4, 1, 0))
+
+    if (LUA_OK != lua_pcall(stl_MapIterator->second.pSt_LuaState, 4, 4, 0))
     {
 		PluginExtension_IsErrorOccur = true;
 		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_EXECTION;
 		st_csStl.unlock_shared();
 		return false;
     }
-    lua_getglobal(stl_MapIterator->second.pSt_LuaState, "PInt_HTTPCode");
-	if (!lua_isnil(stl_MapIterator->second.pSt_LuaState, -1))
+	// 调用后栈布局：
+// [-4] outputTable
+// [-3] msgBuffer
+// [-2] msgLen
+// [-1] retCode   <-- 栈顶，最先取
+// 
+	// 取 retCode（可根据需要判断）
+	bool bRet = true;
+	if (lua_isboolean(stl_MapIterator->second.pSt_LuaState, -1))
 	{
-		*pInt_HTTPCode = (int)lua_tointeger(stl_MapIterator->second.pSt_LuaState, -1);
+		bRet = lua_toboolean(stl_MapIterator->second.pSt_LuaState, -1) != 0;
 	}
-    lua_pop(stl_MapIterator->second.pSt_LuaState, -1);
+	lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
 
-	lua_getglobal(stl_MapIterator->second.pSt_LuaState, "PInt_MsgLen");
-	if (!lua_isnil(stl_MapIterator->second.pSt_LuaState, -1))
+	//取回数据
+	if (lua_isinteger(stl_MapIterator->second.pSt_LuaState, -1))
 	{
 		*pInt_MsgLen = (int)lua_tointeger(stl_MapIterator->second.pSt_LuaState, -1);
 	}
-	lua_pop(stl_MapIterator->second.pSt_LuaState, -1);
+	lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
 
-    if (*pInt_MsgLen > 0)
-    {
-		lua_getglobal(stl_MapIterator->second.pSt_LuaState, "PtszMsgBuffer");
+	if (*pInt_MsgLen > 0 && lua_isstring(stl_MapIterator->second.pSt_LuaState, -1))
+	{
 		_tcsxcpy(ptszMsgBuffer, lua_tostring(stl_MapIterator->second.pSt_LuaState, -1));
-		lua_pop(stl_MapIterator->second.pSt_LuaState, -1);
-    }
+	}
+	lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
+	//取输出参数 table
+	*pInt_OutputPCount = 0;
+	if (lua_istable(stl_MapIterator->second.pSt_LuaState, -1))
+	{
+		int nCount = (int)luaL_len(stl_MapIterator->second.pSt_LuaState, -1);
+		*pInt_OutputPCount = nCount;
+
+		if (nCount > 0 && pppOutputParameters != nullptr)
+		{
+			// 分配输出参数数组（调用方负责释放）
+			BaseLib_Memory_Malloc((XPPPMEM)pppOutputParameters, nCount, XPATH_MAX);
+			for (int i = 0; i < nCount; i++)
+			{
+				lua_rawgeti(stl_MapIterator->second.pSt_LuaState, -1, i + 1);  // 取 table[i]
+				LPCXSTR lpszValueStr = lua_tostring(stl_MapIterator->second.pSt_LuaState, -1);
+				if (NULL != lpszValueStr)
+				{
+					_tcsxcpy((*pppOutputParameters)[i], lpszValueStr);
+				}
+				lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
+			}
+		}
+	}
+	lua_pop(stl_MapIterator->second.pSt_LuaState, 1); // pop outputTable
 	st_csStl.unlock_shared();
 #endif
     return true;

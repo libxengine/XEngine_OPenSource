@@ -33,7 +33,7 @@ public:
 	bool PluginExtension_Loader_Find(LPCXSTR lpszMethodName, int* pInt_Type);
 	bool PluginExtension_Loader_Get(LPCXSTR lpszMethodName, XCHAR* ptszPluginName = NULL, XCHAR* ptszPluginVersion = NULL, XCHAR* ptszPluginAuthor = NULL, XCHAR* ptszPluginDesc = NULL);
 	bool PluginExtension_Loader_GetForModule(LPCXSTR lpszModuleName, XCHAR* ptszPluginName = NULL, XCHAR* ptszPluginVersion = NULL, XCHAR* ptszPluginAuthor = NULL, XCHAR* ptszPluginDesc = NULL);
-	bool PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR*** pppHDRList, int nListCount, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, int* pInt_HTTPCode = NULL);
+	bool PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, XCHAR*** pppInputParameters = NULL, int nInputPCount = 0, XCHAR*** pppOutputParameters = NULL, int* pInt_OutputPCount = NULL);
 	bool PluginExtension_Loader_Destory();
 protected:
 private:

@@ -148,18 +148,22 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule,
 		return false;
 	}
 	//将输入参数逐个压入 Lua table
-	lua_createtable(stl_MapIterator->second.pSt_LuaState, nInputPCount, 0);
-	for (int i = 0; i < nInputPCount; i++)
+	lua_createtable(stl_MapIterator->second.pSt_LuaState, nInputPCount - 1, 0);
+	for (int i = 1; i < nInputPCount; i++)
 	{
 		lua_pushstring(stl_MapIterator->second.pSt_LuaState, (*pppInputParameters)[i]);
-		lua_rawseti(stl_MapIterator->second.pSt_LuaState, -2, i + 1); // table[i] = param
+		lua_rawseti(stl_MapIterator->second.pSt_LuaState, -2, i); // table[i] = param
 	}
-    lua_pushinteger(stl_MapIterator->second.pSt_LuaState, nInputPCount);
+    lua_pushinteger(stl_MapIterator->second.pSt_LuaState, nInputPCount - 1);
     lua_pushstring(stl_MapIterator->second.pSt_LuaState, lpszMsgBufer);
     lua_pushinteger(stl_MapIterator->second.pSt_LuaState, nMsgLen);
 
     if (LUA_OK != lua_pcall(stl_MapIterator->second.pSt_LuaState, 4, 4, 0))
     {
+		const char* errMsg = lua_tostring(stl_MapIterator->second.pSt_LuaState, -1);
+		printf("Lua error: %s\n", errMsg ? errMsg : "unknown error");
+		lua_pop(stl_MapIterator->second.pSt_LuaState, 1); // 弹出错误信息
+
 		PluginExtension_IsErrorOccur = true;
 		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_EXECTION;
 		st_csStl.unlock_shared();
@@ -192,29 +196,33 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule,
 	}
 	lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
 	//取输出参数 table
-	*pInt_OutputPCount = 0;
-	if (lua_istable(stl_MapIterator->second.pSt_LuaState, -1))
+	if (NULL != pInt_OutputPCount)
 	{
-		int nCount = (int)luaL_len(stl_MapIterator->second.pSt_LuaState, -1);
-		*pInt_OutputPCount = nCount;
-
-		if (nCount > 0 && pppOutputParameters != nullptr)
+		*pInt_OutputPCount = 0;
+		if (lua_istable(stl_MapIterator->second.pSt_LuaState, -1))
 		{
-			// 分配输出参数数组（调用方负责释放）
-			BaseLib_Memory_Malloc((XPPPMEM)pppOutputParameters, nCount, XPATH_MAX);
-			for (int i = 0; i < nCount; i++)
+			int nCount = (int)luaL_len(stl_MapIterator->second.pSt_LuaState, -1);
+			*pInt_OutputPCount = nCount;
+
+			if (nCount > 0 && pppOutputParameters != nullptr)
 			{
-				lua_rawgeti(stl_MapIterator->second.pSt_LuaState, -1, i + 1);  // 取 table[i]
-				LPCXSTR lpszValueStr = lua_tostring(stl_MapIterator->second.pSt_LuaState, -1);
-				if (NULL != lpszValueStr)
+				// 分配输出参数数组（调用方负责释放）
+				BaseLib_Memory_Malloc((XPPPMEM)pppOutputParameters, nCount, XPATH_MAX);
+				for (int i = 0; i < nCount; i++)
 				{
-					_tcsxcpy((*pppOutputParameters)[i], lpszValueStr);
+					lua_rawgeti(stl_MapIterator->second.pSt_LuaState, -1, i + 1);  // 取 table[i]
+					LPCXSTR lpszValueStr = lua_tostring(stl_MapIterator->second.pSt_LuaState, -1);
+					if (NULL != lpszValueStr)
+					{
+						_tcsxcpy((*pppOutputParameters)[i], lpszValueStr);
+					}
+					lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
 				}
-				lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
 			}
 		}
+		lua_pop(stl_MapIterator->second.pSt_LuaState, 1); // pop outputTable
 	}
-	lua_pop(stl_MapIterator->second.pSt_LuaState, 1); // pop outputTable
+	
 	st_csStl.unlock_shared();
 #endif
     return true;

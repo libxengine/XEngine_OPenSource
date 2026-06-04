@@ -141,6 +141,50 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Find(LPCXSTR lpszMethodName
 	return true;
 }
 /********************************************************************
+函数名称：PluginExtension_Loader_RegisterType
+函数功能：获取注册插件类型
+ 参数.一：lpszMethodName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入模块名称
+返回值
+  类型：整数型
+  意思：返回注册类型,-1 失败
+备注：
+*********************************************************************/
+int CPluginExtension_Loader::PluginExtension_Loader_RegisterType(LPCXSTR lpszMethodName)
+{
+	PluginExtension_IsErrorOccur = false;
+
+	if (NULL == lpszMethodName)
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	unordered_map<string, PLUGINCORE_LOADER>::const_iterator stl_MapIterator = stl_MapLoader.find(lpszMethodName);
+	if (stl_MapIterator == stl_MapLoader.end())
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	int nRegisterTypeCount = 0;
+	if (0 == stl_MapIterator->second.nType)
+	{
+		nRegisterTypeCount = PluginExtension_LibCore_RegisterType(stl_MapIterator->second.xhToken);
+	}
+	else
+	{
+		nRegisterTypeCount = PluginExtension_LuaCore_RegisterType(stl_MapIterator->second.xhToken);
+	}
+	st_Locker.unlock_shared();
+	return nRegisterTypeCount;
+}
+/********************************************************************
 函数名称：PluginExtension_LibCore_Get
 函数功能：获取插件基础信息函数
  参数.一：lpszMethodName

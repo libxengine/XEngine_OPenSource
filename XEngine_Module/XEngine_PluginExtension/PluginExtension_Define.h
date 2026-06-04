@@ -59,6 +59,20 @@ extern "C" bool PluginExtension_LibCore_Init();
 *********************************************************************/
 extern "C" bool PluginExtension_LibCore_Push(XNETHANDLE * pxhNet, LPCXSTR lpszPluginFile, XENGINE_PLUGINPARAM* pSt_PluginParameter = NULL);
 /********************************************************************
+函数名称：PluginExtension_LibCore_RegisterType
+函数功能：注册类型
+ 参数.一：xhModule
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入模块句柄
+返回值
+  类型：整数型
+  意思：返回注册类型
+备注：
+*********************************************************************/
+extern "C" int PluginExtension_LibCore_RegisterType(XNETHANDLE xhModule);
+/********************************************************************
 函数名称：PluginExtension_LibCore_Exec
 函数功能：调用一次插件
  参数.一：xhModule
@@ -191,6 +205,20 @@ extern "C" bool PluginExtension_LuaCore_Init();
 备注：
 *********************************************************************/
 extern "C" bool PluginExtension_LuaCore_Push(XNETHANDLE* pxhModule, LPCXSTR lpszPluginFile, XENGINE_PLUGINPARAM* pSt_PluginParameter = NULL);
+/********************************************************************
+函数名称：PluginExtension_LuaCore_RegisterType
+函数功能：获取注册插件类型
+ 参数.一：xhModule
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入模块句柄
+返回值
+  类型：整数型
+  意思：返回注册类型
+备注：
+*********************************************************************/
+extern "C" int PluginExtension_LuaCore_RegisterType(XNETHANDLE xhModule);
 /********************************************************************
 函数名称：PluginExtension_LuaCore_Exec
 函数功能：调用一次插件
@@ -343,6 +371,20 @@ extern "C" bool PluginExtension_Loader_Insert(LPCXSTR lpszModuleName, int nType,
 备注：
 *********************************************************************/
 extern "C" bool PluginExtension_Loader_Find(LPCXSTR lpszMethodName, int* pInt_Type);
+/********************************************************************
+函数名称：PluginExtension_Loader_RegisterType
+函数功能：获取注册插件类型
+ 参数.一：lpszMethodName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入模块名称
+返回值
+  类型：整数型
+  意思：返回注册类型,-1 失败
+备注：
+*********************************************************************/
+extern "C" int PluginExtension_Loader_RegisterType(LPCXSTR lpszMethodName);
 /********************************************************************
 函数名称：PluginExtension_LibCore_Get
 函数功能：获取插件基础信息函数

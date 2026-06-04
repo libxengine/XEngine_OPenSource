@@ -41,6 +41,10 @@ extern "C" bool PluginExtension_LibCore_Push(XNETHANDLE* pxhModule, LPCXSTR lpsz
 {
 	return m_PluginLib.PluginExtension_LibCore_Push(pxhModule, lpszPluginFile, pSt_PluginParameter);
 }
+extern "C" int PluginExtension_LibCore_RegisterType(XNETHANDLE xhModule)
+{
+	return m_PluginLib.PluginExtension_LibCore_RegisterType(xhModule);
+}
 extern "C" bool PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, XCHAR*** pppInputParameters, int nInputPCount, XCHAR*** pppOutputParameters, int* pInt_OutputPCount)
 {
 	return m_PluginLib.PluginExtension_LibCore_Exec(xhModule, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pppInputParameters, nInputPCount, pppOutputParameters, pInt_OutputPCount);
@@ -68,6 +72,10 @@ extern "C" bool PluginExtension_LuaCore_Push(XNETHANDLE* pxhModule, LPCXSTR lpsz
 {
 	return m_PluginLua.PluginExtension_LuaCore_Push(pxhModule, lpszPluginFile, pSt_PluginParameter);
 }
+extern "C" int PluginExtension_LuaCore_RegisterType(XNETHANDLE xhModule)
+{
+	return m_PluginLua.PluginExtension_LuaCore_RegisterType(xhModule);
+}
 extern "C" bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, XCHAR*** pppInputParameters, int nInputPCount, XCHAR*** pppOutputParameters, int* pInt_OutputPCount)
 {
 	return m_PluginLua.PluginExtension_LuaCore_Exec(xhModule, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pppInputParameters, nInputPCount, pppOutputParameters, pInt_OutputPCount);
@@ -90,6 +98,10 @@ extern "C" bool PluginExtension_Loader_Insert(LPCXSTR lpszModuleName, int nType,
 extern "C" bool PluginExtension_Loader_Find(LPCXSTR lpszMethodName, int* pInt_Type)
 {
 	return m_PluginLoader.PluginExtension_Loader_Find(lpszMethodName, pInt_Type);
+}
+extern "C" int PluginExtension_Loader_RegisterType(LPCXSTR lpszMethodName)
+{
+	return m_PluginLoader.PluginExtension_Loader_RegisterType(lpszMethodName);
 }
 extern "C" bool PluginExtension_Loader_Get(LPCXSTR lpszMethodName, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc)
 {

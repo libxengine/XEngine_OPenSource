@@ -83,6 +83,37 @@ bool CPluginExtension_LibCore::PluginExtension_LibCore_Push(XNETHANDLE* pxhModul
     return true;
 }
 /********************************************************************
+函数名称：PluginExtension_LibCore_RegisterType
+函数功能：注册类型
+ 参数.一：xhModule
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入模块句柄
+返回值
+  类型：整数型
+  意思：返回注册类型
+备注：
+*********************************************************************/
+int CPluginExtension_LibCore::PluginExtension_LibCore_RegisterType(XNETHANDLE xhModule)
+{
+	PluginExtension_IsErrorOccur = false;
+
+	st_csStl.lock_shared();
+	//执行指定插件函数
+	unordered_map<XNETHANDLE, PLUGINCORE_LIBFRAMEWORK>::const_iterator stl_MapIterator = stl_MapFrameWork.find(xhModule);
+	if (stl_MapIterator == stl_MapFrameWork.end())
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_NOTFOUND;
+		st_csStl.unlock_shared();
+		return -1;
+	}
+	int nRegisterTypeCount = stl_MapIterator->second.fpCall_PluginCore_RegisterType();
+	st_csStl.unlock_shared();
+	return nRegisterTypeCount;
+}
+/********************************************************************
 函数名称：PluginExtension_LibCore_Exec
 函数功能：调用一次插件
  参数.一：xhModule
@@ -317,6 +348,18 @@ bool CPluginExtension_LibCore::PluginExtension_LibCore_Add(XNETHANDLE xhNet, LPC
         XFreeModule(st_FrameWork.mhFile);
         PluginExtension_IsErrorOccur = true;
         PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_FPUNINIT;
+        return false;
+    }
+#ifdef _MSC_BUILD
+    st_FrameWork.fpCall_PluginCore_RegisterType = (FPCall_PluginCore_RegisterType)GetProcAddress(st_FrameWork.mhFile, "PluginCore_RegisterType");
+#else
+    * (void**)(&st_FrameWork.fpCall_PluginCore_RegisterType) = dlsym(st_FrameWork.mhFile, _X("PluginCore_RegisterType"));
+#endif
+    if (NULL == st_FrameWork.fpCall_PluginCore_RegisterType)
+    {
+        XFreeModule(st_FrameWork.mhFile);
+        PluginExtension_IsErrorOccur = true;
+        PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_FPREGISTER;
         return false;
     }
 #ifdef _MSC_BUILD

@@ -5,12 +5,14 @@ EXPORTS
 
 	PluginExtension_LibCore_Init
 	PluginExtension_LibCore_Push
+	PluginExtension_LibCore_RegisterType
 	PluginExtension_LibCore_Exec
 	PluginExtension_LibCore_Get
 	PluginExtension_LibCore_Destroy
 
 	PluginExtension_LuaCore_Init
 	PluginExtension_LuaCore_Push
+	PluginExtension_LuaCore_RegisterType
 	PluginExtension_LuaCore_Exec
 	PluginExtension_LuaCore_Get
 	PluginExtension_LuaCore_Destroy
@@ -18,6 +20,7 @@ EXPORTS
 	PluginExtension_Loader_Init
 	PluginExtension_Loader_Insert
 	PluginExtension_Loader_Find
+	PluginExtension_Loader_RegisterType
 	PluginExtension_Loader_Get
 	PluginExtension_Loader_GetForModule
 	PluginExtension_Loader_Exec

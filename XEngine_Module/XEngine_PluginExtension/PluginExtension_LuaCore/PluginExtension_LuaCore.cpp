@@ -73,6 +73,59 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Push(XNETHANDLE* pxhModul
     return true;
 }
 /********************************************************************
+函数名称：PluginExtension_LuaCore_RegisterType
+函数功能：获取注册插件类型
+ 参数.一：xhModule
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入模块句柄
+返回值
+  类型：整数型
+  意思：返回注册类型
+备注：
+*********************************************************************/
+int CPluginExtension_LuaCore::PluginExtension_LuaCore_RegisterType(XNETHANDLE xhModule)
+{
+	PluginExtension_IsErrorOccur = false;
+
+	int nRegisterTypeCount = 0;
+	st_csStl.lock_shared();
+	//执行指定插件函数
+	unordered_map<XNETHANDLE, PLUGINCORE_LUAFRAMEWORK>::const_iterator stl_MapIterator = stl_MapFrameWork.find(xhModule);
+	if (stl_MapIterator == stl_MapFrameWork.end())
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_NOTFOUND;
+		st_csStl.unlock_shared();
+		return false;
+	}
+#ifdef _XENGINE_BUILD_SWITCH_LUA
+	if (LUA_TFUNCTION != lua_getglobal(stl_MapIterator->second.pSt_LuaState, "PluginCore_RegisterType"))
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_FPREGISTER;
+		st_csStl.unlock_shared();
+		return -1;
+	}
+	
+	if (LUA_OK != lua_pcall(stl_MapIterator->second.pSt_LuaState, 0, 1, 0))
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_FPREGISTER;
+		st_csStl.unlock_shared();
+		return -1;
+	}
+	if (lua_isinteger(stl_MapIterator->second.pSt_LuaState, -1))
+	{
+		nRegisterTypeCount = (int)lua_tointeger(stl_MapIterator->second.pSt_LuaState, -1);
+	}
+	lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
+	st_csStl.unlock_shared();
+#endif
+	return nRegisterTypeCount;
+}
+/********************************************************************
 函数名称：PluginExtension_LuaCore_Exec
 函数功能：调用一次插件
  参数.一：xhModule

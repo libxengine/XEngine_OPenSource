@@ -37,11 +37,13 @@ ifeq ($(PLATFORM),linux)
 		PLATVER = -D __CENTOS__
 		ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
 			LIB += -llua
+			FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
 		endif
 	else
 		PLATVER = -D __UBUNTU__
 		ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
 			LIB += -llua5.4
+			FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
 		endif
 	endif
 	FILEEXT = so
@@ -57,6 +59,7 @@ else ifeq ($(PLATFORM),mac)
 	LOADSO += -L /opt/homebrew/opt/lua/lib
 	ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
 		LIB += -llua
+		FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
 	endif
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
@@ -69,6 +72,10 @@ else ifeq ($(PLATFORM), android)
 	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
 	SDKPATH = $(HOME)/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
 	CC = $(SDKPATH) -Wall -fPIC -std=c++20 -target aarch64-linux-android30
+	ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
+		LIB += -llua
+		FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
+	endif
 else ifeq ($(PLATFORM), ios)
 	PLATVER = -D __IOS__
 	FILEEXT = dylib
@@ -77,6 +84,10 @@ else ifeq ($(PLATFORM), ios)
 	LOADSO += -L $(HOME)/XEngine_IOS_Arm64/XEngine_IOS/XEngine_BaseLib
 	SDKPATH = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 	CC = g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -miphoneos-version-min=16.0
+	ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
+		LIB += -llua
+		FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
+	endif
 endif
 
 all:$(OBJECTS)

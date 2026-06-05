@@ -232,7 +232,14 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule,
 	bool bRet = true;
 	if (lua_isboolean(stl_MapIterator->second.pSt_LuaState, -1))
 	{
-		bRet = lua_toboolean(stl_MapIterator->second.pSt_LuaState, -1) != 0;
+		bRet = lua_toboolean(stl_MapIterator->second.pSt_LuaState, -1);
+		if (!bRet)
+		{
+			PluginExtension_IsErrorOccur = true;
+			PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_EXECTION;
+			st_csStl.unlock_shared();
+			return false;
+		}
 	}
 	lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
 

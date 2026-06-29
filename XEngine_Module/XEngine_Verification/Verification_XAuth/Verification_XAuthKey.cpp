@@ -382,27 +382,10 @@ bool CVerification_XAuthKey::Verification_XAuthKey_KeyParse(VERIFICATION_XAUTHKE
 	//是否有自定义硬件码,如果有,那么可以不用关心硬件类型
 	if (NULL == lpszHWCode)
 	{
-		SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
-		SystemApi_HardWare_GetSerial(&st_SDKSerial);
-
-		if (ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW == enHWType)
+		if (ENUM_VERIFICATION_MODULE_HW_TYPE_UNKNOW != enHWType)
 		{
-			//采用默认主板序列验证
-			if (ENUM_VERIFICATION_MODULE_HW_TYPE_BOARD != pSt_XAuthInfo->st_AuthRegInfo.enHWType)
-			{
-				Verification_IsErrorOccur = true;
-				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_HWTYPE;
-				return false;
-			}
-			if (0 != _tcsxnicmp(st_SDKSerial.tszBoardSerial, pSt_XAuthInfo->st_AuthRegInfo.tszHardware, _tcsxlen(st_SDKSerial.tszBoardSerial)))
-			{
-				Verification_IsErrorOccur = true;
-				Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_SERIAL;
-				return false;
-			}
-		}
-		else
-		{
+			SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
+			SystemApi_HardWare_GetSerial(&st_SDKSerial);
 			//验证硬件类型是否匹配
 			if (enHWType == pSt_XAuthInfo->st_AuthRegInfo.enHWType)
 			{

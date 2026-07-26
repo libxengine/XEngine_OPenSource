@@ -16,25 +16,28 @@ support systems:linux,macos,windows,android,ios
 - XEngine_Example      Example Source
 
 #### Module Struct
-- XEngine_Token        Handle Management module
-- XEngine_InfoReport   information report module
-- XEngine_MSGNotify    Message Notify Modules
-- XEngine_AIApi        AI chat api module
-- XEngine_Verification verification module
-- jsoncpp              json module
-- tinyxml2             XML module
+- XEngine_Token            Handle Management module
+- XEngine_InfoReport       information report module
+- XEngine_MSGNotify        Message Notify Modules
+- XEngine_AIApi            AI chat api module
+- XEngine_Verification     verification module
+- XEngine_PluginExtension  plugin management module
+- jsoncpp                  json module
+- tinyxml2                 XML module
 
 #### 工具结构
 - XEngine_APPFileSort          file sort tools
 - XEngine_APPSimulateKeyInput  Simulate keybroad Input Tools
 - XEngine_APPSocketTest        network test tool(server and client)
-- XEngine_APPModuleTest        XEngine install completed check
 
 #### Example Struct
 - InfoReport_APPExample   information report example
 - MSGNotify_APPExample    message notify example
 - TinyXML2_APPExample     xml module example
 - AIApi_APPExample        ai module example
+- Verification_APPExample verification module example
+- Plugin_APPExample       plugin call example
+- PluginModule_APPExample plugin moudle example
 
 ## install
 

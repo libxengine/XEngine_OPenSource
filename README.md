@@ -17,25 +17,28 @@
 - XEngine_Example      例子源代码
 
 #### 模块结构
-- XEngine_Token        句柄管理模块
-- XEngine_InfoReport   信息报告模块
-- XEngine_MSGNotify    消息通知模块
-- XEngine_AIApi        AI对话接口模块
-- XEngine_Verification 验证模块
-- jsoncpp              json模块
-- tinyxml2             XML模块 
+- XEngine_Token            句柄管理模块
+- XEngine_InfoReport       信息报告模块
+- XEngine_MSGNotify        消息通知模块
+- XEngine_AIApi            AI对话接口模块
+- XEngine_Verification     验证模块
+- XEngine_PluginExtension  插件管理器模块
+- jsoncpp                  json模块
+- tinyxml2                 XML模块 
 
 #### 工具结构
 - XEngine_APPFileSort          文件排序工具
 - XEngine_APPSimulateKeyInput  模拟键盘输入工具
 - XEngine_APPSocketTest        网络测试工具(服务器和客户端)
-- XEngine_APPModuleTest        XEngine库安装完整性检查程序
 
 #### 例子结构
 - InfoReport_APPExample   报告模块例子
 - MSGNotify_APPExample    消息通知模块例子
 - TinyXML2_APPExample     XML模块例子
 - AIApi_APPExample        AI模块例子
+- Verification_APPExample 验证模块例子
+- Plugin_APPExample       插件调用例子
+- PluginModule_APPExample 插件模块实现例子
 
 ## 安装教程
 

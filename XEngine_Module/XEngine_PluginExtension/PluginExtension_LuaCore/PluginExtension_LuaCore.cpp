@@ -282,10 +282,62 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule,
 		}
 		lua_pop(stl_MapIterator->second.pSt_LuaState, 1); // pop outputTable
 	}
-	
 	st_csStl.unlock_shared();
 #endif
+	
     return true;
+}
+bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer)
+{
+	PluginExtension_IsErrorOccur = false;
+
+	st_csStl.lock_shared();
+	//执行指定插件函数
+	unordered_map<XNETHANDLE, PLUGINCORE_LUAFRAMEWORK>::const_iterator stl_MapIterator = stl_MapFrameWork.find(xhModule);
+	if (stl_MapIterator == stl_MapFrameWork.end())
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_NOTFOUND;
+		st_csStl.unlock_shared();
+		return false;
+	}
+#ifdef _XENGINE_BUILD_SWITCH_LUA
+	if (0 == lua_getglobal(stl_MapIterator->second.pSt_LuaState, "PluginCore_Call2"))
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_FPCALL;
+		st_csStl.unlock_shared();
+		return false;
+	}
+	lua_pushlightuserdata(stl_MapIterator->second.pSt_LuaState, phBuffer);
+
+	if (LUA_OK != lua_pcall(stl_MapIterator->second.pSt_LuaState, 1, 1, 0))
+	{
+		const char* errMsg = lua_tostring(stl_MapIterator->second.pSt_LuaState, -1);
+		printf("Lua error: %s\n", errMsg ? errMsg : "unknown error");
+		lua_pop(stl_MapIterator->second.pSt_LuaState, 1); // 弹出错误信息
+
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_EXECTION;
+		st_csStl.unlock_shared();
+		return false;
+	}
+	// 调用后栈布局：
+	// [-1] retCode   <-- 栈顶，最先取
+	// 取 retCode（可根据需要判断）
+	bool bRet = lua_toboolean(stl_MapIterator->second.pSt_LuaState, -1);
+	if (!bRet)
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_EXECTION;
+		st_csStl.unlock_shared();
+		return false;
+	}
+	lua_pop(stl_MapIterator->second.pSt_LuaState, 1);
+
+#endif
+	st_csStl.unlock_shared();
+	return true;
 }
 /********************************************************************
 函数名称：PluginExtension_LuaCore_Get

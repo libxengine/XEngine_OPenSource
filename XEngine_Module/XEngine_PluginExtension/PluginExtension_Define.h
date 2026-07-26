@@ -126,6 +126,8 @@ extern "C" int PluginExtension_LibCore_RegisterType(XNETHANDLE xhModule);
 备注：
 *********************************************************************/
 extern "C" bool PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, XCHAR*** pppInputParameters = NULL, int nInputPCount = 0, XCHAR*** pppOutputParameters = NULL, int* pInt_OutputPCount = NULL);
+extern "C" bool PluginExtension_LibCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer);
+extern "C" bool PluginExtension_LibCore_Exec3(XNETHANDLE xhModule, XHANDLE phBuffer, XHANDLE*** ppphBuffer, int* pInt_ListCount);
 /********************************************************************
 函数名称：PluginExtension_LibCore_Get
 函数功能：获取插件基础信息函数
@@ -273,6 +275,7 @@ extern "C" int PluginExtension_LuaCore_RegisterType(XNETHANDLE xhModule);
 备注：
 *********************************************************************/
 extern "C" bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, XCHAR*** pppInputParameters = NULL, int nInputPCount = 0, XCHAR*** pppOutputParameters = NULL, int* pInt_OutputPCount = NULL);
+extern "C" bool PluginExtension_LuaCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer);
 /********************************************************************
 函数名称：PluginExtension_LuaCore_Get
 函数功能：获取插件基础信息函数
@@ -507,6 +510,8 @@ extern "C" bool PluginExtension_Loader_GetForModule(LPCXSTR lpszModuleName, XCHA
 备注：
 *********************************************************************/
 extern "C" bool PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, XCHAR*** pppInputParameters = NULL, int nInputPCount = 0, XCHAR*** pppOutputParameters = NULL, int* pInt_OutputPCount = NULL);
+extern "C" bool PluginExtension_Loader_Exec2(LPCXSTR lpszMethodName, XHANDLE phBuffer);
+extern "C" bool PluginExtension_Loader_Exec3(LPCXSTR lpszMethodName, XHANDLE phBuffer, XHANDLE*** ppphBuffer, int* pInt_ListCount);
 /********************************************************************
 函数名称：PluginExtension_Loader_Destory
 函数功能：销毁加载器

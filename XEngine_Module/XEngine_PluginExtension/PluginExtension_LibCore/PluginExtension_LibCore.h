@@ -15,6 +15,8 @@ typedef void(*FPCall_PluginCore_UnInit)();
 typedef int(*FPCall_PluginCore_RegisterType)();
 typedef void(*FPCall_PluginCore_GetInfo)(XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc);
 typedef bool(*FPCall_PluginCore_Call)(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, XCHAR*** pppInputParameters, int nInputPCount, XCHAR*** pppOutputParameters, int* pInt_OutputPCount);
+typedef bool(*FPCall_PluginCore_Call2)(XHANDLE phBuffer);
+typedef bool(*FPCall_PluginCore_Call3)(XHANDLE phBuffer, XHANDLE*** ppphBuffer, int *pInt_ListCount);
 typedef XLONG(*FPCall_PluginCore_GetLastError)();
 
 typedef struct 
@@ -29,12 +31,15 @@ typedef struct
 	XCHAR tszModuleAuthor[128];
 	XCHAR tszModuleDesc[128];
 	XCHAR tszModuleVer[64];
+	int nCallCount;
 
 	bool(*fpCall_PluginCore_Init)(XENGINE_PLUGINPARAM* pSt_PluginParameter);
 	void(*fpCall_PluginCore_UnInit)();
 	int(*fpCall_PluginCore_RegisterType)();
 	void(*fpCall_PluginCore_GetInfo)(XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc);
 	bool(*fpCall_PluginCore_Call)(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLe, XCHAR*** pppInputParameters, int nInputPCount, XCHAR*** pppOutputParameters, int* pInt_OutputPCount);
+	bool(*fpCall_PluginCore_Call2)(XHANDLE phBuffer);
+	bool(*fpCall_PluginCore_Call3)(XHANDLE phBuffer, XHANDLE ***ppphBuffer, int* pInt_ListCount);
 	XLONG(*fpCall_PluginCore_GetLastError)();
 }PLUGINCORE_LIBFRAMEWORK;
 
@@ -48,6 +53,8 @@ public:
 	bool PluginExtension_LibCore_Push(XNETHANDLE* pxhModule, LPCXSTR lpszPluginFile, XENGINE_PLUGINPARAM* pSt_PluginParameter = NULL);
 	int PluginExtension_LibCore_RegisterType(XNETHANDLE xhModule);
 	bool PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, XCHAR*** pppInputParameters = NULL, int nInputPCount = 0, XCHAR*** pppOutputParameters = NULL, int* pInt_OutputPCount = NULL);
+	bool PluginExtension_LibCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer);
+	bool PluginExtension_LibCore_Exec3(XNETHANDLE xhModule, XHANDLE phBuffer, XHANDLE*** ppphBuffer, int* pInt_ListCount);
 	bool PluginExtension_LibCore_Get(XNETHANDLE xhModule, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc);
 	bool PluginExtension_LibCore_Destroy();
 protected:

@@ -420,6 +420,77 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName
 	st_Locker.unlock_shared();
 	return true;
 }
+bool CPluginExtension_Loader::PluginExtension_Loader_Exec2(LPCXSTR lpszMethodName, XHANDLE phBuffer)
+{
+	PluginExtension_IsErrorOccur = false;
+
+	if (NULL == lpszMethodName)
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	unordered_map<string, PLUGINCORE_LOADER>::const_iterator stl_MapIterator = stl_MapLoader.find(lpszMethodName);
+	if (stl_MapIterator == stl_MapLoader.end())
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	if (0 == stl_MapIterator->second.nType)
+	{
+		if (!PluginExtension_LibCore_Exec2(stl_MapIterator->second.xhToken, phBuffer))
+		{
+			st_Locker.unlock_shared();
+			return false;
+		}
+	}
+	else
+	{
+		if (!PluginExtension_LuaCore_Exec2(stl_MapIterator->second.xhToken, phBuffer))
+		{
+			st_Locker.unlock_shared();
+			return false;
+		}
+	}
+	st_Locker.unlock_shared();
+	return true;
+}
+bool CPluginExtension_Loader::PluginExtension_Loader_Exec3(LPCXSTR lpszMethodName, XHANDLE phBuffer, XHANDLE*** ppphBuffer, int* pInt_ListCount)
+{
+	PluginExtension_IsErrorOccur = false;
+
+	if (NULL == lpszMethodName)
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_PARAMENT;
+		return false;
+	}
+	st_Locker.lock_shared();
+	unordered_map<string, PLUGINCORE_LOADER>::const_iterator stl_MapIterator = stl_MapLoader.find(lpszMethodName);
+	if (stl_MapIterator == stl_MapLoader.end())
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	if (0 == stl_MapIterator->second.nType)
+	{
+		if (!PluginExtension_LibCore_Exec3(stl_MapIterator->second.xhToken, phBuffer, ppphBuffer, pInt_ListCount))
+		{
+			st_Locker.unlock_shared();
+			return false;
+		}
+	}
+	else
+	{
+	}
+	st_Locker.unlock_shared();
+	return true;
+}
 /********************************************************************
 函数名称：PluginExtension_Loader_Destory
 函数功能：销毁加载器

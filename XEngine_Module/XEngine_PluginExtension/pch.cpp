@@ -49,6 +49,14 @@ extern "C" bool PluginExtension_LibCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsg
 {
 	return m_PluginLib.PluginExtension_LibCore_Exec(xhModule, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pppInputParameters, nInputPCount, pppOutputParameters, pInt_OutputPCount);
 }
+extern "C" bool PluginExtension_LibCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer)
+{
+	return m_PluginLib.PluginExtension_LibCore_Exec2(xhModule, phBuffer);
+}
+extern "C" bool PluginExtension_LibCore_Exec3(XNETHANDLE xhModule, XHANDLE phBuffer, XHANDLE*** ppphBuffer, int* pInt_ListCount)
+{
+	return m_PluginLib.PluginExtension_LibCore_Exec3(xhModule, phBuffer, ppphBuffer, pInt_ListCount);
+}
 extern "C" bool PluginExtension_LibCore_Get(XNETHANDLE xhModule, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc)
 {
 	return m_PluginLib.PluginExtension_LibCore_Get(xhModule, ptszPluginName, ptszPluginVersion, ptszPluginAuthor, ptszPluginDesc);
@@ -79,6 +87,10 @@ extern "C" int PluginExtension_LuaCore_RegisterType(XNETHANDLE xhModule)
 extern "C" bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, XCHAR*** pppInputParameters, int nInputPCount, XCHAR*** pppOutputParameters, int* pInt_OutputPCount)
 {
 	return m_PluginLua.PluginExtension_LuaCore_Exec(xhModule, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pppInputParameters, nInputPCount, pppOutputParameters, pInt_OutputPCount);
+}
+extern "C" bool PluginExtension_LuaCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer)
+{
+	return m_PluginLua.PluginExtension_LuaCore_Exec2(xhModule, phBuffer);
 }
 extern "C" bool PluginExtension_LuaCore_Get(XNETHANDLE xhModule, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc)
 {
@@ -114,6 +126,14 @@ extern "C" bool PluginExtension_Loader_GetForModule(LPCXSTR lpszModuleName, XCHA
 extern "C" bool PluginExtension_Loader_Exec(LPCXSTR lpszMethodName, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer, int nMsgLen, XCHAR*** pppInputParameters, int nInputPCount, XCHAR*** pppOutputParameters, int* pInt_OutputPCount)
 {
 	return m_PluginLoader.PluginExtension_Loader_Exec(lpszMethodName, ptszMsgBuffer, pInt_MsgLen, lpszMsgBufer, nMsgLen, pppInputParameters, nInputPCount, pppOutputParameters, pInt_OutputPCount);
+}
+extern "C" bool PluginExtension_Loader_Exec2(LPCXSTR lpszMethodName, XHANDLE phBuffer)
+{
+	return m_PluginLoader.PluginExtension_Loader_Exec2(lpszMethodName, phBuffer);
+}
+extern "C" bool PluginExtension_Loader_Exec3(LPCXSTR lpszMethodName, XHANDLE phBuffer, XHANDLE*** ppphBuffer, int* pInt_ListCount)
+{
+	return m_PluginLoader.PluginExtension_Loader_Exec3(lpszMethodName, phBuffer, ppphBuffer, pInt_ListCount);
 }
 extern "C" bool PluginExtension_Loader_Destory()
 {

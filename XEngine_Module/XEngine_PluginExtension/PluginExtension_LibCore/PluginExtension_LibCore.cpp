@@ -191,6 +191,54 @@ bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec(XNETHANDLE xhModule,
 
     return true;
 }
+bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer)
+{
+	PluginExtension_IsErrorOccur = false;
+
+	st_csStl.lock_shared();
+	//执行指定插件函数
+	unordered_map<XNETHANDLE, PLUGINCORE_LIBFRAMEWORK>::const_iterator stl_MapIterator = stl_MapFrameWork.find(xhModule);
+	if (stl_MapIterator == stl_MapFrameWork.end())
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_NOTFOUND;
+		st_csStl.unlock_shared();
+		return false;
+	}
+	if (!stl_MapIterator->second.fpCall_PluginCore_Call2(phBuffer))
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
+		st_csStl.unlock_shared();
+		return false;
+	}
+	st_csStl.unlock_shared();
+	return true;
+}
+bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec3(XNETHANDLE xhModule, XHANDLE phBuffer, XHANDLE*** ppphBuffer, int* pInt_ListCount)
+{
+	PluginExtension_IsErrorOccur = false;
+
+	st_csStl.lock_shared();
+	//执行指定插件函数
+	unordered_map<XNETHANDLE, PLUGINCORE_LIBFRAMEWORK>::const_iterator stl_MapIterator = stl_MapFrameWork.find(xhModule);
+	if (stl_MapIterator == stl_MapFrameWork.end())
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_NOTFOUND;
+		st_csStl.unlock_shared();
+		return false;
+	}
+	if (!stl_MapIterator->second.fpCall_PluginCore_Call3(phBuffer, ppphBuffer, pInt_ListCount))
+	{
+		PluginExtension_IsErrorOccur = true;
+		PluginExtension_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();
+		st_csStl.unlock_shared();
+		return false;
+	}
+	st_csStl.unlock_shared();
+	return true;
+}
 /********************************************************************
 函数名称：PluginExtension_LibCore_Get
 函数功能：获取插件基础信息函数
@@ -362,18 +410,43 @@ bool CPluginExtension_LibCore::PluginExtension_LibCore_Add(XNETHANDLE xhNet, LPC
         PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_FPREGISTER;
         return false;
     }
+    //call to convert
 #ifdef _MSC_BUILD
     st_FrameWork.fpCall_PluginCore_Call = (FPCall_PluginCore_Call)GetProcAddress(st_FrameWork.mhFile, "PluginCore_Call");
 #else
     * (void**)(&st_FrameWork.fpCall_PluginCore_Call) = dlsym(st_FrameWork.mhFile, _X("PluginCore_Call"));
 #endif
-    if (NULL == st_FrameWork.fpCall_PluginCore_Call)
+    if (NULL != st_FrameWork.fpCall_PluginCore_Call)
+    {
+        st_FrameWork.nCallCount++;
+    }
+#ifdef _MSC_BUILD
+    st_FrameWork.fpCall_PluginCore_Call2 = (FPCall_PluginCore_Call2)GetProcAddress(st_FrameWork.mhFile, "PluginCore_Call2");
+#else
+    * (void**)(&st_FrameWork.fpCall_PluginCore_Call2) = dlsym(st_FrameWork.mhFile, _X("PluginCore_Call2"));
+#endif
+    if (NULL != st_FrameWork.fpCall_PluginCore_Call2)
+    {
+        st_FrameWork.nCallCount++;
+    }
+#ifdef _MSC_BUILD
+    st_FrameWork.fpCall_PluginCore_Call3 = (FPCall_PluginCore_Call3)GetProcAddress(st_FrameWork.mhFile, "PluginCore_Call3");
+#else
+    * (void**)(&st_FrameWork.fpCall_PluginCore_Call3) = dlsym(st_FrameWork.mhFile, _X("PluginCore_Call3"));
+#endif
+    if (NULL != st_FrameWork.fpCall_PluginCore_Call3)
+    {
+        st_FrameWork.nCallCount++;
+    }
+
+    if (0 == st_FrameWork.nCallCount)
     {
         XFreeModule(st_FrameWork.mhFile);
         PluginExtension_IsErrorOccur = true;
         PluginExtension_dwErrorCode = ERROR_XENGINE_THIRDPART_PLUGIN_FPCALL;
         return false;
     }
+
 #ifdef _MSC_BUILD
     st_FrameWork.fpCall_PluginCore_GetLastError = (FPCall_PluginCore_GetLastError)GetProcAddress(st_FrameWork.mhFile, _X("PluginCore_GetLastError"));
 #else

@@ -7,7 +7,7 @@
 ## 介绍
 
 开发语言:C/C++  
-开发工具:vs2022  
+开发工具:vs2026  
 支持系统:linux,macos,windows,android,ios
 
 ## 目录结构

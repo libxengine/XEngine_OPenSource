@@ -282,9 +282,9 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule,
 		}
 		lua_pop(stl_MapIterator->second.pSt_LuaState, 1); // pop outputTable
 	}
-	st_csStl.unlock_shared();
 #endif
-	
+
+	st_csStl.unlock_shared();
     return true;
 }
 bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer)

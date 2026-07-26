@@ -69,8 +69,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_PluginExtension", "XEngine_Module\XEngine_PluginExtension\XEngine_PluginExtension.vcxproj", "{D76B9C99-D002-4770-BB33-C24A91ED97E9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin_APPExample", "XEngine_Example\Plugin_APPExample\Plugin_APPExample.vcxproj", "{573754B4-F446-4A29-8546-17FD66A7FBAE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D76B9C99-D002-4770-BB33-C24A91ED97E9} = {D76B9C99-D002-4770-BB33-C24A91ED97E9}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PluginModule_VideoHook", "XEngine_Example\PluginModule_APPExample\PluginModule_VideoHook.vcxproj", "{0F5B5423-3DD4-4E96-9FE3-F04C2D20DE1A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D76B9C99-D002-4770-BB33-C24A91ED97E9} = {D76B9C99-D002-4770-BB33-C24A91ED97E9}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

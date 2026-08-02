@@ -134,7 +134,15 @@ bool CVerification_HTTP::Verification_HTTP_DigestClientPacket(XCHAR* ptszMSGBuff
 	int nRet = 0;
 	if (bQOPBody)
 	{
-
+		nRet = _xstprintf(ptszMSGBuffer, _X("Authorization: Digest username=\"%s\","
+			"realm=\"%s\","
+			"nonce=\"%s\","
+			"uri=\"%s\","
+			"qop=\"auth-int\","
+			"nc=00000001,"
+			"cnonce=\"%s\","
+			"response=\"%s\","
+			"opaque=\"%s\"\r\n"), lpszUser, lpszRealm, lpszNonceStr, lpszRequestUri, tszCNonceStr, tszResponseStr, lpszOpaqueStr);
 	}
 	else
 	{
@@ -219,7 +227,10 @@ bool CVerification_HTTP::Verification_HTTP_DigestServerPacket(XCHAR* ptszMSGBuff
 	int nRet = 0;
 	if (bQOPBody)
 	{
-
+		nRet = _xsntprintf(ptszMSGBuffer, XPATH_MAX, _X("WWW-Authenticate: Digest realm=\"%s\","
+			"qop=\"auth-int\","
+			"nonce=\"%s\","
+			"opaque=\"%s\"\r\n"), lpszRealm, ptszNonceStr, ptszOpaqueStr);
 	}
 	else
 	{

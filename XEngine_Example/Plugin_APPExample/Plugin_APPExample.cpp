@@ -62,11 +62,7 @@ int main()
 	XENGINE_PLUGINBUFFER st_PluginBuffer = {};
 	st_PluginBuffer.nUserNumber = 100;
 	_xstprintf(st_PluginBuffer.tszUserData, _X("videohook"));
-	if (!PluginExtension_Loader_Exec2(_X("videohook"), &st_PluginBuffer))
-	{
-		printf("PluginExtension_Loader_Call2 failed\n");
-		return -1;
-	}
+
 	//lua
 	LPCXSTR lpszLuaName = _X("D:\\XEngine_OPenSource\\Debug\\PluginModule_VideoHook.lua");
 	if (!PluginExtension_Loader_Insert(lpszLuaName, 1))
@@ -83,11 +79,7 @@ int main()
 
 	st_PluginBuffer.nUserNumber = 100;
 	_xstprintf(st_PluginBuffer.tszUserData, _X("audio"));
-	if (!PluginExtension_Loader_Exec2(_X("audiohook"), &st_PluginBuffer))
-	{
-		printf("PluginExtension_Loader_Call2 failed\n");
-		return -1;
-	}
+	
 
 	PluginExtension_Loader_Destory();
 	return 1;

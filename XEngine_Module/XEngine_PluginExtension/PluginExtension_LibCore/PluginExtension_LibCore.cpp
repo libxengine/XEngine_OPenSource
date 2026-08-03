@@ -191,7 +191,7 @@ bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec(XNETHANDLE xhModule,
 
     return true;
 }
-bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer)
+bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec2(XNETHANDLE xhModule, XHANDLE*** ppphBuffer)
 {
 	PluginExtension_IsErrorOccur = false;
 
@@ -205,7 +205,7 @@ bool CPluginExtension_LibCore::PluginExtension_LibCore_Exec2(XNETHANDLE xhModule
 		st_csStl.unlock_shared();
 		return false;
 	}
-	if (!stl_MapIterator->second.fpCall_PluginCore_Call2(phBuffer))
+	if (!stl_MapIterator->second.fpCall_PluginCore_Call2(ppphBuffer))
 	{
 		PluginExtension_IsErrorOccur = true;
 		PluginExtension_dwErrorCode = stl_MapIterator->second.fpCall_PluginCore_GetLastError();

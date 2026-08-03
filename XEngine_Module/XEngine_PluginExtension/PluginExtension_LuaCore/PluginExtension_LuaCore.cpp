@@ -287,7 +287,7 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec(XNETHANDLE xhModule,
 	st_csStl.unlock_shared();
     return true;
 }
-bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec2(XNETHANDLE xhModule, XHANDLE phBuffer)
+bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec2(XNETHANDLE xhModule, XHANDLE*** ppphBuffer)
 {
 	PluginExtension_IsErrorOccur = false;
 
@@ -309,7 +309,7 @@ bool CPluginExtension_LuaCore::PluginExtension_LuaCore_Exec2(XNETHANDLE xhModule
 		st_csStl.unlock_shared();
 		return false;
 	}
-	lua_pushlightuserdata(stl_MapIterator->second.pSt_LuaState, phBuffer);
+	lua_pushlightuserdata(stl_MapIterator->second.pSt_LuaState, (*ppphBuffer));
 
 	if (LUA_OK != lua_pcall(stl_MapIterator->second.pSt_LuaState, 1, 1, 0))
 	{

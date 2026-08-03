@@ -420,7 +420,7 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Exec(LPCXSTR lpszMethodName
 	st_Locker.unlock_shared();
 	return true;
 }
-bool CPluginExtension_Loader::PluginExtension_Loader_Exec2(LPCXSTR lpszMethodName, XHANDLE phBuffer)
+bool CPluginExtension_Loader::PluginExtension_Loader_Exec2(LPCXSTR lpszMethodName, XHANDLE*** ppphBuffer)
 {
 	PluginExtension_IsErrorOccur = false;
 
@@ -441,7 +441,7 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Exec2(LPCXSTR lpszMethodNam
 	}
 	if (0 == stl_MapIterator->second.nType)
 	{
-		if (!PluginExtension_LibCore_Exec2(stl_MapIterator->second.xhToken, phBuffer))
+		if (!PluginExtension_LibCore_Exec2(stl_MapIterator->second.xhToken, ppphBuffer))
 		{
 			st_Locker.unlock_shared();
 			return false;
@@ -449,7 +449,7 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Exec2(LPCXSTR lpszMethodNam
 	}
 	else
 	{
-		if (!PluginExtension_LuaCore_Exec2(stl_MapIterator->second.xhToken, phBuffer))
+		if (!PluginExtension_LuaCore_Exec2(stl_MapIterator->second.xhToken, ppphBuffer))
 		{
 			st_Locker.unlock_shared();
 			return false;

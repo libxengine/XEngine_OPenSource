@@ -92,6 +92,7 @@ typedef enum
 typedef struct  
 {
 	XCHAR tszRequestUrl[XPATH_MID];         // 请求的资源地址
+	XCHAR tszTokenStr[128];                 // TOKEN
 	XCHAR tszClientID[128];                 // 客户端ID
 	XCHAR tszClientCode[128];               // 客户端代码,authorization_code有效
 	XCHAR tszClientSecert[128];             // 客户端秘钥
@@ -441,7 +442,7 @@ extern "C" bool Verification_OAuth_Parse(VERIFICATION_OAUTHINFO* pSt_OAuthInfo, 
  参数.三：lpszAccessToken
   In/Out：In
   类型：常量字符指针
-  可空：N
+  可空：Y
   意思：输入要打包的访问token
  参数.四：lpszRefreshToken
   In/Out：In
@@ -458,12 +459,17 @@ extern "C" bool Verification_OAuth_Parse(VERIFICATION_OAUTHINFO* pSt_OAuthInfo, 
   类型：常量字符指针
   可空：Y
   意思：输入token过期时间，默认为3600秒
+ 参数.七：nbAction
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：-1不启用,0 失败,1 成功
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszAccessToken, LPCXSTR lpszRefreshToken = NULL, LPCXSTR lpszTokenType = _X("Bearer"), int nExpiredTime = 3600);
+extern "C" bool Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszAccessToken = NULL, LPCXSTR lpszRefreshToken = NULL, LPCXSTR lpszTokenType = _X("Bearer"), int nExpiredTime = 3600, int nbAction = -1);
 /********************************************************************
 函数名称：Verification_OAuth_PacketError
 函数功能：错误打包处理函数

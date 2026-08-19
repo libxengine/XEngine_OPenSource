@@ -70,9 +70,9 @@ extern "C" bool Verification_OAuth_Parse(VERIFICATION_OAUTHINFO* pSt_OAuthInfo, 
 {
 	return m_OAuthVerification.Verification_OAuth_Parse(pSt_OAuthInfo, lpszUrl, lpszMSGBuffer);
 }
-extern "C" bool Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszAccessToken, LPCXSTR lpszRefreshToken, LPCXSTR lpszTokenType, int nExpiredTime)
+extern "C" bool Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszAccessToken, LPCXSTR lpszRefreshToken, LPCXSTR lpszTokenType, int nExpiredTime, int nbAction)
 {
-	return m_OAuthVerification.Verification_OAuth_PacketToken(ptszMSGBuffer, pInt_MSGLen, lpszAccessToken, lpszRefreshToken, lpszTokenType, nExpiredTime);
+	return m_OAuthVerification.Verification_OAuth_PacketToken(ptszMSGBuffer, pInt_MSGLen, lpszAccessToken, lpszRefreshToken, lpszTokenType, nExpiredTime, nbAction);
 }
 extern "C" bool Verification_OAuth_PacketError(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszOAuthError, LPCXSTR lpszErrorDescription, LPCXSTR lpszErrorUri)
 {

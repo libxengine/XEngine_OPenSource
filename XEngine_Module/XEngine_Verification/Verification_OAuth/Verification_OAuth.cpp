@@ -72,6 +72,7 @@ bool CVerification_OAuth::Verification_OAuth_Parse(VERIFICATION_OAUTHINFO* pSt_O
 	LPCXSTR lpszUrlStr = _X("redirect_uri");
 	LPCXSTR lpszStateStr = _X("redirect_uri");
 	LPCXSTR lpszTokenTypeStr = _X("token_type_hint");
+	LPCXSTR lpszTokenStr = _X("token");
 
 	XCHAR* ptszTokTmp = NULL;
 	XCHAR* ptszTokStr = _tcsxtok_s(tszHTTPBuffer, _X("&"), &ptszTokTmp);
@@ -121,6 +122,10 @@ bool CVerification_OAuth::Verification_OAuth_Parse(VERIFICATION_OAUTHINFO* pSt_O
 		{
 			_tcsxcpy(pSt_OAuthInfo->tszTokenTypeStr, tszStrVlu);
 		}
+		else if (0 == _tcsxnicmp(lpszTokenStr, tszStrKey, _tcsxlen(lpszTokenStr)))
+		{
+			_tcsxcpy(pSt_OAuthInfo->tszTokenStr, tszStrVlu);
+		}
 		ptszTokStr = _tcsxtok_s(NULL, _X("&"), &ptszTokTmp);
 	}
 	return true;
@@ -141,7 +146,7 @@ bool CVerification_OAuth::Verification_OAuth_Parse(VERIFICATION_OAUTHINFO* pSt_O
  参数.三：lpszAccessToken
   In/Out：In
   类型：常量字符指针
-  可空：N
+  可空：Y
   意思：输入要打包的访问token
  参数.四：lpszRefreshToken
   In/Out：In
@@ -158,12 +163,17 @@ bool CVerification_OAuth::Verification_OAuth_Parse(VERIFICATION_OAUTHINFO* pSt_O
   类型：常量字符指针
   可空：Y
   意思：输入token过期时间，默认为3600秒
+ 参数.七：nbAction
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：-1不启用,0 失败,1 成功
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-bool CVerification_OAuth::Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszAccessToken, LPCXSTR lpszRefreshToken /* = NULL */, LPCXSTR lpszTokenType /* = _X("Bearer") */, int nExpiredTime /* = 3600 */)
+bool CVerification_OAuth::Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, int* pInt_MSGLen, LPCXSTR lpszAccessToken /* = NULL */, LPCXSTR lpszRefreshToken /* = NULL */, LPCXSTR lpszTokenType /* = _X("Bearer") */, int nExpiredTime /* = 3600 */, int nbAction /* = -1 */)
 {
 	Verification_IsErrorOccur = false;
 
@@ -175,13 +185,34 @@ bool CVerification_OAuth::Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, i
 	}
 	Json::Value st_JsonRoot;
 
-	st_JsonRoot["access_token"] = lpszAccessToken;
-	st_JsonRoot["token_type"] = lpszTokenType;
+	if (NULL != lpszAccessToken)
+	{
+		st_JsonRoot["access_token"] = lpszAccessToken;
+	}
+	if (NULL != lpszTokenType)
+	{
+		st_JsonRoot["token_type"] = lpszTokenType;
+	}
 	if (NULL != lpszRefreshToken)
 	{
 		st_JsonRoot["refresh_token"] = lpszRefreshToken;
 	}
-	st_JsonRoot["expires_in"] = nExpiredTime;
+	
+	if (nbAction > -1)
+	{
+		st_JsonRoot["active"] = nbAction == 1 ? true : false;
+		if (nExpiredTime > 0)
+		{
+			st_JsonRoot["exp"] = nExpiredTime;
+		}
+	}
+	else
+	{
+		if (nExpiredTime > 0)
+		{
+			st_JsonRoot["expires_in"] = nExpiredTime;
+		}
+	}
 
 	*pInt_MSGLen = st_JsonRoot.toStyledString().length();
 	_tcsxcpy(ptszMSGBuffer, st_JsonRoot.toStyledString().c_str());

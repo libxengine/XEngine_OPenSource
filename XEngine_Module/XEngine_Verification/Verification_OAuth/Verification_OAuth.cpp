@@ -69,6 +69,9 @@ bool CVerification_OAuth::Verification_OAuth_Parse(VERIFICATION_OAUTHINFO* pSt_O
 	LPCXSTR lpszUserStr = _X("username");
 	LPCXSTR lpszPassStr = _X("password");
 	LPCXSTR lpszRefreshStr = _X("refresh_token");
+	LPCXSTR lpszUrlStr = _X("redirect_uri");
+	LPCXSTR lpszStateStr = _X("redirect_uri");
+	LPCXSTR lpszTokenTypeStr = _X("token_type_hint");
 
 	XCHAR* ptszTokTmp = NULL;
 	XCHAR* ptszTokStr = _tcsxtok_s(tszHTTPBuffer, _X("&"), &ptszTokTmp);
@@ -105,6 +108,18 @@ bool CVerification_OAuth::Verification_OAuth_Parse(VERIFICATION_OAUTHINFO* pSt_O
 		else if (0 == _tcsxnicmp(lpszRefreshStr, tszStrKey, _tcsxlen(lpszRefreshStr)))
 		{
 			_tcsxcpy(pSt_OAuthInfo->tszClientRefresh, tszStrVlu);
+		}
+		else if (0 == _tcsxnicmp(lpszUrlStr, tszStrKey, _tcsxlen(lpszUrlStr)))
+		{
+			_tcsxcpy(pSt_OAuthInfo->tszRequestUrl, tszStrVlu);
+		}
+		else if (0 == _tcsxnicmp(lpszStateStr, tszStrKey, _tcsxlen(lpszStateStr)))
+		{
+			_tcsxcpy(pSt_OAuthInfo->tszRandomStr, tszStrVlu);
+		}
+		else if (0 == _tcsxnicmp(lpszTokenTypeStr, tszStrKey, _tcsxlen(lpszTokenTypeStr)))
+		{
+			_tcsxcpy(pSt_OAuthInfo->tszTokenTypeStr, tszStrVlu);
 		}
 		ptszTokStr = _tcsxtok_s(NULL, _X("&"), &ptszTokTmp);
 	}

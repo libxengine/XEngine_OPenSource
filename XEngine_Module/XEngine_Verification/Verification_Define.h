@@ -91,6 +91,7 @@ typedef enum
 //////////////////////////////////////////////////////////////////////////
 typedef struct  
 {
+	XCHAR tszRequestUrl[XPATH_MID];         // 请求的资源地址
 	XCHAR tszClientID[128];                 // 客户端ID
 	XCHAR tszClientCode[128];               // 客户端代码,authorization_code有效
 	XCHAR tszClientSecert[128];             // 客户端秘钥
@@ -98,6 +99,8 @@ typedef struct
 	XCHAR tszClientPass[128];               // 客户端密码,仅PASSWORD授权类型使用
 	XCHAR tszClientRefresh[128];            // 客户端刷新令牌,仅REFRESH_TOKEN授权类型使用
 	XCHAR tszGrandType[64];                 // 授权类型
+	XCHAR tszRandomStr[64];                 // 随机字符串
+	XCHAR tszTokenTypeStr[64];              // token类型
 }VERIFICATION_OAUTHINFO;
 typedef struct
 {

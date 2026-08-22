@@ -17,15 +17,15 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
-static LPCXSTR lpszXSerialType[5] = { "UNKNOW","SECOND","DAY","TIME","CUSTOM" };
-static LPCXSTR lpszXRegType[9] = { "UNKNOW","TEMP","TRY","TEST","STANDARD","PROFESSIONAL","ULTIMATE","UNLIMIT","EXPIRED" };
-static LPCXSTR lpszXHDType[6] = { "UNKNOW","CPU","DISK","BOARD","SYSTEM" };
-static LPCXSTR lpszXVerType[6] = { "UNKNOW","LOCAL","NETWORK" };
+static const char* lpszXSerialType[5] = { "UNKNOW","SECOND","DAY","TIME","CUSTOM" };
+static const char* lpszXRegType[9] = { "UNKNOW","TEMP","TRY","TEST","STANDARD","PROFESSIONAL","ULTIMATE","UNLIMIT","EXPIRED" };
+static const char* lpszXHDType[6] = { "UNKNOW","CPU","DISK","BOARD","SYSTEM" };
+static const char* lpszXVerType[3] = { "UNKNOW","LOCAL","NETWORK" };
 
 static const wchar_t* lpszTSerialType[5] = { L"UNKNOW",L"SECOND",L"DAY",L"TIME",L"CUSTOM" };
 static const wchar_t* lpszTRegType[9] = { L"UNKNOW",L"TEMP",L"TRY",L"TEST",L"STANDARD",L"PROFESSIONAL",L"ULTIMATE",L"UNLIMIT",L"EXPIRED" };
 static const wchar_t* lpszTHDType[5] = { L"UNKNOW",L"CPU",L"DISK",L"BOARD",L"SYSTEM" };
-static const wchar_t* lpszTVerType[6] = { L"UNKNOW",L"LOCAL",L"NETWORK" };
+static const wchar_t* lpszTVerType[3] = { L"UNKNOW",L"LOCAL",L"NETWORK" };
 #ifndef _MSC_BUILD
 #pragma GCC diagnostic pop
 #endif

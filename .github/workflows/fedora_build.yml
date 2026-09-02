@@ -67,7 +67,7 @@ jobs:
       - name: install system package
         run: |
             dnf update -y
-            dnf install gcc g++ make git jq unzip wget -y
+            dnf install gcc g++ make git jq unzip wget luajit-devel -y
 
       - name: Set TERM variable
         run: echo "TERM=xterm" >> $GITHUB_ENV
@@ -83,6 +83,11 @@ jobs:
             
             chmod 777 *
             ./XEngine_LINEnv.sh -i 3
+
+      - name: install library package
+        run: |
+            dnf install luajit-devel -y
+
       - name: make
         run: | 
             cd XEngine_Module

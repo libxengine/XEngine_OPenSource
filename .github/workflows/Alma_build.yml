@@ -68,6 +68,10 @@ jobs:
             chmod 777 *
             ./XEngine_LINEnv.sh -i 3
 
+      - name: install library package
+        run: |
+            dnf install luajit-devel -y
+            
       - name: make
         run: | 
             cd XEngine_Module

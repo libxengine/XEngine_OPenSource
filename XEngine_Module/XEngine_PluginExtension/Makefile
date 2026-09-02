@@ -1,10 +1,9 @@
 CC = g++ -Wall -std=c++20 -fPIC
 PLATFORM = linux
-_XENGINE_BUILD_SWITCH_LUA=0
 PLATVER = 
 FILEEXT = 
 LIBFLAG = 
-LOADHDR = -I ./ -I /usr/include/lua5.4 -I /usr/local/include/lua
+LOADHDR = -I ./ -I /usr/include/luajit-2.1 -I /usr/local/include/luajit-2.1
 LOADSO = 
 LIB = -lXEngine_BaseLib
 LIBEX = 
@@ -35,17 +34,11 @@ endif
 ifeq ($(PLATFORM),linux)
 	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
 		PLATVER = -D __CENTOS__
-		ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
-			LIB += -llua
-			FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
-		endif
 	else
 		PLATVER = -D __UBUNTU__
-		ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
-			LIB += -llua5.4
-			FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
-		endif
 	endif
+	LIB += -lluajit-5.1
+	FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
 	FILEEXT = so
 	LIBFLAG = -shared
 	LIBEX = -lpthread -lrt -ldl
@@ -57,10 +50,8 @@ else ifeq ($(PLATFORM),mac)
 	LIBFLAG = -dynamiclib
 	LOADHDR += -I /opt/homebrew/opt/lua/include/lua
 	LOADSO += -L /opt/homebrew/opt/lua/lib
-	ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
-		LIB += -llua
-		FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
-	endif
+	LIB += -lluajit-5.1
+	FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
 else ifeq ($(PLATFORM), android)
@@ -72,10 +63,6 @@ else ifeq ($(PLATFORM), android)
 	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
 	SDKPATH = $(HOME)/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
 	CC = $(SDKPATH) -Wall -fPIC -std=c++20 -target aarch64-linux-android30
-	ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
-		LIB += -llua
-		FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
-	endif
 else ifeq ($(PLATFORM), ios)
 	PLATVER = -D __IOS__
 	FILEEXT = dylib
@@ -84,10 +71,6 @@ else ifeq ($(PLATFORM), ios)
 	LOADSO += -L $(HOME)/XEngine_IOS_Arm64/XEngine_IOS/XEngine_BaseLib
 	SDKPATH = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 	CC = g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -miphoneos-version-min=16.0
-	ifeq ($(_XENGINE_BUILD_SWITCH_LUA),1)
-		LIB += -llua
-		FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
-	endif
 endif
 
 all:$(OBJECTS)

@@ -54,6 +54,10 @@ jobs:
             chmod 777 *
             ./XEngine_LINEnv.sh -i 3
 
+      - name: install library package
+        run: |
+            apt install libluajit-5.1-dev -y
+            
       - name: make
         run: | 
             cd XEngine_Module

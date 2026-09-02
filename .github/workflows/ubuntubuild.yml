@@ -77,7 +77,7 @@ jobs:
 
       - name: install library package
         run: |
-            apt install libluajit-5.1-dev -y
+            sudo apt install libluajit-5.1-dev -y
 
       - name: make
         run: | 

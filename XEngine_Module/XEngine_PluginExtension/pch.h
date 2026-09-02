@@ -11,13 +11,15 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "framework.h"
 #include <tchar.h>
-#define _XENGINE_BUILD_SWITCH_LUA
+//#define _XENGINE_BUILD_SWITCH_LUA
 #ifdef _XENGINE_BUILD_SWITCH_LUA
 #include <luajit/lua.hpp>
 #endif
 #else
 #include <dlfcn.h>
+#ifdef _XENGINE_BUILD_SWITCH_LUA
 #include <lua.hpp>
+#endif
 #endif
 #endif //PCH_H
 #include <stdio.h>

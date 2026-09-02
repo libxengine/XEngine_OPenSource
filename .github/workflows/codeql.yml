@@ -34,9 +34,9 @@ jobs:
       run: |
           echo "TERM=xterm" >> $GITHUB_ENV
 
-      - name: install library package
-        run: |
-            apt install libluajit-5.1-dev -y
+    - name: install library package
+      run: |
+          apt install libluajit-5.1-dev -y
             
     - name: Set up Dependency Environment
       run: |

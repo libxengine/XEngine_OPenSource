@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ${{ matrix.runner }}
     container:
-      image: quay.io/centos/centos:${{ matrix.stream }}
+      image: centos/centos:${{ matrix.version }}
       options: --platform ${{ matrix.platform }}
     strategy:
       matrix:
@@ -75,7 +75,7 @@ jobs:
       - name: install library package
         run: |
             dnf install luajit-devel -y
-            
+
       - name: make
         run: | 
             cd XEngine_Module

@@ -15,8 +15,9 @@
 #include <dlfcn.h>
 #endif
 #endif //PCH_H
+#define _XENGINE_BUILD_SWITCH_LUA
 #ifdef _XENGINE_BUILD_SWITCH_LUA
-#include <lua.hpp>
+#include <luajit/lua.hpp>
 #endif
 #include <stdio.h>
 #include <stdlib.h>

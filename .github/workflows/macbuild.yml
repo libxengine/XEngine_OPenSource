@@ -56,7 +56,7 @@ jobs:
             brew install luajit -y
             brew info luajit
             brew --prefix luajit
-            ls -al /opt/homebrew/opt/luajit
+            ls -alL /opt/homebrew/opt/luajit
 
       - name: make
         run: | 

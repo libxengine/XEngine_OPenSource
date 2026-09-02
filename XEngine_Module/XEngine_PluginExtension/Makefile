@@ -48,7 +48,7 @@ else ifeq ($(PLATFORM),mac)
 	PLATVER = -D __MACOS__
 	FILEEXT = dylib
 	LIBFLAG = -dynamiclib
-	LOADHDR += -I /opt/homebrew/opt/luajit/include/luajit
+	LOADHDR += -I /opt/homebrew/opt/luajit/include
 	LOADSO += -L /opt/homebrew/opt/luajit/lib
 	LIB += -lluajit-5.1
 	FLAGS += -D _XENGINE_BUILD_SWITCH_LUA

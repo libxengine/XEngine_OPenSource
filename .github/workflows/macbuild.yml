@@ -54,9 +54,7 @@ jobs:
       - name: install library package
         run: |
             brew install luajit -y
-            brew info luajit
-            brew --prefix luajit
-            ls -alL /opt/homebrew/opt/luajit
+            ls -alL /opt/homebrew/opt/luajit/include
 
       - name: make
         run: | 

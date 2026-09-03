@@ -276,6 +276,7 @@ extern "C" int PluginExtension_LuaCore_RegisterType(XNETHANDLE xhModule);
 *********************************************************************/
 extern "C" bool PluginExtension_LuaCore_Exec(XNETHANDLE xhModule, XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszMsgBufer = NULL, int nMsgLen = 0, XCHAR*** pppInputParameters = NULL, int nInputPCount = 0, XCHAR*** pppOutputParameters = NULL, int* pInt_OutputPCount = NULL);
 extern "C" bool PluginExtension_LuaCore_Exec2(XNETHANDLE xhModule, XHANDLE*** ppphBuffer);
+extern "C" bool PluginExtension_LuaCore_Exec3(XNETHANDLE xhModule, XHANDLE phBuffer, XHANDLE*** ppphBuffer, int* pInt_ListCount);
 /********************************************************************
 函数名称：PluginExtension_LuaCore_Get
 函数功能：获取插件基础信息函数

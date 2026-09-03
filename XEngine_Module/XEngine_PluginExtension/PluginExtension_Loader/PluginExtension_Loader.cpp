@@ -487,6 +487,11 @@ bool CPluginExtension_Loader::PluginExtension_Loader_Exec3(LPCXSTR lpszMethodNam
 	}
 	else
 	{
+		if (!PluginExtension_LuaCore_Exec3(stl_MapIterator->second.xhToken, phBuffer, ppphBuffer, pInt_ListCount))
+		{
+			st_Locker.unlock_shared();
+			return false;
+		}
 	}
 	st_Locker.unlock_shared();
 	return true;

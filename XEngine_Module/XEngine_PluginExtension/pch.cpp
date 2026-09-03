@@ -92,6 +92,10 @@ extern "C" bool PluginExtension_LuaCore_Exec2(XNETHANDLE xhModule, XHANDLE*** pp
 {
 	return m_PluginLua.PluginExtension_LuaCore_Exec2(xhModule, ppphBuffer);
 }
+extern "C" bool PluginExtension_LuaCore_Exec3(XNETHANDLE xhModule, XHANDLE phBuffer, XHANDLE*** ppphBuffer, int* pInt_ListCount)
+{
+	return m_PluginLua.PluginExtension_LuaCore_Exec3(xhModule, phBuffer, ppphBuffer, pInt_ListCount);
+}
 extern "C" bool PluginExtension_LuaCore_Get(XNETHANDLE xhModule, XCHAR* ptszPluginName, XCHAR* ptszPluginVersion, XCHAR* ptszPluginAuthor, XCHAR* ptszPluginDesc)
 {
 	return m_PluginLua.PluginExtension_LuaCore_Get(xhModule, ptszPluginName, ptszPluginVersion, ptszPluginAuthor, ptszPluginDesc);

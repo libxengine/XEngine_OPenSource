@@ -17,6 +17,7 @@ EXPORTS
 	PluginExtension_LuaCore_RegisterType
 	PluginExtension_LuaCore_Exec
 	PluginExtension_LuaCore_Exec2
+	PluginExtension_LuaCore_Exec3
 	PluginExtension_LuaCore_Get
 	PluginExtension_LuaCore_Destroy
 

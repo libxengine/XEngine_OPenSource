@@ -54,7 +54,6 @@ jobs:
       - name: install library package
         run: |
             brew install luajit -y
-            brew --prefix luajit
 
       - name: make
         run: | 

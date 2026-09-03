@@ -451,10 +451,10 @@ bool CAIApi_Chat::AIApi_Chat_Parse(AICLIENT_CHAT* pSt_AIClient, LPCXSTR lpszMSGB
 	Json::Value st_JsonChoices = st_JsonRoot["choices"];
 	if (st_JsonChoices.isNull())
 	{
-		Json::Value st_JsonError = st_JsonRoot["error"];
-		if (!st_JsonError.isNull())
+		Json::Value st_JsonErrorInfo = st_JsonRoot["error"];
+		if (!st_JsonErrorInfo.isNull())
 		{
-			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonError["message"].asCString(), st_JsonError["message"].size(), false, pSt_AIClient->lParam);
+			pSt_AIClient->lpCall_Chat(pSt_AIClient->xhToken, st_JsonErrorInfo["message"].asCString(), st_JsonErrorInfo["message"].size(), false, pSt_AIClient->lParam);
 		}
 		return false;
 	}

@@ -14,7 +14,6 @@
 #else
 #include <unistd.h>
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,3 +89,5 @@ extern XLONG Verification_dwErrorCode;
 #endif
 #endif
 #endif
+
+#endif //PCH_H

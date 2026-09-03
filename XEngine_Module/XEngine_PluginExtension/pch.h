@@ -21,7 +21,6 @@
 #include <lua.hpp>
 #endif
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -60,3 +59,5 @@ extern XLONG PluginExtension_dwErrorCode;
 #else
 #define XFreeModule dlclose
 #endif
+
+#endif //PCH_H

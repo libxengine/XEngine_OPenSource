@@ -10,7 +10,6 @@
 // 添加要在此处预编译的标头
 #include "framework.h"
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,3 +61,5 @@ extern XLONG MSGNotify_dwErrorCode;
 #endif
 #endif
 #endif
+
+#endif //PCH_H

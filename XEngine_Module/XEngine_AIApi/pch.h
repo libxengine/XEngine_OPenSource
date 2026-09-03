@@ -14,7 +14,6 @@
 #else
 #include <unistd.h>
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -79,3 +78,5 @@ extern XLONG AIApi_dwErrorCode;
 #endif
 #endif
 #endif
+
+#endif //PCH_H

@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ${{ matrix.runner }}
     container:
-      image: centos/centos:${{ matrix.version }}
+      image: quay.io/centos/centos:${{ matrix.stream }}
       options: --platform ${{ matrix.platform }}
     strategy:
       matrix:

@@ -56,9 +56,13 @@ Macos Exection:./XEngine_LINEnv.sh -i 3
 
 #### Windows
 use vs open and complie  
+The plugin system requires Luajit library support. Install the dependencies via vcpkg: vcpkg.exe install luajit:x86-windows luajit:x64-windows
 
 #### Linux
 Linux use Makefile complie  
+The plugin system requires Luajit library support. Install the dependencies:  
+ubuntu:sudo apt install libluajit-5.1-dev -y  
+rockylinux:sudo dnf install luajit-devel -y  
 
 ##### Compile Command
 
@@ -67,7 +71,8 @@ make complie
 
 #### MacOS
 
-Linux use Makefile to complie,terminal exection,Requires mac 13 and above 
+Linux use Makefile to complie,terminal exection,Requires mac 15 and above 
+The plugin system requires Luajit library support. Install the dependencies:brew install luajit
 
 ##### Compile Command
 

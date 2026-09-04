@@ -57,9 +57,13 @@ macos执行:./XEngine_LINEnv.sh -i 3
 
 #### Windows
 使用VS打开并且编译,你需要优先配置XEngine环境才能使用  
+插件系统需要安装luajit库支持,通过 vcpkg安装依赖:vcpkg.exe install luajit:x86-windows luajit:x64-windows
 
 #### Linux
 Linux使用Makefile编译  
+插件系统需要依赖luajit库,如下安装:  
+ubuntu:sudo apt install libluajit-5.1-dev -y  
+rockylinux:sudo dnf install luajit-devel -y  
 
 ###### 编译命令
 
@@ -67,7 +71,8 @@ Linux使用Makefile编译
 make 编译  
 
 #### MacOS
-使用makefile编译,控制台运行,需要mac 13以及以上版本
+使用makefile编译,控制台运行,需要mac 15以及以上版本  
+插件系统需要安装luajit库支持:brew install luajit
 
 ###### 编译命令
 

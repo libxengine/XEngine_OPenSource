@@ -13,12 +13,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-15
+          - os: macos-26
     runs-on: ${{ matrix.os }}
     
     steps:
       - name: Checkout main repository code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set TERM variable
         run: echo "TERM=xterm" >> $GITHUB_ENV

@@ -36,25 +36,25 @@ jobs:
         run: | 
             cd XEngine_Module
             cd jsoncpp
-            make PLATFORM=ios
+            make PLATFORM=tvios
             cd ..
             cd tinyxml2
-            make PLATFORM=ios
+            make PLATFORM=tvios
             cd ..
             cd XEngine_InfoReport
-            make PLATFORM=ios
+            make PLATFORM=tvios
             cd ..
             cd XEngine_Token
-            make PLATFORM=ios
+            make PLATFORM=tvios
             cd ..
             cd XEngine_MSGNotify
-            make PLATFORM=ios
+            make PLATFORM=tvios
             cd ..
             cd XEngine_AIApi
-            make PLATFORM=ios
+            make PLATFORM=tvios
             cd ..
             cd XEngine_Verification
-            make PLATFORM=ios
+            make PLATFORM=tvios
             cd ..
             cd XEngine_PluginExtension
-            make PLATFORM=ios
+            make PLATFORM=tvios

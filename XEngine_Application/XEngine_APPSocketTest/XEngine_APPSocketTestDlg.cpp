@@ -207,12 +207,13 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton1()
 	m_EditIPPort.GetWindowText(m_StrIPPort);
 	if (BST_CHECKED == m_RadioProtocolTCP.GetCheck())
 	{
-		if (!NetCore_TCPSelect_Start(_ttoi(m_StrIPPort.GetBuffer())))
+		xhTCPToken = NetCore_TCPSelect_StartEx(_ttoi(m_StrIPPort.GetBuffer()));
+		if (NULL == xhTCPToken)
 		{
 			AfxMessageBox(_T("启动服务端失败"));
 			return;
 		}
-		NetCore_TCPSelect_RegisterCallBack(NetCore_TCPSelect_CBLogin, NetCore_TCPSelect_CBRecv, NetCore_TCPSelect_CBLeave, this, this, this);
+		NetCore_TCPSelect_RegisterCallBackEx(xhTCPToken, NetCore_TCPSelect_CBLogin, NetCore_TCPSelect_CBRecv, NetCore_TCPSelect_CBLeave, this, this, this);
 		nClientType = 1;
 	}
 	else if (BST_CHECKED == m_RadioProtocolUDP.GetCheck())
@@ -252,7 +253,7 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton3()
 	USES_CONVERSION;
 	if (nClientType == 1)
 	{
-		if (!NetCore_TCPSelect_Send(W2A(m_StrSendAddr.GetBuffer()), W2A(m_StrSendMsg.GetBuffer()), m_StrSendMsg.GetLength()))
+		if (!NetCore_TCPSelect_SendEx(xhTCPToken, W2A(m_StrSendAddr.GetBuffer()), W2A(m_StrSendMsg.GetBuffer()), m_StrSendMsg.GetLength()))
 		{
 			AfxMessageBox(_T("发送数据失败"));
 			return;
@@ -307,7 +308,7 @@ void CXEngineAPPSocketTestDlg::OnBnClickedButton4()
 	m_RadioProtocolUDP.EnableWindow(true);
 	if (1 == nClientType)
 	{
-		NetCore_TCPSelect_Stop();
+		NetCore_TCPSelect_StopEx(xhTCPToken);
 	}
 	else if (2 == nClientType)
 	{

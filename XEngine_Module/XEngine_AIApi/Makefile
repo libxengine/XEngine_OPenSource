@@ -68,6 +68,14 @@ else ifeq ($(PLATFORM), ios)
 	LOADSO += -L $(HOME)/XEngine_IOS_Arm64/XEngine_IOS/XEngine_BaseLib -L $(HOME)/XEngine_IOS_Arm64/XEngine_IOS/XEngine_Core -L $(HOME)/XEngine_IOS_Arm64/XEngine_IOS/XEngine_Client
 	SDKPATH = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 	CC = g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -miphoneos-version-min=16.0
+else ifeq ($(PLATFORM), tvios)
+	PLATVER = -D __TVIOS__
+	FILEEXT = dylib
+	LIBFLAG = -dynamiclib
+	LOADHDR += -I $(HOME)/XEngine_TVios_Arm64
+	LOADSO += -L $(HOME)/XEngine_TVios_Arm64/XEngine_TVios/XEngine_BaseLib -L $(HOME)/XEngine_TVios_Arm64/XEngine_TVios/XEngine_Core -L $(HOME)/XEngine_TVios_Arm64/XEngine_TVios/XEngine_Client
+	SDKPATH = /Applications/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS.sdk
+	CC = "g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -mtvos-version-min=16.0"
 endif
 
 all:$(OBJECTS)

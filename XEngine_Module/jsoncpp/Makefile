@@ -22,6 +22,9 @@ else
 	else ifeq ($(PLATFORM), ios)
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG
+	else ifeq ($(PLATFORM), tvios)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
 	else
 		FLAGS = -c -lc_p
 		DEBUG = -g -pg -D _DEBUG

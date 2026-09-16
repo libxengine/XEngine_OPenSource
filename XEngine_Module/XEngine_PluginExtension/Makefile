@@ -19,6 +19,12 @@ else
 	else ifeq ($(PLATFORM), android)
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG
+	else ifeq ($(PLATFORM), ios)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
+	else ifeq ($(PLATFORM), tvios)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
 	else
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG
@@ -78,7 +84,7 @@ else ifeq ($(PLATFORM), tvios)
 	LOADHDR += -I $(HOME)/XEngine_TVios_Arm64
 	LOADSO += -L $(HOME)/XEngine_TVios_Arm64/XEngine_TVios/XEngine_BaseLib
 	SDKPATH = /Applications/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS.sdk
-	CC = "g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -mtvos-version-min=16.0"
+	CC = g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -mtvos-version-min=16.0
 endif
 
 all:$(OBJECTS)

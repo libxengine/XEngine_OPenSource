@@ -69,7 +69,7 @@ else ifeq ($(PLATFORM), tvios)
 	FILEEXT = dylib
 	LIBFLAG = -dynamiclib
 	SDKPATH = /Applications/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS.sdk
-	CC = "g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -mtvos-version-min=16.0"
+	CC = g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -mtvos-version-min=16.0
 endif
 
 all:$(OBJECTS)

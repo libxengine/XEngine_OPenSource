@@ -64,6 +64,12 @@ else ifeq ($(PLATFORM), ios)
 	LIBFLAG = -dynamiclib
 	SDKPATH = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 	CC = g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -miphoneos-version-min=16.0
+else ifeq ($(PLATFORM), tvios)
+	PLATVER = -D __TVIOS__
+	FILEEXT = dylib
+	LIBFLAG = -dynamiclib
+	SDKPATH = /Applications/Xcode.app/Contents/Developer/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS.sdk
+	CC = "g++ -Wall -fPIC -std=c++20 -arch arm64 -Wno-deprecated-declarations -isysroot ${SDKPATH} -mtvos-version-min=16.0"
 endif
 
 all:$(OBJECTS)

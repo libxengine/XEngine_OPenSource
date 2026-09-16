@@ -16,6 +16,7 @@
 #include <cstring>
 #include <iostream>
 #include <istream>
+#include <iterator>
 #include <limits>
 #include <memory>
 #include <set>
@@ -23,13 +24,6 @@
 #include <utility>
 
 #include <cstdio>
-#if __cplusplus >= 201103L
-
-#if !defined(sscanf)
-#define sscanf std::sscanf
-#endif
-
-#endif //__cplusplus
 
 #if defined(_MSC_VER)
 #if !defined(_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES)
@@ -45,7 +39,7 @@
 // Define JSONCPP_DEPRECATED_STACK_LIMIT as an appropriate integer at compile
 // time to change the stack limit
 #if !defined(JSONCPP_DEPRECATED_STACK_LIMIT)
-#define JSONCPP_DEPRECATED_STACK_LIMIT 1000
+#define JSONCPP_DEPRECATED_STACK_LIMIT 256
 #endif
 
 static size_t const stackLimit_g =
@@ -53,11 +47,7 @@ static size_t const stackLimit_g =
 
 namespace Json {
 
-#if __cplusplus >= 201103L || (defined(_CPPLIB_VER) && _CPPLIB_VER >= 520)
 using CharReaderPtr = std::unique_ptr<CharReader>;
-#else
-using CharReaderPtr = std::auto_ptr<CharReader>;
-#endif
 
 // Implementation of class Features
 // ////////////////////////////////
@@ -98,15 +88,10 @@ bool Reader::parse(const std::string& document, Value& root,
 }
 
 bool Reader::parse(std::istream& is, Value& root, bool collectComments) {
-  // std::istream_iterator<char> begin(is);
-  // std::istream_iterator<char> end;
-  // Those would allow streamed input from a file, if parse() were a
-  // template function.
-
-  // Since String is reference-counted, this at least does not
-  // create an extra copy.
-  String doc(std::istreambuf_iterator<char>(is), {});
-  return parse(doc.data(), doc.data() + doc.size(), root, collectComments);
+  document_.assign(std::istreambuf_iterator<char>(is),
+                   std::istreambuf_iterator<char>());
+  return parse(document_.data(), document_.data() + document_.size(), root,
+               collectComments);
 }
 
 bool Reader::parse(const char* beginDoc, const char* endDoc, Value& root,
@@ -154,7 +139,12 @@ bool Reader::readValue() {
   // after calling readValue(). parse() executes one nodes_.push(), so > instead
   // of >=.
   if (nodes_.size() > stackLimit_g)
+#if JSON_USE_EXCEPTION
     throwRuntimeError("Exceeded stackLimit in readValue().");
+#else
+    // throwRuntimeError aborts. Don't abort here.
+    return false;
+#endif
 
   Token token;
   readTokenSkippingComments(token);
@@ -588,6 +578,7 @@ bool Reader::decodeDouble(Token& token) {
 bool Reader::decodeDouble(Token& token, Value& decoded) {
   double value = 0;
   IStringStream is(String(token.start_, token.end_));
+  is.imbue(std::locale::classic());
   if (!(is >> value)) {
     if (value == std::numeric_limits<double>::max())
       value = std::numeric_limits<double>::infinity();
@@ -659,6 +650,8 @@ bool Reader::decodeString(Token& token, String& decoded) {
         return addError("Bad escape sequence in string", token, current);
       }
     } else {
+      if (static_cast<unsigned char>(c) < 0x20)
+        return addError("Control character in string", token, current - 1);
       decoded += c;
     }
   }
@@ -982,8 +975,20 @@ private:
 
 // complete copy of Read impl, for OurReader
 
+// Test-only instrumentation: total bytes examined by
+// OurReader::containsNewLine, so unit tests can assert that comment handling
+// stays linear in the input rather than quadratic in the comment count (see
+// CharReaderTest/parseCommentsAfterValueScansLinearly). thread_local so it
+// never races during concurrent parsing; the increment is negligible and only
+// runs while parsing comments. Not part of the supported public API.
+JSON_API size_t& newlineScanByteCountForTesting() {
+  static thread_local size_t count = 0;
+  return count;
+}
+
 bool OurReader::containsNewLine(OurReader::Location begin,
                                 OurReader::Location end) {
+  newlineScanByteCountForTesting() += static_cast<size_t>(end - begin);
   return std::any_of(begin, end, [](char b) { return b == '\n' || b == '\r'; });
 }
 
@@ -1303,9 +1308,13 @@ bool OurReader::readComment() {
       if (lastValueEnd_ && !containsNewLine(lastValueEnd_, commentBegin)) {
         if (isCppStyleComment || !cStyleWithEmbeddedNewline) {
           placement = commentAfterOnSameLine;
-          lastValueHasAComment_ = true;
         }
       }
+      // The gap between the last value and this comment only grows as more
+      // comments are consumed, so a later comment can never be on the same
+      // line as that value. Mark it handled to avoid re-scanning the same
+      // growing prefix for every following comment (quadratic behavior).
+      lastValueHasAComment_ = true;
     }
 
     addComment(commentBegin, current_, placement);
@@ -1622,6 +1631,7 @@ bool OurReader::decodeDouble(Token& token) {
 bool OurReader::decodeDouble(Token& token, Value& decoded) {
   double value = 0;
   IStringStream is(String(token.start_, token.end_));
+  is.imbue(std::locale::classic());
   if (!(is >> value)) {
     if (value == std::numeric_limits<double>::max())
       value = std::numeric_limits<double>::infinity();
@@ -1693,6 +1703,8 @@ bool OurReader::decodeString(Token& token, String& decoded) {
         return addError("Bad escape sequence in string", token, current);
       }
     } else {
+      if (static_cast<unsigned char>(c) < 0x20)
+        return addError("Control character in string", token, current - 1);
       decoded += c;
     }
   }
@@ -1937,7 +1949,7 @@ void CharReaderBuilder::strictMode(Json::Value* settings) {
   (*settings)["allowDroppedNullPlaceholders"] = false;
   (*settings)["allowNumericKeys"] = false;
   (*settings)["allowSingleQuotes"] = false;
-  (*settings)["stackLimit"] = 1000;
+  (*settings)["stackLimit"] = 256;
   (*settings)["failIfExtra"] = true;
   (*settings)["rejectDupKeys"] = true;
   (*settings)["allowSpecialFloats"] = false;
@@ -1954,7 +1966,7 @@ void CharReaderBuilder::setDefaults(Json::Value* settings) {
   (*settings)["allowDroppedNullPlaceholders"] = false;
   (*settings)["allowNumericKeys"] = false;
   (*settings)["allowSingleQuotes"] = false;
-  (*settings)["stackLimit"] = 1000;
+  (*settings)["stackLimit"] = 256;
   (*settings)["failIfExtra"] = false;
   (*settings)["rejectDupKeys"] = false;
   (*settings)["allowSpecialFloats"] = false;
@@ -1970,7 +1982,7 @@ void CharReaderBuilder::ecma404Mode(Json::Value* settings) {
   (*settings)["allowDroppedNullPlaceholders"] = false;
   (*settings)["allowNumericKeys"] = false;
   (*settings)["allowSingleQuotes"] = false;
-  (*settings)["stackLimit"] = 1000;
+  (*settings)["stackLimit"] = 256;
   (*settings)["failIfExtra"] = true;
   (*settings)["rejectDupKeys"] = false;
   (*settings)["allowSpecialFloats"] = false;

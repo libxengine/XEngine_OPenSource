@@ -96,11 +96,11 @@ distribution.
 /* Versioning, past 1.0.14:
 	http://semver.org/
 */
-static const int TIXML2_MAJOR_VERSION = 10;
+static const int TIXML2_MAJOR_VERSION = 11;
 static const int TIXML2_MINOR_VERSION = 0;
 static const int TIXML2_PATCH_VERSION = 0;
 
-#define TINYXML2_MAJOR_VERSION 10
+#define TINYXML2_MAJOR_VERSION 11
 #define TINYXML2_MINOR_VERSION 0
 #define TINYXML2_PATCH_VERSION 0
 
@@ -891,7 +891,7 @@ public:
 
 		If the 'target' is null, then the nodes will
 		be allocated in the current document. If 'target'
-        is specified, the memory will be allocated is the
+        is specified, the memory will be allocated in the
         specified XMLDocument.
 
 		NOTE: This is probably not the correct tool to
@@ -2314,7 +2314,7 @@ public:
     	of the XML file in memory. (Note the size returned
     	includes the terminating null.)
     */
-    int CStrSize() const {
+    size_t CStrSize() const {
         return _buffer.Size();
     }
     /**
@@ -2374,7 +2374,7 @@ private:
 };
 
 
-}	// tinyxml2
+} // namespace tinyxml2
 
 #if defined(_MSC_VER)
 #   pragma warning(pop)

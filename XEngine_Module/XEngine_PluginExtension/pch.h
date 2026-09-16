@@ -18,7 +18,7 @@
 #else
 #include <dlfcn.h>
 #ifdef _XENGINE_BUILD_SWITCH_LUA
-#include <lua.h>
+#include <lua.hpp>
 #endif
 #endif
 #include <stdio.h>

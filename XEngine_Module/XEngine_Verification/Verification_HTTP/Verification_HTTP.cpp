@@ -749,7 +749,7 @@ bool CVerification_HTTP::Verification_HTTP_BasicDecoder(LPCXSTR lpszMsgBuffer, X
 	//是否有Basic
 	if (NULL == _tcsxstr(lpszMsgBuffer, _X("Basic")))
 	{
-		int nMsgLen = _tcsxlen(lpszMsgBuffer);
+		int nMsgLen = (int)_tcsxlen(lpszMsgBuffer);
 		if (!Cryption_Codec_Base64(lpszMsgBuffer, tszBaseBuffer, &nMsgLen, false))
 		{
 			Verification_IsErrorOccur = true;
@@ -759,7 +759,7 @@ bool CVerification_HTTP::Verification_HTTP_BasicDecoder(LPCXSTR lpszMsgBuffer, X
 	}
 	else
 	{
-		int nMsgLen = _tcsxlen(lpszMsgBuffer) - 6;
+		int nMsgLen = (int)_tcsxlen(lpszMsgBuffer) - 6;
 		if (!Cryption_Codec_Base64(lpszMsgBuffer + 6, tszBaseBuffer, &nMsgLen, false))
 		{
 			Verification_IsErrorOccur = true;

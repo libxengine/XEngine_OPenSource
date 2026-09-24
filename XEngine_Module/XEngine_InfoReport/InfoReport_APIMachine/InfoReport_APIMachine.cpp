@@ -390,7 +390,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Hardware(XCHAR* ptszSWInfo, i
 
 	if (NULL != pInt_Len)
 	{
-		*pInt_Len = st_JsonRoot.toStyledString().length();
+		*pInt_Len = (int)st_JsonRoot.toStyledString().length();
 	}
 	memcpy(ptszSWInfo, st_JsonRoot.toStyledString().c_str(), st_JsonRoot.toStyledString().length());
 
@@ -466,7 +466,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Software(XCHAR* ptszSWInfo, i
 
 	if (NULL != pInt_Len)
 	{
-		*pInt_Len = st_JsonRoot.toStyledString().length();
+		*pInt_Len = (int)st_JsonRoot.toStyledString().length();
 	}
 	memcpy(ptszSWInfo, st_JsonRoot.toStyledString().c_str(), st_JsonRoot.toStyledString().length());
 

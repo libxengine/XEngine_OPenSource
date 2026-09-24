@@ -214,10 +214,10 @@ void CXEngineAPPFileSortDlg::XEngine_FileSort_ThreadList(LPVOID lParam)
 		int nGBKLen = 0;
 		wchar_t tszUNCSrc[XPATH_MAX] = {};
 		wchar_t tszUNCDst[XPATH_MAX] = {};
-		nGBKLen = stl_ListIterator->length();
+		nGBKLen = (int)stl_ListIterator->length();
 		BaseLib_Charset_AnsiToUnicode(stl_ListIterator->c_str(), tszUNCSrc, &nGBKLen);
 
-		nGBKLen = strlen(tszFileName);
+		nGBKLen = (int)strlen(tszFileName);
 		BaseLib_Charset_AnsiToUnicode(tszFileName, tszUNCDst, &nGBKLen);
 		pClass_This->m_ListFile.SetItemText(i, 1, tszUNCSrc);
 		pClass_This->m_ListFile.SetItemText(i, 2, tszUNCDst);

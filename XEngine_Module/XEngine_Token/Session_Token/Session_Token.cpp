@@ -728,7 +728,7 @@ bool CSession_Token::Session_Token_GetListStr(XCHAR*** ppptszToken, int* pInt_Li
         Session_dwErrorCode = ERROR_XENGINE_MODULE_SESSION_TOKEN_PARAMENT;
         return false;
     }
-    *pInt_ListCount = stl_MapTokenStr.size();
+    *pInt_ListCount = (int)stl_MapTokenStr.size();
     BaseLib_Memory_Malloc((XPPPMEM)ppptszToken, *pInt_ListCount, sizeof(XPATH_MID));
 
     st_Locker.lock_shared();

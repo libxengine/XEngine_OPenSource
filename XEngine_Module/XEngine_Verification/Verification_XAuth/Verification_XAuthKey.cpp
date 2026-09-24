@@ -57,7 +57,7 @@ bool CVerification_XAuthKey::Verification_XAuthKey_FileRead(VERIFICATION_XAUTHKE
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_XAUTH_OPENFILE;
 		return false;
 	}
-	int nRet = fread(tszENCodecBuffer, 1, sizeof(tszENCodecBuffer), pSt_File);
+	int nRet = (int)fread(tszENCodecBuffer, 1, sizeof(tszENCodecBuffer), pSt_File);
 	fclose(pSt_File);
 
 	if (NULL == lpszKeyPass)

@@ -104,7 +104,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_TryRequest(LPCXSTR lpszURLAdd
 	st_JsonRoot["st_VERTemp"] = st_JsonObject;
 	//请求
 	XCHAR tszMSGBuffer[XPATH_MAX] = {};
-	int nMsgLen = st_JsonRoot.toStyledString().length();
+	int nMsgLen = (int)st_JsonRoot.toStyledString().length();
 	if (!Verification_XAuthNet_HTTPRequest(lpszURLAddr, tszMSGBuffer, &nMsgLen, st_JsonRoot.toStyledString().c_str()))
 	{
 		return false;
@@ -765,7 +765,7 @@ bool CVerification_XAuthNet::Verification_XAuthNet_Login(LPCXSTR lpszUser, LPCXS
 
 	if (dwCryption > 0)
 	{
-		int nPLen = _tcsxlen(lpszPass);
+		int nPLen = (int)_tcsxlen(lpszPass);
 		XBYTE byMD5Buffer[XPATH_MAX] = {};
 		Cryption_Api_Digest(lpszPass, byMD5Buffer, &nPLen, false, dwCryption);
 		BaseLib_String_StrToHex((LPCXSTR)byMD5Buffer, nPLen, st_AuthUser.tszUserPass);

@@ -138,7 +138,7 @@ bool CPlugin_VideoHook::PluginCore_Call2(XHANDLE phBuffer)
 	}
 	XENGINE_PLUGINBUFFER* pSt_PluginBuffer = (XENGINE_PLUGINBUFFER*)phBuffer;
 
-	pSt_PluginBuffer->nUserNumber = _tcsxlen(_X("VideoHook Plugin Call2 Success"));
+	pSt_PluginBuffer->nUserNumber = (int)_tcsxlen(_X("VideoHook Plugin Call2 Success"));
 	_xstprintf(pSt_PluginBuffer->tszUserData, _X("%s"), _X("VideoHook Plugin Call2 Success"));
 	return true;
 }

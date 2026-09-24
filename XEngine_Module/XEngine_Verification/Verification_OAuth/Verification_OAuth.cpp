@@ -214,7 +214,7 @@ bool CVerification_OAuth::Verification_OAuth_PacketToken(XCHAR* ptszMSGBuffer, i
 		}
 	}
 
-	*pInt_MSGLen = st_JsonRoot.toStyledString().length();
+	*pInt_MSGLen = (int)st_JsonRoot.toStyledString().length();
 	_tcsxcpy(ptszMSGBuffer, st_JsonRoot.toStyledString().c_str());
 	return true;
 }
@@ -273,7 +273,7 @@ bool CVerification_OAuth::Verification_OAuth_PacketError(XCHAR* ptszMSGBuffer, i
 		st_JsonRoot["error_uri"] = lpszErrorUri;
 	}
 
-	*pInt_MSGLen = st_JsonRoot.toStyledString().length();
+	*pInt_MSGLen = (int)st_JsonRoot.toStyledString().length();
 	_tcsxcpy(ptszMSGBuffer, st_JsonRoot.toStyledString().c_str());
 	return true;
 }

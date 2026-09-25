@@ -24,12 +24,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v7
           
-    - name: Checkout dependency repository (xengine)
-      uses: actions/checkout@v7
-      with:
-        repository: libxengine/libxengine
-        path: libxengine
-
     - name: Set TERM variable
       run: |
           echo "TERM=xterm" >> $GITHUB_ENV
@@ -40,8 +34,11 @@ jobs:
             
     - name: Set up Dependency Environment
       run: |
-          echo -e $(pwd)
-          cd libxengine
+          latest_tag=$(curl -s -H "Authorization: Bearer ${{ github.token }}" https://api.github.com/repos/libxengine/libxengine/releases/latest | jq -r .tag_name)
+          wget https://github.com/libxengine/libxengine/releases/download/$latest_tag/XEngine_UBuntu_24.04_x86-64.zip
+          unzip ./XEngine_UBuntu_24.04_x86-64.zip -d ./XEngine_UBuntu_24.04_x86-64
+          cd XEngine_UBuntu_24.04_x86-64
+
           chmod +x ./XEngine_LINEnv.sh
           sudo ./XEngine_LINEnv.sh -i 3
 

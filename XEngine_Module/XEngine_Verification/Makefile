@@ -54,6 +54,12 @@ else ifeq ($(PLATFORM),mac)
 	LIBFLAG = -dynamiclib
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
+else ifeq ($(PLATFORM), freebsd)
+	PLATVER = -D __FREEBSD__
+	FILEEXT = so
+	LIBFLAG = -shared
+	LIBEX = -lpthread -lrt -ldl
+	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
 else ifeq ($(PLATFORM), android)
 	PLATVER = -D __ANDROID__
 	FILEEXT = so

@@ -60,6 +60,14 @@ else ifeq ($(PLATFORM),mac)
 	FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
+else ifeq ($(PLATFORM), freebsd)
+	PLATVER = -D __FREEBSD__
+	LIB += -lluajit-5.1
+	FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
+	FILEEXT = so
+	LIBFLAG = -shared
+	LIBEX = -lpthread -lrt -ldl
+	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
 else ifeq ($(PLATFORM), android)
 	PLATVER = -D __ANDROID__
 	FILEEXT = so

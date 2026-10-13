@@ -42,12 +42,6 @@ jobs:
       - name: Checkout main repository code
         uses: actions/checkout@v7
 
-      - name: Checkout dependency repository (xengine)
-        uses: actions/checkout@v7
-        with:
-          repository: libxengine/libxengine
-          path: libxengine
-
       - name: Set TERM variable
         run: echo "TERM=xterm" >> $GITHUB_ENV
 

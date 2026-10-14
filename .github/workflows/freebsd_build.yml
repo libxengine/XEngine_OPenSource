@@ -50,25 +50,25 @@ jobs:
 
             cd XEngine_Module
             cd jsoncpp
-            gmake
+            gmake PLATFORM=freebsd
             cd ..
             cd tinyxml2
-            gmake
+            gmake PLATFORM=freebsd  
             cd ..
             cd XEngine_InfoReport
-            gmake
+            gmake PLATFORM=freebsd
             cd ..
             cd XEngine_Token
-            gmake
+            gmake PLATFORM=freebsd
             cd ..
             cd XEngine_MSGNotify
-            gmake
+            gmake PLATFORM=freebsd
             cd ..
             cd XEngine_AIApi
-            gmake
+            gmake PLATFORM=freebsd
             cd ..
             cd XEngine_Verification
-            gmake
+            gmake PLATFORM=freebsd
             cd ..
             cd XEngine_PluginExtension
-            gmake
+            gmake PLATFORM=freebsd

@@ -46,7 +46,7 @@ jobs:
             
             chmod 777 *
             bash ./XEngine_LINEnv.sh -i 3
-            cd..
+            cd ..
 
             cd XEngine_Module
             cd jsoncpp

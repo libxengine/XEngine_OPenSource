@@ -25,6 +25,9 @@ else
 	else ifeq ($(PLATFORM), tvios)
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG
+	else ifeq ($(PLATFORM), freebsd)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
 	else
 		FLAGS = -c
 		DEBUG = -g -D _DEBUG

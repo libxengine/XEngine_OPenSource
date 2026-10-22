@@ -67,6 +67,7 @@ else ifeq ($(PLATFORM), freebsd)
 	PLATVER = -D __FREEBSD__
 	LIB += -lluajit-5.1
 	FLAGS += -D _XENGINE_BUILD_SWITCH_LUA
+	LOADSO += -L /usr/local/lib
 	FILEEXT = so
 	LIBFLAG = -shared
 	LIBEX = -lpthread -lrt -ldl

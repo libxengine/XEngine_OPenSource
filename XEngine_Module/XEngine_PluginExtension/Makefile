@@ -71,6 +71,7 @@ else ifeq ($(PLATFORM), freebsd)
 	LIBFLAG = -shared
 	LIBEX = -lpthread -lrt -ldl
 	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
+	CC = clang++ -Wall -std=c++20 -fPIC
 else ifeq ($(PLATFORM), android)
 	PLATVER = -D __ANDROID__
 	FILEEXT = so

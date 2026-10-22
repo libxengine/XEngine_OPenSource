@@ -1,4 +1,4 @@
-CC = g++ -Wall -std=c++17 -fPIC
+CC = g++ -Wall -std=c++20 -fPIC
 PLATFORM = linux
 PLATVER = 
 FILEEXT = 
@@ -58,6 +58,7 @@ else ifeq ($(PLATFORM),mac)
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/./
 else ifeq ($(PLATFORM), freebsd)
+	CC = clang++ -Wall -std=c++20 -fPIC
 	PLATVER = -D __FREEBSD__
 	FILEEXT = so
 	LIBFLAG = -shared

@@ -338,7 +338,7 @@ extern "C" bool Verification_HTTP_GetType(XCHAR** pptszListHdr, int nHdrCount, i
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：要验证的密码
+  意思：要验证的密码,此字段为NULL表示lpszUser是验证字符串
  参数.三：pptszListHdr
   In/Out：In
   类型：指向指针的指针
@@ -367,7 +367,7 @@ extern "C" bool Verification_HTTP_Basic(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHA
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：要验证的密码
+  意思：要验证的密码,此字段为NULL表示lpszUser是验证字符串
  参数.三：lpszMethod
   In/Out：In
   类型：常量字符指针

@@ -306,7 +306,7 @@ bool CVerification_HTTP::Verification_HTTP_GetType(XCHAR** pptszListHdr, int nHd
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：要验证的密码
+  意思：要验证的密码,此字段为NULL表示lpszUser是验证字符串
  参数.三：pptszListHdr
   In/Out：In
   类型：指向指针的指针
@@ -326,34 +326,46 @@ bool CVerification_HTTP::Verification_HTTP_Basic(LPCXSTR lpszUser, LPCXSTR lpszP
 {
 	Verification_IsErrorOccur = false;
 
-	if ((NULL == lpszUser) || (NULL == lpszPass))
+	if (NULL == lpszUser)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_PARAMENT;
 		return false;
 	}
-	int nAuthType = 0;
-	int nAuthLen = XPATH_MAX;
-	XCHAR tszAuthStr[XPATH_MAX] = {};
-	if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = HttpProtocol_GetLastError();
-		return false;
-	}
-	//是否是BASIC
-	if (1 != nAuthType)
-	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NOTSUPPORT;
-		return false;
-	}
 	XCHAR tszUserStr[XPATH_MIN] = {};
 	XCHAR tszPassStr[XPATH_MIN] = {};
-	if (!Verification_HTTP_BasicDecoder(tszAuthStr, tszUserStr, tszPassStr))
+
+	if (NULL == lpszPass)
 	{
-		return false;
+		int nAuthType = 0;
+		int nAuthLen = XPATH_MAX;
+		XCHAR tszAuthStr[XPATH_MAX] = {};
+		if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = HttpProtocol_GetLastError();
+			return false;
+		}
+		//是否是BASIC
+		if (1 != nAuthType)
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NOTSUPPORT;
+			return false;
+		}
+		if (!Verification_HTTP_BasicDecoder(tszAuthStr, tszUserStr, tszPassStr))
+		{
+			return false;
+		}
 	}
+	else
+	{
+		if (!Verification_HTTP_BasicDecoder(lpszUser, tszUserStr, tszPassStr))
+		{
+			return false;
+		}
+	}
+	
 	if (0 != _tcsxnicmp(lpszUser, tszUserStr, _tcsxlen(lpszUser)))
 	{
 		Verification_IsErrorOccur = true;
@@ -380,7 +392,7 @@ bool CVerification_HTTP::Verification_HTTP_Basic(LPCXSTR lpszUser, LPCXSTR lpszP
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：要验证的密码
+  意思：要验证的密码,此字段为NULL表示lpszUser是验证字符串
  参数.三：lpszMethod
   In/Out：In
   类型：常量字符指针
@@ -415,30 +427,37 @@ bool CVerification_HTTP::Verification_HTTP_Digest(LPCXSTR lpszUser, LPCXSTR lpsz
 {
 	Verification_IsErrorOccur = false;
 
-	if ((NULL == lpszUser) || (NULL == lpszPass))
+	if (NULL == lpszUser)
 	{
 		Verification_IsErrorOccur = true;
 		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_PARAMENT;
 		return false;
 	}
-
-	int nAuthType = 0;
-	int nAuthLen = XPATH_MAX;
 	XCHAR tszAuthStr[XPATH_MAX] = {};
 
-	if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
+	if (NULL == lpszPass)
 	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = HttpProtocol_GetLastError();
-		return false;
+		_tcsxcpy(tszAuthStr, lpszUser);
 	}
-	//是否是摘要验证
-	if (2 != nAuthType)
+	else
 	{
-		Verification_IsErrorOccur = true;
-		Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NOTSUPPORT;
-		return false;
+		int nAuthType = 0;
+		int nAuthLen = XPATH_MAX;
+		if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = HttpProtocol_GetLastError();
+			return false;
+		}
+		//是否是摘要验证
+		if (2 != nAuthType)
+		{
+			Verification_IsErrorOccur = true;
+			Verification_dwErrorCode = ERROR_XENGINE_MODULE_VERIFICATION_HTTP_NOTSUPPORT;
+			return false;
+		}
 	}
+	
 	XCHAR tszStrUser[XPATH_MIN] = {};
 	XCHAR tszStrReal[XPATH_MIN] = {};
 	XCHAR tszStrNonce[XPATH_MIN] = {};

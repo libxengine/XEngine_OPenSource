@@ -38,11 +38,11 @@ extern "C" bool MSGNotify_EMail_Send(LPCXSTR lpszServiceAddr, LPCXSTR lpszUser, 
 /************************************************************************/
 /*                        短信服务通知                                  */
 /************************************************************************/
-extern "C" bool MSGNotify_SMS_SendTencent(LPCXSTR lpszServiceAddr, LPCXSTR lpszRegion, LPCXSTR lpszAPPID, LPCXSTR lpszSignName, LPCXSTR lpszTemplateID, LPCXSTR lpszPhoneNumber, LPCXSTR lpszMSGBuffer)
+extern "C" bool MSGNotify_SMS_SendTencent(LPCXSTR lpszAPIUrl, LPCXSTR lpszSecretID, LPCXSTR lpszSecretKey, LPCXSTR lpszRegionStr, LPCXSTR lpszAPPID, LPCXSTR lpszSignName, LPCXSTR lpszTemplateID, XCHAR*** ppptszPhoneNumber, int nListCount)
 {
-	return m_MSGSms.MSGNotify_SMS_SendTencent(lpszServiceAddr, lpszRegion, lpszAPPID, lpszSignName, lpszTemplateID, lpszPhoneNumber, lpszMSGBuffer);
+	return m_MSGSms.MSGNotify_SMS_SendTencent(lpszAPIUrl, lpszSecretID, lpszSecretKey, lpszRegionStr, lpszAPPID, lpszSignName, lpszTemplateID, ppptszPhoneNumber, nListCount);
 }
-extern "C" bool MSGNotify_SMS_SendAliyun(LPCXSTR lpszServiceAddr, LPCXSTR lpszRegion, LPCXSTR lpszAPPID, LPCXSTR lpszSignName, LPCXSTR lpszTemplateID, LPCXSTR lpszPhoneNumber, LPCXSTR lpszMSGBuffer)
+extern "C" bool MSGNotify_SMS_SendAliyun(LPCXSTR lpszAPIUrl, LPCXSTR lpszSecretID, LPCXSTR lpszSecretKey, LPCXSTR lpszRegionStr, LPCXSTR lpszAPPID, LPCXSTR lpszSignName, LPCXSTR lpszTemplateID, XCHAR*** ppptszPhoneNumber, int nListCount)
 {
-	return m_MSGSms.MSGNotify_SMS_SendAliyun(lpszServiceAddr, lpszRegion, lpszAPPID, lpszSignName, lpszTemplateID, lpszPhoneNumber, lpszMSGBuffer);
+	return m_MSGSms.MSGNotify_SMS_SendAliyun(lpszAPIUrl, lpszSecretID, lpszSecretKey, lpszRegionStr, lpszAPPID, lpszSignName, lpszTemplateID, ppptszPhoneNumber, nListCount);
 }

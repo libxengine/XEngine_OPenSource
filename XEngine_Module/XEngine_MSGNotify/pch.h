@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <random>
 #include <list>
 #include <unordered_map>
 #include <json/json.h>
@@ -22,8 +23,12 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Define.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIAddr_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIAddr_Error.h>
 #include "MSGNotify_Define.h"
 #include "MSGNotify_Error.h"
 /********************************************************************
@@ -42,7 +47,9 @@ extern XLONG MSGNotify_dwErrorCode;
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
+#pragma comment(lib,"XEngine_Core/XEngine_Cryption")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIAddr")
 #ifdef _DEBUG
 #ifdef _M_X64
 #pragma comment(lib,"x64/Debug/jsoncpp")

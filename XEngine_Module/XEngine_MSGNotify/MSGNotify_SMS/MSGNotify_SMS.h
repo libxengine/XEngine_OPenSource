@@ -17,6 +17,10 @@ public:
     CMSGNotify_SMS();
     ~CMSGNotify_SMS();
 public:
-    bool MSGNotify_SMS_SendTencent(LPCXSTR lpszServiceAddr, LPCXSTR lpszRegion, LPCXSTR lpszAPPID, LPCXSTR lpszSignName, LPCXSTR lpszTemplateID, LPCXSTR lpszPhoneNumber, LPCXSTR lpszMSGBuffer = NULL);
-    bool MSGNotify_SMS_SendAliyun(LPCXSTR lpszServiceAddr, LPCXSTR lpszRegion, LPCXSTR lpszAPPID, LPCXSTR lpszSignName, LPCXSTR lpszTemplateID, LPCXSTR lpszPhoneNumber, LPCXSTR lpszMSGBuffer = NULL);
+    bool MSGNotify_SMS_SendTencent(LPCXSTR lpszAPIUrl, LPCXSTR lpszSecretID, LPCXSTR lpszSecretKey, LPCXSTR lpszRegionStr, LPCXSTR lpszAPPID, LPCXSTR lpszSignName, LPCXSTR lpszTemplateID, XCHAR*** ppptszPhoneNumber, int nListCount);
+    bool MSGNotify_SMS_SendAliyun(LPCXSTR lpszAPIUrl, LPCXSTR lpszSecretID, LPCXSTR lpszSecretKey, LPCXSTR lpszRegionStr, LPCXSTR lpszAPPID, LPCXSTR lpszSignName, LPCXSTR lpszTemplateID, XCHAR*** ppptszPhoneNumber, int nListCount);
+protected:
+    bool MSGNotify_SMS_UTCTime(time_t nTime, XCHAR* ptszTimeStr);
+    bool MSGNotify_SMS_Sha256Hex(LPCXSTR lpszMSGBuffer, XCHAR* ptszMSGBuffer);
+    bool MSGNotify_SMS_Sha1Hex(LPCXSTR lpszMSGBuffer, LPCXSTR lpszKeyStr, XCHAR* ptszMSGBuffer);
 };

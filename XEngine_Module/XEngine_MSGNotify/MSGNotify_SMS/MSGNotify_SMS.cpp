@@ -467,7 +467,12 @@ bool CMSGNotify_SMS::MSGNotify_SMS_UTCTime(time_t nTime, XCHAR* ptszTimeStr)
 	MSGNotify_IsErrorOccur = false;
 
 	struct tm sttime;
-	sttime = *gmtime(&nTime);
+	if (nullptr == gmtime_r(&nTime, &sttime))
+	{
+		MSGNotify_IsErrorOccur = true;
+		MSGNotify_dwErrorCode = ERROR_XENGINE_THIRDPART_MSGNOTIFY_FAILED;
+		return false;
+	}
 	strftime(ptszTimeStr, XPATH_MIN, "%Y-%m-%d", &sttime);
 
 	return true;

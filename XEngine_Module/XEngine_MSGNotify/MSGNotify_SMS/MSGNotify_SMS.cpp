@@ -115,26 +115,26 @@ bool CMSGNotify_SMS::MSGNotify_SMS_SendTencent(LPCXSTR lpszAPIUrl, LPCXSTR lpszS
 	LPCXSTR lpszHTTPQuery = "";
 
 	XCHAR tszCanonicalHeaders[XPATH_MAX] = {};
-	_xstprintf(tszCanonicalHeaders, _X("content-type:application/json; charset=utf-8\nhost:%1023s\n"), st_APIDomain.tszFullDomain);
+	_xsntprintf(tszCanonicalHeaders, sizeof(tszCanonicalHeaders), _X("content-type:application/json; charset=utf-8\nhost:%s\n"), st_APIDomain.tszFullDomain);
 	LPCXSTR lpszSignedHeaders = _X("content-type;host");
 
 	XCHAR tszHashPayload[XPATH_MIN] = {};
 	MSGNotify_SMS_Sha256Hex(m_StrHTTPBody.c_str(), tszHashPayload);
 
 	XCHAR tszCanonicalRequest[XPATH_MAX] = {};
-	_xstprintf(tszCanonicalRequest, _X("%s\n%s\n%s\n%512s\n%s\n%s"), lpszHTTPMethod, lpszHTTPUri, lpszHTTPQuery, tszCanonicalHeaders, lpszSignedHeaders, tszHashPayload);
+	_xsntprintf(tszCanonicalRequest, sizeof(tszCanonicalRequest), _X("%s\n%s\n%s\n%s\n%s\n%s"), lpszHTTPMethod, lpszHTTPUri, lpszHTTPQuery, tszCanonicalHeaders, lpszSignedHeaders, tszHashPayload);
 	// ************* 拼接待签名字符串 *************
 	LPCXSTR lpszAlgorithmStr = _X("TC3-HMAC-SHA256");
 
 	XCHAR tszCredentialScope[XPATH_MIN] = {};
-	_xstprintf(tszCredentialScope, _X("%s/%512s/tc3_request"), tszTimeStr, st_APIDomain.tszSubDomain);
+	_xsntprintf(tszCredentialScope, sizeof(tszCredentialScope), _X("%s/%s/tc3_request"), tszTimeStr, st_APIDomain.tszSubDomain);
 	XCHAR tszHashCanonicalRequest[XPATH_MIN] = {};
 	MSGNotify_SMS_Sha256Hex(tszCanonicalRequest, tszHashCanonicalRequest);
 	XCHAR tszString2Sign[XPATH_MAX] = {};
-	_xstprintf(tszString2Sign, _X("%s\n%lld\n%s\n%s"), lpszAlgorithmStr, m_nTime, tszCredentialScope, tszHashCanonicalRequest);
+	_xsntprintf(tszString2Sign, sizeof(tszString2Sign), _X("%s\n%lld\n%s\n%s"), lpszAlgorithmStr, m_nTime, tszCredentialScope, tszHashCanonicalRequest);
 	// ************* 计算签名 ***************
 	XCHAR tszKeyStr[64] = {};
-	_xstprintf(tszKeyStr, _X("TC3%s"), lpszSecretKey);
+	_xsntprintf(tszKeyStr, sizeof(tszKeyStr), _X("TC3%s"), lpszSecretKey);
 
 	XBYTE k_date[64] = {};
 	int output_len = (int)_tcsxlen(tszTimeStr);
@@ -159,10 +159,10 @@ bool CMSGNotify_SMS::MSGNotify_SMS_SendTencent(LPCXSTR lpszAPIUrl, LPCXSTR lpszS
 	BaseLib_String_HexToStr((LPCXSTR)k_hmac_sha_sign, output_len, tszSignature, false);
 	// ************* 拼接 Authorization *************
 	XCHAR tszAuthorization[XPATH_MAX] = {};
-	_xstprintf(tszAuthorization, _X("%s Credential=%s/%512s, SignedHeaders=%s, Signature=%s"), lpszAlgorithmStr, lpszSecretID, tszCredentialScope, lpszSignedHeaders, tszSignature);
+	_xsntprintf(tszAuthorization, sizeof(tszAuthorization), _X("%s Credential=%s/%s, SignedHeaders=%s, Signature=%s"), lpszAlgorithmStr, lpszSecretID, tszCredentialScope, lpszSignedHeaders, tszSignature);
 
 	XCHAR tszHTTPHdr[XPATH_MAX] = {};
-	_xstprintf(tszHTTPHdr, "Authorization: %512s\r\n"
+	_xsntprintf(tszHTTPHdr, sizeof(tszHTTPHdr), "Authorization: %s\r\n"
 		"Content-Type: application/json; charset=utf-8\r\n"
 		"X-TC-Action: SendSms\r\n"
 		"X-TC-Timestamp: %lld\r\n"
@@ -467,12 +467,21 @@ bool CMSGNotify_SMS::MSGNotify_SMS_UTCTime(time_t nTime, XCHAR* ptszTimeStr)
 	MSGNotify_IsErrorOccur = false;
 
 	struct tm sttime;
+#ifdef _MSC_BUILD
+	if (0 != gmtime_s(&sttime, &nTime))
+	{
+		MSGNotify_IsErrorOccur = true;
+		MSGNotify_dwErrorCode = ERROR_XENGINE_THIRDPART_MSGNOTIFY_FAILED;
+		return false;
+	}
+#else
 	if (nullptr == gmtime_r(&nTime, &sttime))
 	{
 		MSGNotify_IsErrorOccur = true;
 		MSGNotify_dwErrorCode = ERROR_XENGINE_THIRDPART_MSGNOTIFY_FAILED;
 		return false;
 	}
+#endif
 	strftime(ptszTimeStr, XPATH_MIN, "%Y-%m-%d", &sttime);
 
 	return true;

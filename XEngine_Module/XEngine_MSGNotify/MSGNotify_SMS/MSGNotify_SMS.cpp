@@ -115,19 +115,19 @@ bool CMSGNotify_SMS::MSGNotify_SMS_SendTencent(LPCXSTR lpszAPIUrl, LPCXSTR lpszS
 	LPCXSTR lpszHTTPQuery = "";
 
 	XCHAR tszCanonicalHeaders[XPATH_MAX] = {};
-	_xsntprintf(tszCanonicalHeaders, sizeof(tszCanonicalHeaders), _X("content-type:application/json; charset=utf-8\nhost:%s\n"), st_APIDomain.tszFullDomain);
+	_xsntprintf(tszCanonicalHeaders, sizeof(tszCanonicalHeaders), _X("content-type:application/json; charset=utf-8\nhost:%.255s\n"), st_APIDomain.tszFullDomain);
 	LPCXSTR lpszSignedHeaders = _X("content-type;host");
 
 	XCHAR tszHashPayload[XPATH_MIN] = {};
 	MSGNotify_SMS_Sha256Hex(m_StrHTTPBody.c_str(), tszHashPayload);
 
-	XCHAR tszCanonicalRequest[XPATH_MAX] = {};
+	XCHAR tszCanonicalRequest[XPATH_2MAX] = {};
 	_xsntprintf(tszCanonicalRequest, sizeof(tszCanonicalRequest), _X("%s\n%s\n%s\n%s\n%s\n%s"), lpszHTTPMethod, lpszHTTPUri, lpszHTTPQuery, tszCanonicalHeaders, lpszSignedHeaders, tszHashPayload);
 	// ************* 拼接待签名字符串 *************
 	LPCXSTR lpszAlgorithmStr = _X("TC3-HMAC-SHA256");
 
-	XCHAR tszCredentialScope[XPATH_MIN] = {};
-	_xsntprintf(tszCredentialScope, sizeof(tszCredentialScope), _X("%s/%s/tc3_request"), tszTimeStr, st_APIDomain.tszSubDomain);
+	XCHAR tszCredentialScope[XPATH_MID] = {};
+	_xsntprintf(tszCredentialScope, sizeof(tszCredentialScope), _X("%s/%.128s/tc3_request"), tszTimeStr, st_APIDomain.tszSubDomain);
 	XCHAR tszHashCanonicalRequest[XPATH_MIN] = {};
 	MSGNotify_SMS_Sha256Hex(tszCanonicalRequest, tszHashCanonicalRequest);
 	XCHAR tszString2Sign[XPATH_MAX] = {};
@@ -162,13 +162,13 @@ bool CMSGNotify_SMS::MSGNotify_SMS_SendTencent(LPCXSTR lpszAPIUrl, LPCXSTR lpszS
 	_xsntprintf(tszAuthorization, sizeof(tszAuthorization), _X("%s Credential=%s/%s, SignedHeaders=%s, Signature=%s"), lpszAlgorithmStr, lpszSecretID, tszCredentialScope, lpszSignedHeaders, tszSignature);
 
 	XCHAR tszHTTPHdr[XPATH_MAX] = {};
-	_xsntprintf(tszHTTPHdr, sizeof(tszHTTPHdr), "Authorization: %s\r\n"
+	_xsntprintf(tszHTTPHdr, sizeof(tszHTTPHdr), _X("Authorization: %s\r\n"
 		"Content-Type: application/json; charset=utf-8\r\n"
 		"X-TC-Action: SendSms\r\n"
-		"X-TC-Timestamp: %lld\r\n"
+		"X-TC-Timestamp: %llu\r\n"
 		"X-TC-Version: 2021-01-11\r\n"
-		"X-TC-Region: %s\r\n",
-		tszAuthorization, m_nTime, lpszRegionStr);
+		"X-TC-Region: %.512s\r\n"),
+		tszAuthorization, (unsigned long long)m_nTime, lpszRegionStr);
 	/////请求
 	int nHTTPCode = 0;
 	int nHTTPSize = 0;

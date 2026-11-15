@@ -655,7 +655,7 @@ void CAIApi_Chat::AIApi_Chat_CBRecvV3(AICLIENT_CHAT* pSt_AIClient)
 	// --- 核心改动：平移残余数据并更新大小 ---
 	if (nStart > 0)
 	{
-		if (nStart < nLen)
+		if (nStart < (size_t)nLen)
 		{
 			// 情况 A：有残余数据（数据不全的尾巴）
 			size_t nRemainLen = nLen - nStart; // 计算剩下的不完整数据长度

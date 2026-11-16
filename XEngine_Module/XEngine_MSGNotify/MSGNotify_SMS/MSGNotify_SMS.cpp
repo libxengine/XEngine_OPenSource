@@ -162,12 +162,12 @@ bool CMSGNotify_SMS::MSGNotify_SMS_SendTencent(LPCXSTR lpszAPIUrl, LPCXSTR lpszS
 	_xsntprintf(tszAuthorization, sizeof(tszAuthorization), _X("%s Credential=%s/%s, SignedHeaders=%s, Signature=%s"), lpszAlgorithmStr, lpszSecretID, tszCredentialScope, lpszSignedHeaders, tszSignature);
 
 	XCHAR tszHTTPHdr[XPATH_MAX] = {};
-	_xsntprintf(tszHTTPHdr, sizeof(tszHTTPHdr), _X("Authorization: %s\r\n"
+	_xsntprintf(tszHTTPHdr, sizeof(tszHTTPHdr), _X("Authorization: %.256s\r\n"
 		"Content-Type: application/json; charset=utf-8\r\n"
 		"X-TC-Action: SendSms\r\n"
 		"X-TC-Timestamp: %llu\r\n"
 		"X-TC-Version: 2021-01-11\r\n"
-		"X-TC-Region: %.512s\r\n"),
+		"X-TC-Region: %s\r\n"),
 		tszAuthorization, (unsigned long long)m_nTime, lpszRegionStr);
 	/////请求
 	int nHTTPCode = 0;
